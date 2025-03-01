@@ -38,13 +38,7 @@ const ManagementTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
           >
             Outreach
           </button>
-          <button
-            type="button"
-            onClick={() => setSelectedSubDomain("finance")}
-            className="nes-btn is-error nes-btn-task w-[47%] md:w-[22%] aspect-[2] custom-nes-error text-xs"
-          >
-            Finance
-          </button>
+
           <button
             type="button"
             onClick={() => setSelectedSubDomain("general")}
@@ -52,6 +46,7 @@ const ManagementTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
           >
             General Ops.
           </button>
+          
           <button
             type="button"
             onClick={() => setSelectedSubDomain("publicity")}

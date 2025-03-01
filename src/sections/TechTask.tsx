@@ -70,7 +70,7 @@ const TechTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
             onClick={() => setSelectedSubDomain("fullstack")}
             className="nes-btn is-error nes-btn-task  w-[47%] md:w-[22%] aspect-[2] custom-nes-error text-xs"
           >
-            Fullstack
+            Cyber Security
           </button>
           <button
             type="button"
@@ -87,13 +87,6 @@ const TechTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
             AI/ML
           </button>
 
-          <button
-            type="button"
-            onClick={() => setSelectedSubDomain("game")}
-            className="nes-btn is-error nes-btn-task w-[47%] md:w-[22%] aspect-[2] custom-nes-error text-xs"
-          >
-            Game Dev
-          </button>
 
           {!isSC && (
             <button
@@ -198,184 +191,79 @@ export default TechTask;
 // }
 const techTaskData = [
   {
-    label: "ai/ml",
-    title: "Simple Mad Libs Game",
-    description:
-      "Create a basic Mad Libs game where the program asks the user to input various words (e.g., nouns, verbs, adjectives), and then insert those words into a pre-defined story template to generate a funny story.",
-    resources: ["https://www.madlibs.com/"],
-    for: "junior",
+    "label": "backend",
+    "title": "Blog Management API",
+    "description": "Develop a Blog Management API that allows users to create, manage, and interact with blog posts. The backend can be implemented in any programming language and can use any database (SQL or NoSQL) for data storage. Core Features: Users can create a blog post with a title and content. Users can view all blog posts. Users can update a blog post. Users can delete a blog post. Users can add comments to a blog post. Bonus Points: Implement likes on blog posts. Add JWT Authentication to allow users to manage their own posts securely. Deploy the API on a cloud platform. Write a comprehensive README with API documentation, including request and response examples. Use Go for the backend. Use an SQL database.",
+    "for": "junior"
   },
   {
-    label: "ai/ml",
-    title: "Number Guessing Game",
-    description:
-      "Create a simple number guessing game where the computer randomly selects a number within a given range (e.g., 1 to 100), and the player has to guess the number. The game should provide feedback on whether the guess is too high, too low, or correct.",
-    resources: ["https://codepen.io/touchportyl-ns/pen/powKVGp"],
-    for: "junior",
+    "label": "backend",
+    "title": "To-Do List API",
+    "description": "Develop a To-Do List API that allows users to create, manage, and track their tasks. The backend can be implemented in any programming language and can use any database (SQL or NoSQL) for data storage. Core Features: Users can create a task with a title and description. Users can view all their tasks. Users can update a task's title, description, or completion status. Users can delete a task. Bonus Points: Implement due dates for tasks and allow sorting by due date. Add categories or tags to tasks for better organization. Implement JWT Authentication so users can manage their own tasks. Deploy the API on a cloud platform. Use Go for the backend and an SQL database for storage. Write a README with API documentation.",
+    "for": "junior"
   },
   {
-    label: "ai/ml",
-    title: "Basic Linear Regression Model",
-    description:
-      "Implement a simple linear regression model to understand the basics of machine learning. Use a small dataset, such as predicting house prices based on square footage. The goal is to implement the linear regression algorithm from scratch, without using high-level libraries like Scikit-Learn for the model.",
-    resources: [
-      "https://towardsdatascience.com/introduction-to-machine-learning-algorithms-linear-regression-14c4e325882a",
+    "label": "backend",
+    "title": "Advanced Event Management API",
+    "description": "Develop an Advanced Event Management API that allows users to create, manage, and track events, including attendee management, ticketing, and role-based permissions. The backend can be implemented in any programming language and can use any database (SQL or NoSQL) for data storage. Core Features: Users can create an event with a title, description, date, location, and event type (public/private). Users can view all public events and only their own private events. Users can update or delete their own events. Users can register for an event and receive a QR code ticket for entry. Event organizers can track attendance using QR code scanning. Implement role-based access control (RBAC): Organizer: Can create, update, and manage event details & attendees. Attendee: Can register for events and view details. Write a comprehensive README with API documentation, including request/response examples. Bonus Points: Implement ticket pricing with different tiers (e.g., Regular, VIP). Add real-time notifications for event updates using WebSockets. Implement search and filtering (e.g., by date, location, event type). Deploy the API on a cloud platform with auto-scaling. Use Go for the backend and an SQL database for storage.",
+    "for": "senior"
+  },
+  {
+    "label": "backend",
+    "title": "Advanced Multi-Tenant Inventory Management API",
+    "description": "Develop an Advanced Multi-Tenant Inventory Management API that allows businesses to manage their inventory, track stock levels, handle orders, and manage suppliers efficiently. The backend can be implemented in any programming language and can use any database (SQL or NoSQL) for data storage. Core Features: Multi-Tenant System: Each business has its own separate inventory and users. Product Management: Businesses can add, update, and delete products, including batch tracking and expiry dates. Stock Management: Businesses can track stock levels across multiple warehouses/locations and receive low-stock alerts. Order Management: Businesses can place and manage customer orders, update order status (Pending, Shipped, Delivered, Canceled). Businesses can track order fulfillment, ensuring stock availability before confirming orders. Supplier Management: Businesses can add and manage suppliers, track incoming stock, and create purchase orders. Role-Based Access Control (RBAC): Admin: Can manage all products, orders, warehouses, and users within their business. Employee: Can manage stock levels but cannot delete products. Warehouse Manager: Can update stock across warehouses but cannot handle orders. Sales and Stock Reports: Generate reports for sales trends, stock usage, and purchase orders. Write a README with API documentation and sample request/response examples. Bonus Points: RESTful API with Pagination & Filtering: Support query-based filtering (e.g., by product category, stock status). Supplier and Purchase Order Tracking: Businesses can view incoming stock shipments from suppliers. Deploy the API on a cloud platform with auto-scaling. Use Go for the backend and an SQL database for structured data storage.",
+    "for": "senior"
+  },
+  {
+    "label": "ai/ml",
+    "title": "Rental Price Prediction Model",
+    "description": "Perform data visualization and generate key insights from the given dataset. Then, build a machine learning model to predict rental prices based on various features such as location, property size, number of bedrooms, and amenities. Requirements: Conduct Exploratory Data Analysis (EDA) to identify trends, correlations, and anomalies. Visualize rental price distribution, correlations between price and key features, and geographic rent variations. Preprocess the dataset (handle missing values, normalize data, encode categorical variables). Train and evaluate a machine learning model for rent prediction. Interpret model results and provide actionable insights based on the findings.",
+    "resources": [
+      "https://drive.google.com/file/d/193NnzSRruE3uZvkvT4XaUDNI_oVHbA_I/view?usp=drive_link",
+      "https://drive.google.com/file/d/1XNK7ZL-5a4enlcubVoro0VYZ0QgZb42X/view?usp=drive_link"
     ],
-    for: "junior",
+    "for": "junior"
   },
   {
-    label: "ai/ml",
-    title: "Basic Data Visualization",
-    description:
-      "Create a simple data visualization project to understand the basics of handling and visualizing data. Use a small dataset (e.g., Iris dataset) and create visualizations such as scatter plots, bar charts, and histograms to explore the data.",
-    resources: ["https://matplotlib.org/stable/index.html"],
-    for: "junior",
+    "label": "ai/ml",
+    "title": "Sequential Image Classification Model",
+    "description": "Develop a Sequential Machine Learning Model that can identify and categorize images into predefined classes.",
+    "for": "junior"
   },
   {
-    label: "ai/ml",
-    title: "Task: Develop a basic AI behavior for a simple game scenario",
-    description:
-      "Description: Your goal is to create an AI-controlled character that demonstrates either chasing a target or avoiding obstacles within the game environment. You can choose to implement this behavior in any programming language or game development framework of your choice.",
-    for: "senior",
+    "label": "ai/ml",
+    "title": "CIFAR-10 Neural Network from Scratch",
+    "description": "Build a machine learning model from scratch to train on the CIFAR-10 dataset using only NumPy, Pandas, and other basic libraries (without TensorFlow or PyTorch). The model should be a fully connected neural network that can classify images into 10 categories.",
+    "for": "senior"
   },
   {
-    label: "app",
-    title: "Task: Develop a Simple To-Do List Application",
-    description:
-      "Description: Create a basic To-Do List application that allows users to add, edit, and delete tasks. This project will introduce you to fundamental concepts of application development and user interface design.",
-    resources: ["https://reactjs.org/", "https://vuejs.org/"],
-    for: "junior",
+    "label": "ai/ml",
+    "title": "Advanced Spam Detection Model",
+    "description": "Build an advanced Spam Detection Model for Messages, using Natural Language Processing (NLP) techniques and an Advanced Deep Learning-based approach.",
+    "for": "senior"
   },
   {
-    label: "app",
-    title: "Task: Develop a Weather App with API Integration",
-    description:
-      "Description: Create a mobile application that provides users with real-time weather information based on their location. The app should retrieve weather data from a weather API and display it in a user-friendly interface.",
-
-    resources: [
-      "https://openweathermap.org/api",
-      "https://openweathermap.org/current",
-    ],
-
-    for: "junior",
-  },
-
-  {
-    label: "cp",
-    title: "Task: Implement a Simple Sorting Algorithm and Compare Performance",
-    description:
-      "Description: Create a program that implements a basic sorting algorithm (e.g., Bubble Sort, Selection Sort, Insertion Sort) and compare its performance with other sorting algorithms using time complexity analysis.",
-    resources: ["https://docs.python.org/3/", "https://en.cppreference.com/w/"],
-    for: "junior",
-  },
-
-  {
-    label: "cp",
-    title:
-      "Task: Develop a Basic Library Management System with CRUD Operations",
-    description:
-      "Description: Build a simple command-line based library management system that allows users to manage books and members using basic CRUD (Create, Read, Update, Delete) operations directly within the application.",
-    for: "junior",
-  },
-
-  {
-    label: "game",
-    title: "Task: Develop a Basic Scene Setup with Unity Engine",
-    description:
-      "Set up a new scene in Unity. Create and customize terrain (e.g., add hills, valleys,rivers). Set up a directional light and position the main camera. Place a few game objects (e.g., a character, trees, rocks,other side characters etc) in the scene. For submission include the unity project files and a video showing the scene(video optional but appreciated if included).",
-    for: "junior",
-  },
-
-  {
-    label: "game",
-    title: "Basic UI Implementation in Unity: ",
-    description:
-      "Add UI elements such as a start menu, health bar, and score display. Write scripts to handle UI interactions (e.g., start game button, updating health and score). Arrange UI elements on the screen. For submission include the unity project files and a video showing the scene(video optional but appreciated if included).",
-    for: "junior",
-  },
-
-  {
-    label: "game",
-    title: "Task: Develop a Basic Levels Setup with Unreal Engine",
-    description:
-      "Description: Model and animate characters using Unreal Engine's animation tools or import pre-made assets. Rig characters for skeletal animation and set up animation blueprints for movement and interactions. Create animations for actions such as walking, running, jumping, and attacking.",
-    for: "senior",
-  },
-
-  {
-    label: "game",
-    title: "Task: Develop a Basic Scene Setup with Unity Engine",
-    description:
-      "Description: Arrange and position game objects within the scene, such as characters, props, and obstacles. Implement player movement mechanics using Unity's built-in physics or character controllers. Allow the player to move horizontally and jump, with appropriate controls and responsiveness.",
-    for: "senior",
-  },
-
-  {
-    label: "app",
-    title:
-      "Task: Develop a Blog/CMS Application with Social Media Sharing Integration",
-    description:
-      "Description: Create a web-based Blog/CMS (Content Management System) application that allows users to create, edit, publish, and share articles. Additionally, integrate social media sharing functionality to enable users to share their articles on various platforms.",
-    for: "senior",
-  },
-
-  {
-    label: "ai/ml",
-    title:
-      "Task: Develop a Facial Expression Recognition System using Deep Learning",
-    description:
-      "Description:Build a sophisticated machine learning model to recognize facial expressions (e.g., happy, sad, angry, surprised) using deep learning techniques. This project will involve image processing, convolutional neural networks (CNNs), and model deployment for real-time inference.",
-    for: "senior",
+    "label": "frontend",
+    "title": "Responsive Portfolio Website",
+    "description": "Build a personal portfolio website that demonstrates responsiveness, user interaction, and creative design. Mandatory Requirements: Header & Navigation, About Section, Projects Section, Contact Section, Footer, Styling & Color Constraints, Hidden Validator, and Documentation. The website must include custom CSS animations, real-time form validation, and be fully responsive. Bonus Challenges: Implement a 'Back to Top' button with custom animation, add dark mode toggle, display a live clock that shows your local time zone using JavaScript.",
+    "for": "junior"
   },
   {
-    label: "backend",
-    title: "Task: Devlop a Simple Blog API",
-    description:
-      "Design a user-friendly blogging platform allowing users to effectively manage their posts. With this app, users can easily browse through all their posts, write new ones, make edits, and delete old ones. You have the freedom to select the backend framework that best suits your needs.",
-    for: "junior",
-  },
-
-  {
-    label: "backend",
-    title: "Task: Devlop a Ecommerce API",
-    description:
-      "Develop a secure Ecommerce platform with user registration, login (including user verification or Google OAuth is bonus ), authentication and product management. Users can view all products, create new listings with image uploads, edit and delete products. Implement a search function with pagination, price sorting, category filtering, and a like product features.",
-    for: "senior",
-  },
-
-  {
-    label: "frontend",
-    title: "Task: Kanban Board Clone",
-    description:
-      "Your task is to create a Kanban board clone that is fully functional, responsive, and features an intuitive user interface. A Kanban board is a project management tool that visually represents work at various stages of a process using cards and columns. Each column represents a stage of the workflow, and cards within each column represent tasks or items to be completed. The primary objective of a Kanban board is to provide visibility into the progress of work and help teams manage their tasks efficiently.",
-    for: "senior",
-    resources: ["https://webix.com/demos/kanban/"],
+    "label": "frontend",
+    "title": "Interactive To-Do List",
+    "description": "Create a dynamic to-do list application that integrates custom input behaviors, sorting, and personalized motivational messages. Mandatory Requirements: Task Addition with autocomplete for recurring tasks, Task Display with custom styling based on priority, Interactivity for marking tasks as completed, Custom Sorting Logic, Local Storage Checksum, and Documentation. Bonus Challenges: Persist tasks in localStorage, add filters to switch between 'All,' 'Active,' and 'Completed' tasks, implement a custom notification for overdue tasks.",
+    "for": "junior"
   },
   {
-    label: "frontend",
-    title: "Task: Replicate the UI",
-    description:
-      "Your task is to create a replica of the following authentication page as closely as possible. You can use any front-end technology of your choice, such as HTML, CSS, JavaScript, React, Angular, Vue, etc. The page should be responsive and visually identical to the design provided in the Dribbble shot. You can use placeholder text for the form fields and buttons, but the overall layout, colors, and styles should match the design. Try to implement the theme change functionality as well.",
-    for: "junior",
-    resources: [
-      "https://cdn.dribbble.com/users/6816261/screenshots/16024513/media/dfe89b08449994c393095876f4f40d40.mp4",
-    ],
+    "label": "frontend",
+    "title": "Weather Dashboard with API Integration",
+    "description": "Develop a weather dashboard using a JavaScript framework of your choice. This dashboard must integrate with at least two niche weather APIs, provide a multifaceted view of weather information, and incorporate personalized features. Mandatory Requirements: City Weather Search, Dynamic Visualization, Forecast Cards, Error Handling, Weather Journal, Temperature Unit Toggle, API Key Obfuscation, and Documentation. Bonus Challenges: Add geolocation support with an animated UI element, implement a 'Favorites' list with drag-and-drop reordering, provide an 'Export to PDF' button that exports the weather journal, optimize performance using memoization or debouncing.",
+    "for": "senior"
   },
   {
-    label: "fullstack",
-    title: "Form Submission and Admin Panel",
-    description:
-      "Try to create a replica of the following contact page design as closely as possible. You can use any front-end technology of your choice, such as HTML, CSS, JavaScript, React, Angular, Vue, etc. The page should be responsive and visually identical to the design provided in the Dribbble shot. After submission of the form, the data must be saved to a database of your choice, you can create backend for this project using any framework or technology of your choice. In addition to this, create a seperate page for the admin, where the admin can view all the contact form submissions.",
-    for: "junior",
-    resources: [
-      "https://dribbble.com/shots/18739948-Contact-us-UI-design/attachments/13926326?mode=media",
-    ],
-  },
-  {
-    label: "fullstack",
-    title: "Fullstack Blog Application Task",
-    description:
-      "You are tasked with building a full-stack social media platform where users can create profiles, connect with friends, share posts, comment on posts, like posts, and send messages. The application should have a clean and intuitive user interface and should prioritize user experience and scalability.",
-    for: "senior",
-  },
+    "label": "frontend",
+    "title": "E-Commerce Product Listing Page",
+    "description": "Create an e-commerce product listing page using a JavaScript framework of your choice. The page should dynamically fetch product data, allow interaction through filtering and sorting, and include personalized features that simulate a modern shopping experience. Mandatory Requirements: Product Listing with image carousel, Filtering & Sorting with debounced input, 'Recommended for You' Section, Wishlist Feature, Pagination/Infinite Scroll & Price Range Filter, and Documentation. Bonus Challenges: Implement a fully functioning shopping cart with quantity controls and real-time total calculation, enhance accessibility and add smooth hover animations for product cards.",
+    "for": "senior"
+  }
 ];

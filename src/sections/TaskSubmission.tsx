@@ -28,9 +28,10 @@ const TaskSubmission = () => {
     const userDetailsString = secureLocalStorage.getItem(
       "userDetails"
     ) as string;
+    console.log(userDetailsString)
     if (userDetailsString) {
       const userDetails = JSON.parse(userDetailsString);
-      const userDomains = userDetails.domain;
+      const userDomains = userDetails?.data.domain;
       // console.log("userDomains2:", userDomains);
       setDomains(userDomains);
     }
@@ -51,7 +52,7 @@ const TaskSubmission = () => {
       <div className=" nes-container is-rounded h-full  max-h-fit text-sm with-title is-centered w-full lg:w-[30%] invert">
         <div className="h-auto mb-4 text-lg">Domains</div>
         <div className="flex flex-col h-full justify-between gap-4 lg:gap-8">
-          {domains.includes("tech") && (
+          {domains?.includes("tech") && (
             <button
               type="button"
               onClick={() => setSelectedDomain(0)}
@@ -63,7 +64,7 @@ const TaskSubmission = () => {
               Technical
             </button>
           )}
-          {domains.includes("design") && (
+          {domains?.includes("design") && (
             <button
               onClick={() => setSelectedDomain(1)}
               type="button"
@@ -75,7 +76,7 @@ const TaskSubmission = () => {
               Design
             </button>
           )}
-          {domains.includes("management") && (
+          {domains?.includes("management") && (
             <button
               onClick={() => setSelectedDomain(2)}
               type="button"
@@ -98,19 +99,19 @@ const TaskSubmission = () => {
               Select any domain to submit task.
             </div>
           )}
-          {domains.includes("tech") && selectedDomain === 0 && (
+          {domains?.includes("tech") && selectedDomain === 0 && (
             <TechTaskSubmission
               setOpenToast={setOpenToast}
               setToastContent={setToastContent}
             />
           )}
-          {domains.includes("design") && selectedDomain === 1 && (
+          {domains?.includes("design") && selectedDomain === 1 && (
             <DesignTaskSubmission
               setOpenToast={setOpenToast}
               setToastContent={setToastContent}
             />
           )}
-          {domains.includes("management") && selectedDomain === 2 && (
+          {domains?.includes("management") && selectedDomain === 2 && (
             <ManagementTaskSubmission
               setOpenToast={setOpenToast}
               setToastContent={setToastContent}

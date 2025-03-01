@@ -5,11 +5,17 @@ import secureLocalStorage from "react-secure-storage";
 
 // import { useTabStore } from "../store";
 import { ToastContent } from "../components/CustomToast";
+import { jwtDecode, JwtPayload } from "jwt-decode";
 // import { useTabStore } from "../store";
 interface Props {
   setOpenToast: React.Dispatch<React.SetStateAction<boolean>>;
   setToastContent: React.Dispatch<React.SetStateAction<ToastContent>>;
 }
+
+interface CustomJwtPayload extends JwtPayload {
+  isTechDone?: boolean; 
+}
+
 const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   // const { tabIndex, setTabIndex } = useTabStore();
   const [subdomain, setSubDomain] = useState<string[]>([]);
@@ -51,6 +57,12 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   const handleSubmitTechTask = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (subdomain.length === 0) {
+      setOpenToast(true);
+      setToastContent({ message: "Please select at least one sub-domain!" });
+      return;
+    }
+    
     const id = secureLocalStorage.getItem("id");
     if (!id) {
       console.error("User id not found in secureLocalStorage");
@@ -75,11 +87,11 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
           },
         }
       );
-      // console.log("response", response);
+      console.log("response", response);
       if (response.data) {
         fetchUserDetails();
       }
-      // console.log(response.data);
+      console.log(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -117,18 +129,29 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   };
 
   const [isTechDone, setIsTechDone] = useState(false);
-  useEffect(() => {
-    const userDetailsString = secureLocalStorage.getItem("userDetails");
-    if (typeof userDetailsString === "string") {
-      const userDetails = JSON.parse(userDetailsString) as {
-        techIsDone: boolean[];
-      };
-      // console.log(userDetails);
-      const isTechDone = userDetails.techIsDone;
-      setIsTechDone(!!userDetails.techIsDone);
-      // console.log("userDomains2:", userDomains);
+  //const [isTechDone, setIsTechDone] = useState(false);
+  const userDetailsString = secureLocalStorage.getItem("userDetails");
+  let tech = false;
+
+  if (typeof userDetailsString === "string") {
+    const userDetails = JSON.parse(userDetailsString);
+    console.log(userDetails,'hbjqkcao;a')
+    if (Array.isArray(userDetails?.data.techIsDone) && userDetails?.data.techIsDone.length > 0) {
+      tech = userDetails?.data.techIsDone[0]; 
     }
-  }, []);
+    console.log(tech,"hihdwuoacbso")
+  }
+
+if (tech) {
+  return (
+    <div className="p-4">
+      You've successfully submitted the Tech Task. You can now track the
+      status of your application in the designated "Application Status" tab.
+    </div>
+  );
+}
+
+
   if (isTechDone) {
     return (
       <div className="p-4">

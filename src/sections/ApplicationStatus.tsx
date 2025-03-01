@@ -13,10 +13,10 @@ const ApplicationStatus = () => {
       const userDetailsString = secureLocalStorage.getItem("userDetails");
 
       if (typeof userDetailsString === "string") {
-        const userDetails = JSON.parse(userDetailsString) as { domain?: string[] };
-
-        if (Array.isArray(userDetails.domain)) {
-          setDomains(userDetails.domain);
+        const userDetails = JSON.parse(userDetailsString) ;
+        console.log(userDetails?.data.domain, "abhinav")
+        if (Array.isArray(userDetails?.data.domain)) {
+          setDomains(userDetails?.data.domain);
         } else {
           console.warn("Domains is not an array, setting to empty array.");
           setDomains([]); // Default to empty array

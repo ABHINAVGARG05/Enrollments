@@ -5,6 +5,11 @@ import Cookies from "js-cookie";
 import Navbar from "../components/Navbar";
 import secureLocalStorage from "react-secure-storage";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode, JwtPayload } from "jwt-decode";
+
+interface CustomJwtPayload extends JwtPayload {
+  isProfileDone?: boolean;
+}
 const ChangeProfile = () => {
   const navigator = useNavigate();
   const [domain, setDomain] = useState<string[]>([]);
@@ -103,9 +108,13 @@ const ChangeProfile = () => {
       // console.log(response.data);
       // TODO: After updating, show some message and redirect to dashboard
       secureLocalStorage.setItem("userDetails", JSON.stringify(response.data));
+      if (token) {
+        const decoded = jwtDecode<CustomJwtPayload>(token);
+        setIsProfile(decoded.isProfileDone === true);
+      }
 
       // console.log("ProfileIsDone", response.data.isProfileDone);
-      setIsProfile(response.data.isProfileDone);
+      // setIsProfile(response.data.isProfileDone);
     } catch (error) {
       // console.log(error);
     }
@@ -126,10 +135,13 @@ const ChangeProfile = () => {
   }, []);
 
   useEffect(() => {
-    const userDetailsstore = secureLocalStorage.getItem("userDetails");
-    if (typeof userDetailsstore === "string") {
-      const userDetails = JSON.parse(userDetailsstore);
-      setIsProfile(userDetails.isProfileDone);
+    const token = Cookies.get("jwtToken");
+    if (token) {
+      const decoded = jwtDecode<CustomJwtPayload>(token);
+      setIsProfile(decoded.isProfileDone === true);
+      console.log(decoded.isProfileDone === true, "uguvuivki");
+      console.log(isProfile, "ivyi")
+      return;
     }
   }, []);
 
@@ -201,7 +213,7 @@ const ChangeProfile = () => {
         ) : (
           <section className="flex items-start text-xs md:text-base lg:items-center flex-col lg:flex-row mt-8">
             <p className="w-full text-xl">
-              Fill the profile to update the domain
+              Profile Updated Successfully
             </p>
           </section>
         )}

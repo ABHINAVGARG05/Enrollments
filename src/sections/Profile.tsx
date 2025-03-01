@@ -68,43 +68,8 @@ const useAuth = () => {
   return { getToken, getUserId };
 };
 
-// const useUserDetails = () => {
-//   const { getToken, getUserId } = useAuth();
-//   const [isLoading, setIsLoading] = useState(false);
-//   const [error, setError] = useState<string | null>(null);
-
-//   const fetchUserDetails = useCallback(async () => {
-//     setIsLoading(true);
-//     setError(null);
-//     try {
-//       const id = getUserId();
-//       if (!id) throw new Error("User ID not found");
-
-//       const token = getToken();
-//       const { data } = await axios.get<UserDetails>(
-//         `${API_BASE_URL}/user/user/${id}`,
-//         {
-//           headers: { Authorization: `Bearer ${token}` },
-//         }
-//       );
-
-//       secureLocalStorage.setItem("userDetails", JSON.stringify(data));
-//       return data;
-//     } catch (error) {
-//       const message = error instanceof AxiosError 
-//         ? error.response?.data?.message || "Failed to fetch user details"
-//         : "An unexpected error occurred";
-//       setError(message);
-//       throw error;
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   }, [getToken, getUserId]);
-
-//   return { fetchUserDetails, isLoading, error };
-// };
-
 const useUserDetails = () => {
+  const { getToken, getUserId } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -112,70 +77,70 @@ const useUserDetails = () => {
     setIsLoading(true);
     setError(null);
     try {
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const id = getUserId();
+      if (!id) throw new Error("User ID not found");
 
-      // Mock user data
-      const mockData: UserDetails = {
-        id: "123",
-        mobile: "9876543210",
-        emailpersonal: "test@example.com",
-        participatedEvent: "Hackathon 2024",
-        volunteeredEvent: "Tech Fest 2023",
-        domain: [Domain.TECH, Domain.DESIGN],
-        isProfileDone: false,
-      };
-
-      secureLocalStorage.setItem("userDetails", JSON.stringify(mockData));
-      return mockData;
+      const token = getToken();
+      const { data } = await axios.get<UserDetails>(
+        `${API_BASE_URL}/user/user/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      console.log(data)
+      secureLocalStorage.setItem("userDetails", JSON.stringify(data));
+      return data;
     } catch (error) {
-      setError("Failed to fetch user details");
+      const message = error instanceof AxiosError 
+        ? error.response?.data?.message || "Failed to fetch user details"
+        : "An unexpected error occurred";
+      setError(message);
       throw error;
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [getToken, getUserId]);
 
   return { fetchUserDetails, isLoading, error };
 };
 
-// const useProfileUpdate = () => {
-//   const { getToken, getUserId } = useAuth();
+// const useUserDetails = () => {
 //   const [isLoading, setIsLoading] = useState(false);
 //   const [error, setError] = useState<string | null>(null);
 
-//   const updateProfile = useCallback(async (formData: ProfileFormState) => {
+//   const fetchUserDetails = useCallback(async () => {
 //     setIsLoading(true);
 //     setError(null);
 //     try {
-//       const id = getUserId();
-//       if (!id) throw new Error("User ID not found");
+//       // Simulate API delay
+//       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-//       const token = getToken();
-//       const { data } = await axios.put(
-//         `${API_BASE_URL}/user/updateuser/${id}`,
-//         formData,
-//         {
-//           headers: { Authorization: `Bearer ${token}` },
-//         }
-//       );
+//       // Mock user data
+//       const mockData: UserDetails = {
+//         id: "123",
+//         mobile: "9876543210",
+//         emailpersonal: "test@example.com",
+//         participatedEvent: "Hackathon 2024",
+//         volunteeredEvent: "Tech Fest 2023",
+//         domain: [Domain.TECH, Domain.DESIGN],
+//         isProfileDone: false,
+//       };
 
-//       return data;
+//       secureLocalStorage.setItem("userDetails", JSON.stringify(mockData));
+//       return mockData;
 //     } catch (error) {
-//       const message = error instanceof AxiosError 
-//         ? error.response?.data?.message || "Failed to update profile"
-//         : "An unexpected error occurred";
-//       setError(message);
+//       setError("Failed to fetch user details");
 //       throw error;
 //     } finally {
 //       setIsLoading(false);
 //     }
-//   }, [getToken, getUserId]);
+//   }, []);
 
-//   return { updateProfile, isLoading, error };
+//   return { fetchUserDetails, isLoading, error };
 // };
 
 const useProfileUpdate = () => {
+  const { getToken, getUserId } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -183,22 +148,57 @@ const useProfileUpdate = () => {
     setIsLoading(true);
     setError(null);
     try {
-      // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const id = getUserId();
+      if (!id) throw new Error("User ID not found");
 
-      // Mock success response
-      secureLocalStorage.setItem("userDetails", JSON.stringify({ ...formData, isProfileDone: true }));
-      return { message: "Profile updated successfully!" };
+      const token = getToken();
+      const { data } = await axios.put(
+        `${API_BASE_URL}/user/updateuser/${id}`,
+        formData,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      console.log(data)
+      return data;
     } catch (error) {
-      setError("Failed to update profile");
+      const message = error instanceof AxiosError 
+        ? error.response?.data?.message || "Failed to update profile"
+        : "An unexpected error occurred";
+      setError(message);
       throw error;
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [getToken, getUserId]);
 
   return { updateProfile, isLoading, error };
 };
+
+// const useProfileUpdate = () => {
+//   const [isLoading, setIsLoading] = useState(false);
+//   const [error, setError] = useState<string | null>(null);
+
+//   const updateProfile = useCallback(async (formData: ProfileFormState) => {
+//     setIsLoading(true);
+//     setError(null);
+//     try {
+//       // Simulate API delay
+//       await new Promise((resolve) => setTimeout(resolve, 1000));
+
+//       // Mock success response
+//       secureLocalStorage.setItem("userDetails", JSON.stringify({ ...formData, isProfileDone: true }));
+//       return { message: "Profile updated successfully!" };
+//     } catch (error) {
+//       setError("Failed to update profile");
+//       throw error;
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   }, []);
+
+//   return { updateProfile, isLoading, error };
+// };
 
 // Main Component
 const Profile = () => {
@@ -222,8 +222,8 @@ const Profile = () => {
   useEffect(() => {
     const userDetailsStr = secureLocalStorage.getItem("userDetails") as string | null;
     if (userDetailsStr) {
-      const userDetails = JSON.parse(userDetailsStr) as UserDetails;
-      setIsProfileComplete(userDetails.isProfileDone);
+      const userDetails = JSON.parse(userDetailsStr);
+      setIsProfileComplete(userDetails?.data.isProfileDone);
       setFormState({
         mobile: userDetails.mobile,
         emailpersonal: userDetails.emailpersonal,
@@ -232,11 +232,11 @@ const Profile = () => {
         domain: userDetails.domain || [],
       });
     } else {
-      fetchUserDetails().then((data) => {
-        setIsProfileComplete(data?.isProfileDone ?? false);
+      fetchUserDetails().then((userDetails) => {
+        setIsProfileComplete(true); ////yoooooooooooooooooo
+        console.log(userDetails,"hiiii")
       });
-    }
-  }, [fetchUserDetails]);
+  }}, [fetchUserDetails]);
 
   // Update tab index when profile is complete
   useEffect(() => {

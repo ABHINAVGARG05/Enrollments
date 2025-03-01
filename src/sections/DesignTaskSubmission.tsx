@@ -61,6 +61,12 @@ const { tabIndex, setTabIndex } = useTabStore();
   const handleSubmitTechTask = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (subdomain.length === 0) {
+      setOpenToast(true);
+      setToastContent({ message: "Please select at least one sub-domain!" });
+      return;
+    }
+
     const id = secureLocalStorage.getItem("id");
     if (!id) {
       console.error("User id not found in secureLocalStorage");

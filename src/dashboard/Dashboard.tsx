@@ -9,17 +9,33 @@ import Task from "../sections/Task";
 import TaskSubmission from "../sections/TaskSubmission";
 import ApplicationStatus from "../sections/ApplicationStatus";
 import { useTabStore } from "../store";
+import { jwtDecode, JwtPayload } from "jwt-decode";
+
+interface CustomJwtPayload extends JwtPayload {
+  isProfileDone?: boolean; 
+}
 
 const Dashboard = () => {
   const { tabIndex, setTabIndex } = useTabStore();
   const navigate = useNavigate();
 
-/*   useEffect(() => {
+useEffect(() => {
     const jwtToken = Cookies.get("jwtToken");
     if (!jwtToken) {
       navigate("/");
+      return;
     }
-  }, [navigate]); */
+    try {
+      const decoded = jwtDecode<CustomJwtPayload>(jwtToken);
+      if (decoded?.isProfileDone) {
+        setTabIndex(1);
+        console.log("yes");
+      }
+    }catch(error) {
+      console.log(error);
+    }
+  }, [navigate]); 
+
 
 
   const renderTabContent = () => {
@@ -36,7 +52,9 @@ const Dashboard = () => {
         return <div>Invalid Tab</div>;
     }
   };
-
+  useEffect(() => {
+    console.log(tabIndex, "yoooo");
+  },[tabIndex])
   return (
     <div className="w-full h-full flex flex-col md:flex-row justify-center items-center sm:flex p-4 ">
       <Navbar />

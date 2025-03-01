@@ -35,7 +35,7 @@ const Header = ({ tabIndex, setTabIndex }: HeaderProps) => {
           className={`nes-btn btn-header ${tabIndex === tab.id ? "is-success" : ""} ${tab.disabled ? "opacity-50 cursor-not-allowed" : ""
             }`}
           onClick={() => !tab.disabled && setTabIndex(tab.id)}
-          onKeyDown={(event) => handleKeyPress(event, tab.id, tab.disabled)}
+          // onKeyDown={(event) => handleKeyPress(event, tab.id, tab.disabled)}
           disabled={tab.disabled}
           aria-selected={tabIndex === tab.id} 
           role="tab"

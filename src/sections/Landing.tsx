@@ -12,6 +12,7 @@ import PlayBtn from "../components/PlayBtn";
 import Scene3d from "../components/Scene3d";
 import { useCharacterAnimations } from "../context/CharAnimation";
 import { useTabStore } from "../store";
+import { jwtDecode, JwtPayload } from "jwt-decode";
 
 
 const Landing = () => {
@@ -38,6 +39,10 @@ const Landing = () => {
   const handlePlayBtnClick = () => {
     setIsSceneVisible(true);
   };
+
+  interface CustomJwtPayload extends JwtPayload {
+    isProfileDone?: boolean; 
+  }
 
   const validateInputs = useCallback(() => {
     const trimmedEmail = email.trim();
@@ -108,9 +113,23 @@ const Landing = () => {
       secureLocalStorage.setItem("userDetails", JSON.stringify(response.data));
 
       const isProfileDone = response.data?.isProfileDone;
-      setTabIndex(isProfileDone ? 1 : 0);
-
       navigate("/dashboard");
+    //   try {
+    //   //   const decoded = jwtDecode<CustomJwtPayload>(token);
+    //   //   console.log(decoded.isProfileDone);
+    //   //   if(decoded?.isProfileDone) {
+    //   //     setTabIndex(1);
+    //   //     console.log("hii");
+    //   //   }else {
+    //   //     setTabIndex(0);
+    //   //   }
+    //   // }catch(error) {
+    //   //   console.log(error);
+    //   //   setTabIndex(0);
+    //   // }
+    //   // setTabIndex(isProfileDone ? 1 : 0);
+
+      
     } catch (err) {
       console.error("Error fetching user details:", err);
     }

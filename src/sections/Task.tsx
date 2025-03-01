@@ -19,18 +19,17 @@ const Task = () => {
       "userDetails"
     ) as string;
     if (userDetailsString) {
-      const userDetails: { domain: string[]; isProfileDone: boolean } =
-        JSON.parse(userDetailsString);
-      const userDomains = userDetails.domain;
+      const userDetails=JSON.parse(userDetailsString);
+      const userDomains = userDetails?.data.domain;
       // console.log("userDomains:", userDomains);
       setDomains(userDomains);
-      const isProfileDone = userDetails.isProfileDone;
-      if (isProfileDone) {
-        setTabIndex(1);
-      } else {
-        setTabIndex(0);
-        // console.log("tabIndex", tabIndex);
-      }
+      //const isProfileDone = userDetails.isProfileDone;
+      // if (isProfileDone) {
+      //   setTabIndex(1);
+      // } else {
+      //   setTabIndex(0);
+      //   // console.log("tabIndex", tabIndex);
+      // }
     }
   }, []);
 
@@ -39,7 +38,7 @@ const Task = () => {
       <div className="w-full  nes-container is-rounded  is-centered lg:w-[30%] invert">
         <div className="h-auto mb-4 text-lg">Domains</div>
         <div className="flex flex-col justify-between gap-4 lg:gap-8">
-          {domains.includes("tech") && (
+          {domains?.includes("tech") && (
             <button
               type="button"
               onClick={() => setSelectedDomain(0)}
@@ -51,7 +50,7 @@ const Task = () => {
               Technical
             </button>
           )}
-          {domains.includes("design") && (
+          {domains?.includes("design") && (
             <button
               onClick={() => setSelectedDomain(1)}
               type="button"
@@ -63,7 +62,7 @@ const Task = () => {
               Design
             </button>
           )}
-          {domains.includes("management") && (
+          {domains?.includes("management") && (
             <button
               onClick={() => setSelectedDomain(2)}
               type="button"
@@ -90,19 +89,19 @@ const Task = () => {
         )}
         <div className="h-auto mb-4 mt-2 text-lg">Tasks</div>
         <div className="w-full h-full flex items-center relative">
-          {domains.includes("tech") && selectedDomain === 0 && (
+          {domains?.includes("tech") && selectedDomain === 0 && (
             <TechTask
               selectedSubDomain={selectedSubDomain}
               setSelectedSubDomain={setSelectedSubDomain}
             />
           )}
-          {domains.includes("design") && selectedDomain === 1 && (
+          {domains?.includes("design") && selectedDomain === 1 && (
             <DesignTask
               selectedSubDomain={selectedSubDomain}
               setSelectedSubDomain={setSelectedSubDomain}
             />
           )}
-          {domains.includes("management") && selectedDomain === 2 && (
+          {domains?.includes("management") && selectedDomain === 2 && (
             <ManagementTask
               selectedSubDomain={selectedSubDomain}
               setSelectedSubDomain={setSelectedSubDomain}
