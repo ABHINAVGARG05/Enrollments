@@ -153,7 +153,7 @@ const designTaskData = [
     title: "UI/UX",
     description:
       "Your mission is to overhaul the MFC website by designing and prototyping UI/UX modifications for an enhanced user experience. Referencing the current website (link provided below), identify areas for improvement and implement changes to streamline navigation, improve visual appeal, and optimize functionality. Consider factors like responsiveness, accessibility, and branding consistency throughout the redesign. Additionally, provide detailed documentation outlining your design rationale, wireframes, and interactive prototypes to guide the development process effectively.",
-    resources: ["https://www.mozillavit.in/"],
+    resources: ["https://www.mfcvit.in/"],
   },
   {
     label: "poster",

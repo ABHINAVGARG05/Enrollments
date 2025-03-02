@@ -251,16 +251,6 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
               <input
                 type="checkbox"
                 className="nes-checkbox is-dark"
-                value="finance"
-                checked={subdomain.includes("finance")}
-                onChange={handleCheckboxChange}
-              />
-              <span className="text-xs md:text-xs">Finance</span>
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                className="nes-checkbox is-dark"
                 value="editorial"
                 checked={subdomain.includes("editorial")}
                 onChange={handleCheckboxChange}

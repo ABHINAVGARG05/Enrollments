@@ -220,16 +220,6 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
               <input
                 type="checkbox"
                 className="nes-checkbox is-dark"
-                value="fullstack"
-                checked={subdomain.includes("fullstack")}
-                onChange={handleCheckboxChange}
-              />
-              <span className="text-xs md:text-xs">Fullstack</span>
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                className="nes-checkbox is-dark"
                 value="app"
                 checked={subdomain.includes("app")}
                 onChange={handleCheckboxChange}
@@ -245,16 +235,6 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
                 onChange={handleCheckboxChange}
               />
               <span className="text-xs md:text-xs">AI/ML</span>
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                className="nes-checkbox is-dark"
-                value="gamedev"
-                checked={subdomain.includes("gamedev")}
-                onChange={handleCheckboxChange}
-              />
-              <span className="text-xs md:text-xs">Game Dev</span>
             </label>
             <label>
               <input
