@@ -44,7 +44,7 @@ const ApplicationStatus = () => {
     <div className="w-full profile py-6 flex gap-4 flex-col lg:flex-row">
       <div className="w-full nes-container is-rounded is-centered lg:w-[30%] invert">
         <div className="h-auto mb-4 text-lg">Domains</div>
-        <div className="flex flex-col justify-between lg:gap-4">
+        <div className="flex flex-col justify-between gap-4 lg:gap-8">
           {Array.isArray(domains) && domains.includes("tech") && (
             <button
               type="button"

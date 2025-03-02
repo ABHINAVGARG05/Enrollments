@@ -210,7 +210,7 @@ const { tabIndex, setTabIndex } = useTabStore();
                 checked={subdomain.includes("3d")}
                 onChange={handleCheckboxChange}
               />
-              <span className="text-xs md:text-xs">3D</span>
+              <span className="text-xs md:text-xs">3D Modelling</span>
             </label>
             <label>
               <input

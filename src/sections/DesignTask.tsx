@@ -47,7 +47,7 @@ const DesignTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
             onClick={() => setSelectedSubDomain("3d")}
             className="nes-btn is-error  w-[47%] md:w-[22%] aspect-[2] custom-nes-error text-xs"
           >
-            3D
+            3D Modelling
           </button>
           <button
             type="button"
@@ -165,7 +165,7 @@ const designTaskData = [
 
   {
     label: "3d",
-    title: "3D",
+    title: "3D Modelling",
     description: "Recreate the following 2D image to a 3D model.",
     resources: [
       "https://drive.google.com/file/d/1GeoLTRphTOrNCvwJDFMstL2hDUocp76L/view?usp=sharing",

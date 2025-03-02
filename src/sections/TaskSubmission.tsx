@@ -80,13 +80,13 @@ const TaskSubmission = () => {
       )}
       <div className=" nes-container is-rounded h-full  max-h-fit text-sm with-title is-centered w-full lg:w-[30%] invert">
         <div className="h-auto mb-4 text-lg">Domains</div>
-        <div className="flex flex-col h-full justify-between gap-4 lg:gap-8">
+        <div className="flex flex-col h-full justify-start gap-4 lg:gap-8">
           {domains?.includes("tech") && (
             <button
               type="button"
               onClick={() => setSelectedDomain(0)}
               className={`
-              nes-btn w-full lg:h-[30%] text-sm md:text-base domain-btn
+              nes-btn w-full lg:h-[20%] text-sm md:text-base domain-btn
               ${selectedDomain === 0 && "is-primary"}
             `}
             >
@@ -98,7 +98,7 @@ const TaskSubmission = () => {
               onClick={() => setSelectedDomain(1)}
               type="button"
               className={`
-              nes-btn w-full lg:h-[30%] text-sm md:text-base domain-btn
+              nes-btn w-full lg:h-[20%] text-sm md:text-base domain-btn
               ${selectedDomain === 1 && "is-primary"}
             `}
             >
@@ -110,7 +110,7 @@ const TaskSubmission = () => {
               onClick={() => setSelectedDomain(2)}
               type="button"
               className={`
-              nes-btn w-full lg:h-[30%] text-sm  md:text-base domain-btn
+              nes-btn w-full lg:h-[20%] text-sm  md:text-base domain-btn
               ${selectedDomain === 2 && "is-primary"}
             `}
             >
