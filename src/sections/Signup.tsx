@@ -39,7 +39,7 @@ const Signup: React.FC = () => {
       isError = false;
     }
 
-    const registerNumberRegex = /^(21|22|23)[a-zA-Z]{3}\d{4}$/;
+    const registerNumberRegex = /^(21|22|23|24)[a-zA-Z]{3}\d{4}$/;
     if (!regno) {
       errors.registerNumber = "Register number is required";
       isError = true;
