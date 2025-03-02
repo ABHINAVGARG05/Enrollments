@@ -247,7 +247,7 @@ const Profile = () => {
     } else {
       fetchUserDetails().then((userDetails) => {
         setIsProfileComplete(true); ////yoooooooooooooooooo
-        console.log(userDetails,"hiiii")
+        //console.log(userDetails,"hiiii")
       });
   }}, [fetchUserDetails]);
 

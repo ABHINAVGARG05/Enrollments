@@ -41,6 +41,13 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   });
 
   useEffect(() => {
+    const token = Cookies.get("jwtToken");
+    if(token) {
+      const decoded = jwtDecode<CustomJwtPayload>(token);
+      if(decoded?.isManagementDone){
+        setIsManagementDone(true);
+      }
+    }
     const localData = secureLocalStorage.getItem("userDetails") as
       | string
       | null;

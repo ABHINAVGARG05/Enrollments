@@ -155,16 +155,23 @@ const ChangeProfile = () => {
           type: "success"
         });
         setOpenToast(true);
-        
-        // Reset domain changed flag
+
         setIsDomainChanged(false);
         setError(false);
-        
-        // Delay navigation to ensure state updates and toast are visible
-        setTimeout(() => {
-          // Use replace to avoid navigation history issues
-          navigate("/dashboard", { replace: true });
-        }, 1500);
+
+        setToastContent({
+          message: "Your profile is being updated please re-login to continue.",
+          type: "warning",
+        });
+        setOpenToast(true);
+
+        setTimeout(()=>{
+          Cookies.remove("jwtToken");
+          Cookies.remove("refreshToken");
+          secureLocalStorage.clear();
+          navigate("/")
+        },2500)
+
       }
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -179,7 +186,6 @@ const ChangeProfile = () => {
     }
   };
 
-  // Refresh token to update domain information
   const refreshToken = async () => {
     try {
       const token = Cookies.get("jwtToken");
@@ -201,7 +207,6 @@ const ChangeProfile = () => {
       );
       
       if (response.data && response.data.accessToken) {
-        // Update tokens in cookies
         Cookies.set("jwtToken", response.data.accessToken);
         if (response.data.refreshToken) {
           Cookies.set("refreshToken", response.data.refreshToken);
@@ -215,17 +220,14 @@ const ChangeProfile = () => {
     }
   };
 
-  // Load user data on component mount
   useEffect(() => {
     const loadUserData = async () => {
-      // First try to get user details from local storage
       const userDetailsStr = secureLocalStorage.getItem("userDetails");
       
       if (typeof userDetailsStr === "string") {
         try {
           const userDetails = JSON.parse(userDetailsStr) as UserDetails;
-          
-          // Handle different possible data structures
+
           const userDomain = userDetails?.domain || 
                            (userDetails?.data && userDetails.data.domain) || 
                            [];
@@ -234,19 +236,16 @@ const ChangeProfile = () => {
           setIsLoading(false);
         } catch (error) {
           console.error("Error parsing user details:", error);
-          await fetchUserDetails(); // Fallback to API if parsing fails
+          await fetchUserDetails(); 
         }
       } else {
-        // If user details not found in local storage, fetch them
         await fetchUserDetails();
       }
     };
     
     loadUserData();
-    
-    // Clean up function
+
     return () => {
-      // Cancel any pending requests or timers if needed
     };
   }, [fetchUserDetails]);
 

@@ -152,7 +152,7 @@ const { tabIndex, setTabIndex } = useTabStore();
     console.log("refresh--->", decoded);
     console.log(desg);
   }
-  if (secureLocalStorage.getItem("DesgSub")) {
+  if (secureLocalStorage.getItem("DesgSub") || desg) {
     return (
       <div className="p-4">
         You've successfully submitted the Design Task. You can now track the

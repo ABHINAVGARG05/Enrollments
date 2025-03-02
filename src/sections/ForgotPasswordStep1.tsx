@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
-// import { toast } from "react-toastify";
 import BoundingBox from "../components/BoundingBox";
 import Button from "../components/Button";
 import CustomToast, { ToastContent } from "../components/CustomToast";
@@ -22,7 +21,6 @@ const ForgotPassword = () => {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // Reset previous errors
     setRegnoError("");
     setEmailError("");
 
@@ -40,7 +38,6 @@ const ForgotPassword = () => {
       return;
     }
 
-    // Form data is valid, proceed with password reset
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/auth/requestPasswordReset`,

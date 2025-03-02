@@ -34,6 +34,13 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   });
 
   useEffect(() => {
+    const token = Cookies.get("jwtToken");
+    if(token) {
+      const decoded = jwtDecode<CustomJwtPayload>(token);
+      if(decoded?.isTechDone){
+        setIsTechDone(true);
+      }
+    }
     // Check if tech task is already submitted on component mount
     const techSubmitted = secureLocalStorage.getItem("TechSub");
     if (techSubmitted === "true" || techSubmitted === true) {

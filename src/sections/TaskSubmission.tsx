@@ -11,6 +11,26 @@ interface CustomJwtPayload extends JwtPayload {
   isProfileDone?: boolean; 
   domain ?: [];
 }
+
+const DOMAIN_MAP = {
+  tech: 0,
+  design: 1,
+  management: 2
+};
+
+interface UserDetails {
+  mobile?: string;
+  emailpersonal?: string;
+  participatedEvent?: boolean;
+  volunteeredEvent?: boolean;
+  domain?: string[];
+  isProfileDone?: boolean;
+  data?: {
+    isProfileDone?: boolean;
+    domain?: string[];
+  };
+}
+
 const TaskSubmission = () => {
   const [openToast, setOpenToast] = useState(false);
   const [toastContent, setToastContent] = useState<ToastContent>({});
@@ -31,25 +51,19 @@ const TaskSubmission = () => {
   };
 
   useEffect(() => {
-    const token = Cookies.get("refreshToken");
-    if(token) {
-      const decoded = jwtDecode<CustomJwtPayload>(token);
-      const userDomains = decoded?.domain;
-      console.log("decoded----->",decoded);
-      if(userDomains) {
-        setDomains(userDomains);
+    const userDetailsStr = secureLocalStorage.getItem("userDetails");
+      
+      if (userDetailsStr && typeof userDetailsStr === "string") {
+        const userDetails = JSON.parse(userDetailsStr) as UserDetails;
+        
+        // Handle both possible structures of userDetails
+        const userDomains = userDetails?.domain || userDetails?.data?.domain || [];
+       // const isProfileDone = userDetails?.isProfileDone || userDetails?.data?.isProfileDone;
+        
+        if (userDomains.length > 0) {
+          setDomains(userDomains);
+        }
       }
-    }
-    // const userDetailsString = secureLocalStorage.getItem(
-    //   "userDetails"
-    // ) as string;
-    // console.log(userDetailsString)
-    // if (userDetailsString) {
-    //   const userDetails = JSON.parse(userDetailsString);
-    //   const userDomains = userDetails?.data.domain;
-    //   // console.log("userDomains2:", userDomains);
-    //   setDomains(userDomains);
-    // }
   }, []);
 
   return (

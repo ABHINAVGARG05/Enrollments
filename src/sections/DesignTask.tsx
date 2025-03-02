@@ -11,10 +11,7 @@ interface Props {
 }
 const DesignTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
   const [filteredTasks, setFilteredTask] = useState<Task[]>([]);
-  // const [showModal, setShowModal] = useState(false);
-  // const [taskState, setTaskState] = useState("");
   useEffect(() => {
-    // Based on the sub-domain we are filtering the task
     const filteredTask = designTaskData.filter(
       (task) => task.label === selectedSubDomain
     );

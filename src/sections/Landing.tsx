@@ -115,21 +115,6 @@ const Landing = () => {
 
       const isProfileDone = response.data?.isProfileDone;
       navigate("/dashboard");
-    //   try {
-    //   //   const decoded = jwtDecode<CustomJwtPayload>(token);
-    //   //   console.log(decoded.isProfileDone);
-    //   //   if(decoded?.isProfileDone) {
-    //   //     setTabIndex(1);
-    //   //     console.log("hii");
-    //   //   }else {
-    //   //     setTabIndex(0);
-    //   //   }
-    //   // }catch(error) {
-    //   //   console.log(error);
-    //   //   setTabIndex(0);
-    //   // }
-    //   // setTabIndex(isProfileDone ? 1 : 0);
-
       
     } catch (err) {
       console.error("Error fetching user details:", err);
