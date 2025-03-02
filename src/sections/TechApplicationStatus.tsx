@@ -25,7 +25,7 @@ const TechApplicationStatus = () => {
             },
           }
         );
-        console.log("response", response);
+        // console.log("response", response);
         if (response.data) {
           setStatus(response.data.message);
         }

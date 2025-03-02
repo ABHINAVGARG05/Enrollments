@@ -29,12 +29,12 @@ useEffect(() => {
       const decoded = jwtDecode<CustomJwtPayload>(jwtToken);
       if (decoded?.isProfileDone) {
         setTabIndex(1);
-        console.log("yes");
+        // console.log("yes");
       }
     }catch(error) {
       console.log(error);
     }
-  }, [navigate]); 
+  }, [navigate, setTabIndex]); 
 
 
 
@@ -53,7 +53,7 @@ useEffect(() => {
     }
   };
   useEffect(() => {
-    console.log(tabIndex, "yoooo");
+    // console.log(tabIndex, "yoooo");
   },[tabIndex])
   return (
     <div className="w-full h-full flex flex-col md:flex-row justify-center items-center sm:flex p-4 ">

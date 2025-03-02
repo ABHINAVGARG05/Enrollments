@@ -96,7 +96,7 @@ const Signup: React.FC = () => {
           `${import.meta.env.VITE_BASE_URL}/auth/signup`,
           formData
         );
-        console.log(response)
+        // console.log(response)
         if (response.data.token) {
           document.cookie = "jwtToken=" + response.data.token;
           if (response.data.refreshToken) {

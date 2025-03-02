@@ -16,7 +16,7 @@ export const useTabStore = create<TabStore>((set) => {
   const userDetailsString = secureLocalStorage.getItem("userDetails");
   let initialTabIndex = 0;
   const token = Cookies.get("jwtToken")
-  console.log(token)
+  // console.log(token)
   // if (token) {
   //   try {
   //     const decoded = jwtDecode<CustomJwtPayload>(token);
@@ -36,7 +36,7 @@ export const useTabStore = create<TabStore>((set) => {
   //     initialTabIndex = 0;
   //   }
   // }
-  console.log(userDetailsString)
+  // console.log(userDetailsString)
   // if (userDetailsString) {
   //   // const userDetails = JSON.parse(userDetailsString);
   //   const userProfile = userDetails.isProfileDone;
