@@ -121,7 +121,7 @@ const TaskSubmission = () => {
       </div>
       <div className="text-white w-full h-full lg:w-[90%] max-h-fit  overflow-y-scroll overflow-x-hidden">
       
-        <div className="w-full h-full nes-container is-rounded is-dark dark-nes-container text-sm ">
+        <div className="w-full h-fit nes-container is-rounded is-dark dark-nes-container text-sm overflow-y-scroll">
         <div className="h-auto mb-4 text-lg">Task Submission</div>
           {selectedDomain === -1 && (
             <div className="min-h-40 flex items-center justify-center text-center">

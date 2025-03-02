@@ -7,12 +7,12 @@ const About = () => {
       <BoundingBox className="relative  overflow-auto">
         <div className="w-full h-full text-center relative">
           <h1
-            className="text-[1.5rem] md:text-[3rem] text-prime"
+            className="text-[1.5rem] md:text-[2.5rem] text-prime"
             style={{ textShadow: "3px 3px 0px red" }}
           >
-            MOZILLA FIREFOX
+            MOZILLA FIREFOX CLUB
           </h1>
-          <div className="w-full h-full nes-container is-rounded is-dark text-2xl md:text-base text-left md:text-center overflow-auto max-h-[50vh]">
+          <div className="w-full h-fit nes-container justify-center is-rounded is-dark text-2xl md:text-base text-left md:text-center overflow-auto max-h-[50vh] p-10">
             <p>
               Mozilla Firefox Club - VIT has been a beacon of innovation within
               VIT's student developer community for the last 10 years, boasting
