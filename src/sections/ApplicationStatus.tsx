@@ -3,6 +3,11 @@ import TechApplicationStatus from "./TechApplicationStatus";
 import DesignApplicationStatus from "./DesignApplicationStatus";
 import ManagementApplicationStatus from "./ManagementApplicationStatus";
 import secureLocalStorage from "react-secure-storage";
+import { jwtDecode, JwtPayload } from "jwt-decode";
+import Cookie from "js-cookie"
+interface CustomJwtPayload extends JwtPayload { 
+  domain ?: [];
+}
 
 const ApplicationStatus = () => {
   const [selectedDomain, setSelectedDomain] = useState(-1);
@@ -10,21 +15,28 @@ const ApplicationStatus = () => {
 
   useEffect(() => {
     try {
-      const userDetailsString = secureLocalStorage.getItem("userDetails");
-
-      if (typeof userDetailsString === "string") {
-        const userDetails = JSON.parse(userDetailsString) ;
-        console.log(userDetails?.data.domain, "abhinav")
-        if (Array.isArray(userDetails?.data.domain)) {
-          setDomains(userDetails?.data.domain);
-        } else {
-          console.warn("Domains is not an array, setting to empty array.");
-          setDomains([]); // Default to empty array
+      const token = Cookie.get("refreshToken");
+      if(token) {
+        const decoded = jwtDecode<CustomJwtPayload>(token);
+        if(decoded?.domain){
+          setDomains(decoded?.domain)
         }
-      } else {
-        console.warn("No user details found in secureLocalStorage.");
-        setDomains([]); // Ensure domains is always an array
       }
+      // const userDetailsString = secureLocalStorage.getItem("userDetails");
+
+      // if (typeof userDetailsString === "string") {
+      //   const userDetails = JSON.parse(userDetailsString) ;
+      //   console.log(userDetails?.data.domain, "abhinav")
+      //   if (Array.isArray(userDetails?.data.domain)) {
+      //     setDomains(userDetails?.data.domain);
+      //   } else {
+      //     console.warn("Domains is not an array, setting to empty array.");
+      //     setDomains([]); // Default to empty array
+      //   }
+      // } else {
+      //   console.warn("No user details found in secureLocalStorage.");
+      //   setDomains([]); // Ensure domains is always an array
+      // }
     } catch (error) {
       console.error("Error parsing user details:", error);
       setDomains([]); // Prevents crashing if parsing fails

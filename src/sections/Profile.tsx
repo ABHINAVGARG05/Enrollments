@@ -8,6 +8,11 @@ import secureLocalStorage from "react-secure-storage";
 import { debounce } from "lodash";
 import { z } from "zod";
 import BoundingBox from "../components/BoundingBox";
+import { jwtDecode, JwtPayload } from "jwt-decode";
+interface CustomJwtPayload extends JwtPayload {
+  isProfileDone?: boolean; 
+  domain ?: [];
+}
 
 // Constants
 const API_BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -221,9 +226,17 @@ const Profile = () => {
   // Initialize form from stored data
   useEffect(() => {
     const userDetailsStr = secureLocalStorage.getItem("userDetails") as string | null;
+    const token = Cookies.get("refreshToken")
+    console.log(token)
+    if(token) {
+      const decoded = jwtDecode<CustomJwtPayload>(token);
+      if(decoded.isProfileDone) {
+        setIsProfileComplete(decoded?.isProfileDone)
+      }
+    }
     if (userDetailsStr) {
       const userDetails = JSON.parse(userDetailsStr);
-      setIsProfileComplete(userDetails?.data.isProfileDone);
+      //setIsProfileComplete(userDetails?.data.isProfileDone);
       setFormState({
         mobile: userDetails.mobile,
         emailpersonal: userDetails.emailpersonal,

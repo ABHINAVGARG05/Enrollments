@@ -96,8 +96,12 @@ const Signup: React.FC = () => {
           `${import.meta.env.VITE_BASE_URL}/auth/signup`,
           formData
         );
+        console.log(response)
         if (response.data.token) {
           document.cookie = "jwtToken=" + response.data.token;
+          if (response.data.refreshToken) {
+            document.cookie = "refreshToken=" + response.data.refreshToken;
+          }
           setOpenToast(true);
           setToastContent({
             message: "OTP SENT",

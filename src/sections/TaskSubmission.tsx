@@ -5,6 +5,12 @@ import ManagementTaskSubmission from "./ManagementTaskSubmission";
 import secureLocalStorage from "react-secure-storage";
 import CustomToast from "../components/CustomToast";
 import { ToastContent } from "../components/CustomToast";
+import { jwtDecode, JwtPayload } from "jwt-decode";
+import Cookies from "js-cookie"
+interface CustomJwtPayload extends JwtPayload {
+  isProfileDone?: boolean; 
+  domain ?: [];
+}
 const TaskSubmission = () => {
   const [openToast, setOpenToast] = useState(false);
   const [toastContent, setToastContent] = useState<ToastContent>({});
@@ -25,16 +31,25 @@ const TaskSubmission = () => {
   };
 
   useEffect(() => {
-    const userDetailsString = secureLocalStorage.getItem(
-      "userDetails"
-    ) as string;
-    console.log(userDetailsString)
-    if (userDetailsString) {
-      const userDetails = JSON.parse(userDetailsString);
-      const userDomains = userDetails?.data.domain;
-      // console.log("userDomains2:", userDomains);
-      setDomains(userDomains);
+    const token = Cookies.get("refreshToken");
+    if(token) {
+      const decoded = jwtDecode<CustomJwtPayload>(token);
+      const userDomains = decoded?.domain;
+      console.log("decoded----->",decoded);
+      if(userDomains) {
+        setDomains(userDomains);
+      }
     }
+    // const userDetailsString = secureLocalStorage.getItem(
+    //   "userDetails"
+    // ) as string;
+    // console.log(userDetailsString)
+    // if (userDetailsString) {
+    //   const userDetails = JSON.parse(userDetailsString);
+    //   const userDomains = userDetails?.data.domain;
+    //   // console.log("userDomains2:", userDomains);
+    //   setDomains(userDomains);
+    // }
   }, []);
 
   return (
