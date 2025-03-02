@@ -67,7 +67,7 @@ const TechTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
           </button>
           <button
             type="button"
-            onClick={() => setSelectedSubDomain("fullstack")}
+            onClick={() => setSelectedSubDomain("cybersec")}
             className="nes-btn is-error nes-btn-task  w-[47%] md:w-[22%] aspect-[2] custom-nes-error text-xs"
           >
             Cyber Security
