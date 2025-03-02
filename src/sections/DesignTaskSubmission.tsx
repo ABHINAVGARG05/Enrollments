@@ -332,25 +332,31 @@ const quizSubQuestions = [
     domain: "design",
     label: "design_que9",
     question:
-      "Describe a project you've worked on where prototyping played a crucial role. What tools did you use, and how did you iterate on your prototypes to achieve the final design?",
+      'BrightHive, a fast-growing AI startup, needs a modern logo. After extensive research and iterations, you present a design that the marketing team and COO approve. However, the CEO, Alex, says, "Something feels off, but I can’t explain why." With no clear feedback and a tight deadline, how do you refine the design while ensuring alignment with the company’s vision?',
   },
   {
     domain: "design",
     label: "design_que10",
     question:
-      "Think of a user interface you find particularly intuitive or user-friendly. What specific design elements contribute to its effectiveness, and how would you apply similar principles to enhance the UI of a mobile app geared towards productivity?",
+      'At GoFleet, a logistics platform, you present a redesigned dashboard backed by user data. Midway, senior VP Michael interrupts, saying, "This looks way more complicated than before." His opinion could influence the final decision. With only five minutes to respond, how do you justify your design and keep the project moving forward?',
   },
   {
     domain: "design",
     label: "design_que11",
     question:
-      "Imagine you're tasked with creating a poster for a fundraising event for a local charity. How would you approach the design to effectively communicate the cause and inspire people to participate? Feel free to describe your preferred design tools and any past experiences relevant to poster making.",
+      "During a usability test for SwiftPay’s bill-splitting feature, a participant, Sophia, repeatedly makes a mistake but dismisses it as \"not paying attention.\" You suspect a UI flaw but can’t make changes yet. How do you confirm if it’s user error or a design issue without influencing the results?",
   },
   {
     domain: "design",
     label: "design_que12",
     question:
-      "Reflect on a video editing project you've completed in the past. What challenges did you face during the editing process, and how did you overcome them to deliver a polished final product? Additionally, how do you ensure that your editing choices align with the intended message or theme of the video?",
+      "You’re editing a documentary for Echo Films about farmers facing climate change. The most emotional interview, featuring David, is suddenly cut by the producer, Linda, who says, \"The client thinks it’s too bleak.\" Losing it weakens the story. How do you convince Linda to keep the integrity of the film while addressing client concerns?",
+  },
+  {
+    domain: "design",
+    label: "design_que13",
+    question:
+      "ViralView, a media company, sends you raw footage for an ad campaign but provides no script, storyboard, or guidance—just a message from the creative director, James: \"Make something great.\" With a tight deadline and unclear expectations, how do you decide on storytelling, editing style, and pacing to ensure the final product impresses?",
   },
 ];
 const quizQuestions = [
