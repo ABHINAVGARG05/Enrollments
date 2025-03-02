@@ -3,11 +3,17 @@ import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
 import { ToastContent } from "../components/CustomToast";
+import { jwtDecode, JwtPayload } from "jwt-decode";
 // import { useTabStore } from "../store";
 interface Props {
   setOpenToast: React.Dispatch<React.SetStateAction<boolean>>;
   setToastContent: React.Dispatch<React.SetStateAction<ToastContent>>;
 }
+
+interface CustomJwtPayload extends JwtPayload {
+  isManagementDone?: boolean; 
+}
+
 const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   // const [domain, setDomain] = useState<string[]>([]);
   const [coreType, setCoreType] = useState("junior");
@@ -32,14 +38,6 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     question15: "",
     question16: "",
     question17: "",
-    question18: "",
-    question19: "",
-    question20: "",
-    question21: "",
-    question22: "",
-    question23: "",
-    question24: "",
-    question25: "",
   });
 
   useEffect(() => {
@@ -91,6 +89,8 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
       setToastContent({ message: "Please select at least one sub-domain!" });
       return;
     }
+
+    secureLocalStorage.setItem("MangSub",true);
 
     const id = secureLocalStorage.getItem("id");
     if (!id) {
@@ -153,7 +153,7 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
       secureLocalStorage.setItem("userDetails", JSON.stringify(response.data));
 
       if (response.data.managementIsDone) {
-        setManagementIsDone(true);
+        setIsManagementDone(true);
         setOpenToast(true);
         setToastContent({ message: "Task Submitted Successfully!" });
       }
@@ -161,20 +161,20 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
       console.error("Fetch User Details Error:", error.response?.data || error.message);
     }
   };
-  const [managementIsDone, setManagementIsDone] = useState(false);
-  useEffect(() => {
-    const userDetailsString = secureLocalStorage.getItem("userDetails");
-    if (typeof userDetailsString === "string") {
-      const userDetails = JSON.parse(userDetailsString) as {
-        managementIsDone: boolean[];
-      };
-      // console.log(userDetails);
-      const isTechDone = userDetails.managementIsDone;
-      setManagementIsDone(!!userDetails.managementIsDone);
-      // console.log("userDomains2:", userDomains);
+  const [isManagementDone, setIsManagementDone] = useState(false);
+  //const [isTechDone, setIsTechDone] = useState(false);
+  const userDetailsString = secureLocalStorage.getItem("userDetails");
+  let mang = false;
+
+  const token = Cookies.get("refreshToken");
+  if (token) {
+    const decoded = jwtDecode<CustomJwtPayload>(token);
+    if (decoded?.isManagementDone) {
+      mang = decoded?.isManagementDone;
     }
-  }, []);
-  if (managementIsDone) {
+    console.log("refresh--->", decoded)
+  }
+  if (secureLocalStorage.getItem("MangSub")) {
     return (
       <div className="p-4">
         You've successfully submitted the Management Task. You can now track

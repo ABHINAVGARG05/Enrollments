@@ -4,9 +4,14 @@ import Cookies from "js-cookie";
 import secureLocalStorage from "react-secure-storage";
 import { ToastContent } from "../components/CustomToast";
 import { useTabStore } from "../store";
+import { jwtDecode, JwtPayload } from "jwt-decode";
 interface Props {
   setOpenToast: React.Dispatch<React.SetStateAction<boolean>>;
   setToastContent: React.Dispatch<React.SetStateAction<ToastContent>>;
+}
+
+interface CustomJwtPayload extends JwtPayload {
+  isDesignDone?: boolean; 
 }
 const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
 const { tabIndex, setTabIndex } = useTabStore();
@@ -68,6 +73,8 @@ const { tabIndex, setTabIndex } = useTabStore();
     }
 
     const id = secureLocalStorage.getItem("id");
+    secureLocalStorage.setItem("DesgSub",true);
+
     if (!id) {
       console.error("User id not found in secureLocalStorage");
       return;
@@ -120,7 +127,7 @@ const { tabIndex, setTabIndex } = useTabStore();
 
       secureLocalStorage.setItem("userDetails", JSON.stringify(response.data));
       if (response.data.designIsDone) {
-        setDesignIsDone(true);
+        setIsDesignDone(true);
         setOpenToast(true);
         setToastContent({ message: "Task Submitted Successfully!" });
       }
@@ -128,21 +135,24 @@ const { tabIndex, setTabIndex } = useTabStore();
 
       // console.log("techIsDone", response.data.techIsDone);
     } catch (error) {
-      // console.log(error);
+      console.log(error);
     }
   };
-  const [designIsDone, setDesignIsDone] = useState(false);
-  useEffect(() => {
-    const userDetailsString = secureLocalStorage.getItem("userDetails");
-    if (typeof userDetailsString === "string") {
-      const userDetails = JSON.parse(userDetailsString) as {
-        designIsDone: boolean; // ✅ Change this from boolean[] to boolean
-      };
-      
-      setDesignIsDone(!!userDetails.designIsDone); // ✅ Convert value to boolean safely
+  const [isDesignDone, setIsDesignDone] = useState(false);
+  //const [isTechDone, setIsTechDone] = useState(false);
+  const userDetailsString = secureLocalStorage.getItem("userDetails");
+  let desg = false;
+
+  const token = Cookies.get("refreshToken");
+  if (token) {
+    const decoded = jwtDecode<CustomJwtPayload>(token);
+    if (decoded?.isDesignDone) {
+      desg = decoded?.isDesignDone;
     }
-  }, []);
-  if (designIsDone) {
+    console.log("refresh--->", decoded);
+    console.log(desg);
+  }
+  if (secureLocalStorage.getItem("DesgSub")) {
     return (
       <div className="p-4">
         You've successfully submitted the Design Task. You can now track the

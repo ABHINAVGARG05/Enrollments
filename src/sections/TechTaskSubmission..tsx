@@ -13,7 +13,7 @@ interface Props {
 }
 
 interface CustomJwtPayload extends JwtPayload {
-  isTechDone?: boolean; 
+  isTechDone?: boolean;
 }
 
 const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
@@ -62,8 +62,10 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
       setToastContent({ message: "Please select at least one sub-domain!" });
       return;
     }
-    
+
     const id = secureLocalStorage.getItem("id");
+    secureLocalStorage.setItem("TechSub", true);
+
     if (!id) {
       console.error("User id not found in secureLocalStorage");
       return;
@@ -134,12 +136,12 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   let tech = false;
 
   const token = Cookies.get("refreshToken");
-  if(token){
+  if (token) {
     const decoded = jwtDecode<CustomJwtPayload>(token);
-    if(decoded?.isTechDone) {
+    if (decoded?.isTechDone) {
       tech = decoded?.isTechDone;
     }
-    console.log("refresh--->",decoded)
+    console.log("refresh--->", decoded)
   }
 
   // if (typeof userDetailsString === "string") {
@@ -151,196 +153,188 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   //   console.log(tech,"hihdwuoacbso")
   // }
 
-if (tech) {
-  return (
-    <div className="p-4">
-      You've successfully submitted the Tech Task. You can now track the
-      status of your application in the designated "Application Status" tab.
-    </div>
-  );
-}
+  if (secureLocalStorage.getItem("TechSub")) {
+    {
+      return (
+        <div className="p-4">
+          You've successfully submitted the Tech Task. You can now track the
+          status of your application in the designated "Application Status" tab.
+        </div>
+      );
+    }
 
-
-  if (isTechDone) {
     return (
-      <div className="p-4">
-        You've successfully submitted the Tech Task. You can now track the
-        status of your application in the designated "Application Status" tab.
-      </div>
-    );
-  }
-  return (
-    <>
-      {/* <div className="p-4">
+      <>
+        {/* <div className="p-4">
         The time limit for task submissions has ended. Kindly await the results,
         which will be available in the application status tab, if you have
         submitted the tasks.
       </div> */}
-      <section className="mb-4 text-xs md:text-sm">
-        Append all your tech tasks in following manner:
-        <br />
-        <span className="text-prime">
-          [Project Title 1] - [Github Link 1] - [Demo Link 1]
-        </span>
-        <br />
-        <span className="text-prime hidden md:block">
-          [Project Title 2] - [Github Link 2] - [Demo Link 2]
-        </span>
-      </section>
-      <form onSubmit={handleSubmitTechTask}>
-        <h2>Choose Sub-Domain</h2>
-        <div className="flex">
-          <div className="flex flex-row gap-4 flex-wrap justify-center">
-            <label>
-              <input
-                type="checkbox"
-                className="nes-checkbox is-dark"
-                value="frontend"
-                checked={subdomain.includes("frontend")}
-                onChange={handleCheckboxChange}
-              />
-              <span className="text-xs md:text-xs">Frontend</span>
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                className="nes-checkbox is-dark"
-                value="backend"
-                checked={subdomain.includes("backend")}
-                onChange={handleCheckboxChange}
-              />
-              <span className="text-xs md:text-xs">Backend</span>
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                className="nes-checkbox is-dark"
-                value="fullstack"
-                checked={subdomain.includes("fullstack")}
-                onChange={handleCheckboxChange}
-              />
-              <span className="text-xs md:text-xs">Fullstack</span>
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                className="nes-checkbox is-dark"
-                value="app"
-                checked={subdomain.includes("app")}
-                onChange={handleCheckboxChange}
-              />
-              <span className="text-xs md:text-xs">App Dev</span>
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                className="nes-checkbox is-dark"
-                value="ml"
-                checked={subdomain.includes("ml")}
-                onChange={handleCheckboxChange}
-              />
-              <span className="text-xs md:text-xs">AI/ML</span>
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                className="nes-checkbox is-dark"
-                value="gamedev"
-                checked={subdomain.includes("gamedev")}
-                onChange={handleCheckboxChange}
-              />
-              <span className="text-xs md:text-xs">Game Dev</span>
-            </label>
-            <label>
-              <input
-                type="checkbox"
-                className="nes-checkbox is-dark"
-                value="cp"
-                checked={subdomain.includes("cp")}
-                onChange={handleCheckboxChange}
-              />
-              <span className="text-xs md:text-xs">CP</span>
-            </label>
-          </div>
-        </div>
-        <textarea
-          id="textarea_field"
-          className="nes-textarea is-dark min-h-[15rem]"
-          // required
-          name="question1"
-          onChange={(e) => handleInputChange(e, "question1")}
-          required
-          placeholder="Write here..."
-        ></textarea>
-
-        <section className="my-2  text-xs md:text-sm">
-          <span className="text-prime">Answer some general questions:</span>
+        <section className="mb-4 text-xs md:text-sm">
+          Append all your tech tasks in following manner:
           <br />
-          {quizQuestions.map((quiz, index) => (
-            <div
-              style={{
-                backgroundColor: "rgba(0,0,0,0)",
-                padding: "1rem",
-              }}
-              className="nes-field is-inline flex flex-col mt-4"
-              key={index}
-            >
-              <label
-                style={{ color: "#fff" }}
-                className="w-full text-label text-xs "
-              >
-                {quiz.question}
-              </label>
-              <br />
-              <textarea
-                id="textarea_field"
-                className="nes-textarea is-dark min-h-[5rem]"
-                // required
-                name={`question${index + 2}`}
-                placeholder="Write here..."
-                onChange={(e) => handleInputChange(e, quiz.question)}
-                required
-              ></textarea>
-            </div>
-          ))}
+          <span className="text-prime">
+            [Project Title 1] - [Github Link 1] - [Demo Link 1]
+          </span>
+          <br />
+          <span className="text-prime hidden md:block">
+            [Project Title 2] - [Github Link 2] - [Demo Link 2]
+          </span>
         </section>
-        <p className="text-prime text-xs md:text-sm mt-4 md:mt-0">
-          Note: Once submitted you cannot revert back
-        </p>
-        <button
-          type="submit"
-          className="nes-btn is-error w-full text-xs md:text-sm"
-        >
-          Submit
-        </button>
-      </form>
-    </>
-  );
-};
+        <form onSubmit={handleSubmitTechTask}>
+          <h2>Choose Sub-Domain</h2>
+          <div className="flex">
+            <div className="flex flex-row gap-4 flex-wrap justify-center">
+              <label>
+                <input
+                  type="checkbox"
+                  className="nes-checkbox is-dark"
+                  value="frontend"
+                  checked={subdomain.includes("frontend")}
+                  onChange={handleCheckboxChange}
+                />
+                <span className="text-xs md:text-xs">Frontend</span>
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  className="nes-checkbox is-dark"
+                  value="backend"
+                  checked={subdomain.includes("backend")}
+                  onChange={handleCheckboxChange}
+                />
+                <span className="text-xs md:text-xs">Backend</span>
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  className="nes-checkbox is-dark"
+                  value="fullstack"
+                  checked={subdomain.includes("fullstack")}
+                  onChange={handleCheckboxChange}
+                />
+                <span className="text-xs md:text-xs">Fullstack</span>
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  className="nes-checkbox is-dark"
+                  value="app"
+                  checked={subdomain.includes("app")}
+                  onChange={handleCheckboxChange}
+                />
+                <span className="text-xs md:text-xs">App Dev</span>
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  className="nes-checkbox is-dark"
+                  value="ml"
+                  checked={subdomain.includes("ml")}
+                  onChange={handleCheckboxChange}
+                />
+                <span className="text-xs md:text-xs">AI/ML</span>
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  className="nes-checkbox is-dark"
+                  value="gamedev"
+                  checked={subdomain.includes("gamedev")}
+                  onChange={handleCheckboxChange}
+                />
+                <span className="text-xs md:text-xs">Game Dev</span>
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  className="nes-checkbox is-dark"
+                  value="cp"
+                  checked={subdomain.includes("cp")}
+                  onChange={handleCheckboxChange}
+                />
+                <span className="text-xs md:text-xs">CP</span>
+              </label>
+            </div>
+          </div>
+          <textarea
+            id="textarea_field"
+            className="nes-textarea is-dark min-h-[15rem]"
+            // required
+            name="question1"
+            onChange={(e) => handleInputChange(e, "question1")}
+            required
+            placeholder="Write here..."
+          ></textarea>
 
-export default TechTaskSubmission;
-const quizQuestions = [
-  {
-    domain: "tech",
-    label: "tech_que1",
-    question: "What is npm, and how does a developer use it?",
-  },
-  {
-    domain: "tech",
-    label: "tech_que2",
-    question:
-      "What is the difference between a compiled language and an interpreted language?",
-  },
-  {
-    domain: "tech",
-    label: "tech_que3",
-    question:
-      "Research XOR Linked Lists and explain how they work in your own words.",
-  },
-  {
-    domain: "tech",
-    label: "tech_que4",
-    question:
-      "Suppose you want to hide some data in a multimedia file. What would be your approach?",
-  },
-];
+          <section className="my-2  text-xs md:text-sm">
+            <span className="text-prime">Answer some general questions:</span>
+            <br />
+            {quizQuestions.map((quiz, index) => (
+              <div
+                style={{
+                  backgroundColor: "rgba(0,0,0,0)",
+                  padding: "1rem",
+                }}
+                className="nes-field is-inline flex flex-col mt-4"
+                key={index}
+              >
+                <label
+                  style={{ color: "#fff" }}
+                  className="w-full text-label text-xs "
+                >
+                  {quiz.question}
+                </label>
+                <br />
+                <textarea
+                  id="textarea_field"
+                  className="nes-textarea is-dark min-h-[5rem]"
+                  // required
+                  name={`question${index + 2}`}
+                  placeholder="Write here..."
+                  onChange={(e) => handleInputChange(e, quiz.question)}
+                  required
+                ></textarea>
+              </div>
+            ))}
+          </section>
+          <p className="text-prime text-xs md:text-sm mt-4 md:mt-0">
+            Note: Once submitted you cannot revert back
+          </p>
+          <button
+            type="submit"
+            className="nes-btn is-error w-full text-xs md:text-sm"
+          >
+            Submit
+          </button>
+        </form>
+      </>
+    );
+  }
+
+  export default TechTaskSubmission;
+  const quizQuestions = [
+    {
+      domain: "tech",
+      label: "tech_que1",
+      question: "What is npm, and how does a developer use it?",
+    },
+    {
+      domain: "tech",
+      label: "tech_que2",
+      question:
+        "What is the difference between a compiled language and an interpreted language?",
+    },
+    {
+      domain: "tech",
+      label: "tech_que3",
+      question:
+        "Research XOR Linked Lists and explain how they work in your own words.",
+    },
+    {
+      domain: "tech",
+      label: "tech_que4",
+      question:
+        "Suppose you want to hide some data in a multimedia file. What would be your approach?",
+    },
+  ];
