@@ -265,5 +265,74 @@ const techTaskData = [
     "title": "E-Commerce Product Listing Page",
     "description": "Create an e-commerce product listing page using a JavaScript framework of your choice. The page should dynamically fetch product data, allow interaction through filtering and sorting, and include personalized features that simulate a modern shopping experience. Mandatory Requirements: Product Listing with image carousel, Filtering & Sorting with debounced input, 'Recommended for You' Section, Wishlist Feature, Pagination/Infinite Scroll & Price Range Filter, and Documentation. Bonus Challenges: Implement a fully functioning shopping cart with quantity controls and real-time total calculation, enhance accessibility and add smooth hover animations for product cards.",
     "for": "senior"
-  }
+  }, 
+  {
+    "label": "cybersec",
+    "title": "Capture the Flag (CTF) Challenge",
+    "description": "Solve cybersecurity challenges in cryptography, web vulnerabilities, and reverse engineering to find hidden flags. Using platforms like PicoCTF or local setups, they should know about SQL injection, XSS, and encryption basics.",
+    "for": "senior"
+  },
+  {
+    "label": "cybersec",
+    "title": "Capture the Flag (CTF) Challenge",
+    "description": "Solve cybersecurity challenges in cryptography, web vulnerabilities, and reverse engineering to find hidden flags. Using platforms like PicoCTF or local setups, they should know about SQL injection, XSS, and encryption basics.",
+    "for": "junior"
+  },
+  {
+    "label": "cybersec",
+    "title": "Simulated Cyber Attack & Defense",
+    "description": "Your system is under attack! Identify vulnerabilities in your own machine using Nmap, Wireshark, and OWASP ZAP. Simulate an attack like a MITM (Man-in-the-Middle), SQL injection, or XSS, document your findings, and secure your system against exploitation. Submit a detailed report with attack steps, detection, and mitigation strategies.",
+    "for": "senior"
+  },
+  {
+    "label": "cybersec",
+    "title": "Simulated Cyber Attack & Defense",
+    "description": "Your system is under attack! Identify vulnerabilities in your own machine using Nmap, Wireshark, and OWASP ZAP. Simulate an attack like a MITM (Man-in-the-Middle), SQL injection, or XSS, document your findings, and secure your system against exploitation. Submit a detailed report with attack steps, detection, and mitigation strategies.",
+    "for": "junior"
+  },
+  {
+    "label": "app",
+    "title": "The Curious Case of the Lost Journal",
+    "description": "Build a Flutter mystery adventure where users explore locations, collect clues, and make decisions leading to multiple endings. Implement state management, custom navigation, an inventory system, and dialogues. Bonus: animations, local storage, a mini-game, and dark mode. Tests logic, UI, and state handling. ",
+    "for": "junior"
+  },
+  {
+    "label": "app",
+    "title": "The Curious Case of the Lost Journal",
+    "description": "Build a Flutter mystery adventure where users explore locations, collect clues, and make decisions leading to multiple endings. Implement state management, custom navigation, an inventory system, and dialogues. Bonus: animations, local storage, a mini-game, and dark mode. Tests logic, UI, and state handling. ",
+    "for": "senior"
+  },
+  {
+    "label": "app",
+    "title": "Glitch in the System",
+    "description":
+      "Build a Flutter sci-fi adventure where users play as a hacker trapped in a virtual world. They must navigate a corrupted system, solve logic-based puzzles, and bypass security layers to escape. Implement state management, branching paths, hacking-themed UI, and interactive terminals. Bonus: glitch effects, encryption puzzles, and adaptive soundscapes.",
+
+    "for": "junior",
+  },
+  {
+    "label": "app",
+    "title": "Glitch in the System",
+    "description":
+      "Build a Flutter sci-fi adventure where users play as a hacker trapped in a virtual world. They must navigate a corrupted system, solve logic-based puzzles, and bypass security layers to escape. Implement state management, branching paths, hacking-themed UI, and interactive terminals. Bonus: glitch effects, encryption puzzles, and adaptive soundscapes.",
+
+    "for": "senior",
+  },
+
+  {
+    "label": "cp",
+    "title": "Task: Implement a Simple Sorting Algorithm and Compare Performance",
+    "description":
+      "Description: Create a program that implements a basic sorting algorithm (e.g., Bubble Sort, Selection Sort, Insertion Sort) and compare its performance with other sorting algorithms using time complexity analysis.",
+    "for": "junior",
+  },
+
+  {
+    "label": "cp",
+    "title":
+      "Task: Develop a Basic Library Management System with CRUD Operations",
+    "description":
+      "Description: Build a simple command-line based library management system that allows users to manage books and members using basic CRUD (Create, Read, Update, Delete) operations directly within the application.",
+    "for": "junior",
+  },
 ];
