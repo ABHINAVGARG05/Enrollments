@@ -165,7 +165,6 @@ const VerifyOTP: React.FC = () => {
                 value={otp}
                 onChange={setOTP}
                 numInputs={6}
-                isInputNum
                 renderSeparator={<span className="hidden md:block">-</span>}
                 renderInput={(props) => (
                   <input
