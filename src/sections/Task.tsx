@@ -3,7 +3,13 @@ import TechTask from "./TechTask";
 import DesignTask from "./DesignTask";
 import ManagementTask from "./ManagementTask";
 import { useTabStore } from "../store";
+import Cookies from "js-cookie"
 import secureLocalStorage from "react-secure-storage";
+import { jwtDecode, JwtPayload } from "jwt-decode";
+interface CustomJwtPayload extends JwtPayload {
+  isProfileDone?: boolean; 
+  domain ?: [];
+}
 
 const Task = () => {
   const { tabIndex, setTabIndex } = useTabStore();
@@ -14,15 +20,15 @@ const Task = () => {
     setSelectedSubDomain("");
   }, [selectedDomain]);
 
+  const token = Cookies.get("refreshToken")
+  if(token) {
+    const decoded = jwtDecode<CustomJwtPayload>(token);
+
   useEffect(() => {
-    const userDetailsString = secureLocalStorage.getItem(
-      "userDetails"
-    ) as string;
-    if (userDetailsString) {
-      const userDetails=JSON.parse(userDetailsString);
-      const userDomains = userDetails?.data.domain;
+    if(decoded?.domain){
+      setDomains(decoded?.domain)
+    }
       // console.log("userDomains:", userDomains);
-      setDomains(userDomains);
       //const isProfileDone = userDetails.isProfileDone;
       // if (isProfileDone) {
       //   setTabIndex(1);
@@ -30,8 +36,8 @@ const Task = () => {
       //   setTabIndex(0);
       //   // console.log("tabIndex", tabIndex);
       // }
-    }
   }, []);
+ }
 
   return (
     <div className="w-full profile py-6 flex gap-4 flex-col lg:flex-row">

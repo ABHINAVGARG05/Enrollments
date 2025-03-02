@@ -133,14 +133,23 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   const userDetailsString = secureLocalStorage.getItem("userDetails");
   let tech = false;
 
-  if (typeof userDetailsString === "string") {
-    const userDetails = JSON.parse(userDetailsString);
-    console.log(userDetails,'hbjqkcao;a')
-    if (Array.isArray(userDetails?.data.techIsDone) && userDetails?.data.techIsDone.length > 0) {
-      tech = userDetails?.data.techIsDone[0]; 
+  const token = Cookies.get("refreshToken");
+  if(token){
+    const decoded = jwtDecode<CustomJwtPayload>(token);
+    if(decoded?.isTechDone) {
+      tech = decoded?.isTechDone;
     }
-    console.log(tech,"hihdwuoacbso")
+    console.log("refresh--->",decoded)
   }
+
+  // if (typeof userDetailsString === "string") {
+  //   const userDetails = JSON.parse(userDetailsString);
+  //   console.log(userDetails,'hbjqkcao;a')
+  //   if (Array.isArray(userDetails?.data.techIsDone) && userDetails?.techIsDone.length > 0) {
+  //     tech = userDetails?.data.techIsDone[0]; 
+  //   }
+  //   console.log(tech,"hihdwuoacbso")
+  // }
 
 if (tech) {
   return (

@@ -72,6 +72,7 @@ const Landing = () => {
       );
 
       if (response.data.token) {
+        Cookies.set("refreshToken",response.data.refreshToken,{secure:true})
         Cookies.set("jwtToken", response.data.token, { secure: true });
 
         toast.success("Login successful", {
