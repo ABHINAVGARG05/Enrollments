@@ -182,11 +182,11 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     //console.log("refresh--->", decoded)
   }
   if(secureLocalStorage.getItem("MangSub") || mang) {
-    setOpenToast(true);
-    setToastContent({
-      message:"Task Submitted Successfully",
-    })
-    fetchUserDetails();
+    //setOpenToast(true);
+    // setToastContent({
+    //   message:"Task Submitted Successfully",
+    // })
+    // fetchUserDetails();
   }
   if (secureLocalStorage.getItem("MangSub")) {
     return (
