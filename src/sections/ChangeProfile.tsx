@@ -9,10 +9,8 @@ import Toast from "../components/CustomToast"; // Import Toast component
 
 interface UserDetails {
   domain?: string[];
-  isDomainUpdated?: boolean;
   data?: {
     domain?: string[];
-    isDomainUpdated?: boolean;
   };
 }
 

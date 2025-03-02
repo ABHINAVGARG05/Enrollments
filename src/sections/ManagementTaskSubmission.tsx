@@ -156,7 +156,7 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
       );
       // console.log(response.data);
 
-      console.log("User Details:", response.data);
+      //console.log("User Details:", response.data);
       secureLocalStorage.setItem("userDetails", JSON.stringify(response.data));
 
       if (response.data.managementIsDone) {
@@ -179,7 +179,14 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     if (decoded?.isManagementDone) {
       mang = decoded?.isManagementDone;
     }
-    console.log("refresh--->", decoded)
+    //console.log("refresh--->", decoded)
+  }
+  if(secureLocalStorage.getItem("MangSub") || mang) {
+    setOpenToast(true);
+    setToastContent({
+      message:"Task Submitted Successfully",
+    })
+    fetchUserDetails();
   }
   if (secureLocalStorage.getItem("MangSub")) {
     return (
