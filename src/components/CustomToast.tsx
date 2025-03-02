@@ -12,6 +12,7 @@ interface Props {
   customStyle?: string;
   setToast?: React.Dispatch<React.SetStateAction<boolean>>;
   setToastContent?: React.Dispatch<React.SetStateAction<ToastContent>>;
+  onClose?: () => void; 
 }
 
 const CustomToast = ({
@@ -21,6 +22,7 @@ const CustomToast = ({
   customStyle,
   setToast,
   setToastContent,
+  onClose,
 }: Props) => {
   //   const [render, setRender] = useState(true);
   useEffect(() => {
@@ -29,6 +31,7 @@ const CustomToast = ({
       //   setRender(false);
       setToast && setToast(false);
       setToastContent && setToastContent({});
+      onClose && onClose();
     }, duration);
     return () => {
       clearTimeout(timeout);

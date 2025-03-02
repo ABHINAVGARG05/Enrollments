@@ -1,32 +1,41 @@
 import { useEffect, useState } from "react";
+
 interface Task {
-  label: string;
-  description: string;
-  title: string;
-  resources: string[];
+  domain: string;
+  subdomain: string;
+  label: number;
+  for: string;
+  question: string;
 }
+
 interface Props {
   selectedSubDomain: string;
   setSelectedSubDomain: React.Dispatch<React.SetStateAction<string>>;
 }
+
+
 const ManagementTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
-  const [filteredTasks, setFilteredTask] = useState<Task[]>([]);
-  // const [showModal, setShowModal] = useState(false);
-  // const [taskState, setTaskState] = useState("");
+  const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
+  
   useEffect(() => {
-    // Based on the sub-domain we are filtering the task
-    const filteredTask = managementTaskData.filter(
-      (task) => task.label === selectedSubDomain
-    );
-    if (filteredTask) {
-      setFilteredTask(filteredTask);
-    }
+    // Map the string subdomain to the correct filter criteria
+    const getFilteredTasks = () => {
+      if (!selectedSubDomain) return [];
+      
+      return managementTaskData.filter(
+        (task) => task.subdomain.toLowerCase() === selectedSubDomain.toLowerCase()
+      );
+    };
+    
+    const filteredTask = getFilteredTasks();
+    setFilteredTasks(filteredTask);
   }, [selectedSubDomain]);
 
   return (
     <div
-      className={`w-full h-full overflow-y-scroll -task-container ${selectedSubDomain === "" ? "flex items-center" : ""
-        }`}
+      className={`w-full h-full overflow-y-scroll task-container ${
+        selectedSubDomain === "" ? "flex items-center" : ""
+      }`}
     >
       {selectedSubDomain === "" && (
         <div className="flex justify-center flex-wrap w-full">
@@ -40,7 +49,7 @@ const ManagementTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
 
           <button
             type="button"
-            onClick={() => setSelectedSubDomain("general")}
+            onClick={() => setSelectedSubDomain("generaloperations")}
             className="nes-btn is-error nes-btn-task w-[47%] md:w-[22%] aspect-[2] custom-nes-error text-xs"
           >
             General Ops.
@@ -69,28 +78,16 @@ const ManagementTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
           {filteredTasks.map((task, index) => (
             <div
               className="nes-container is-dark with-title dark-container-nes"
-              key={index}
+              key={`task-${task.label}-${index}`}
             >
-              <p className="title ">{task.title}</p>
+              <p className="title">{task.for} - Task {task.label}</p>
               <p className="text-xs text-left leading-4 desc-task">
-                {task.description}
+                {task.question}
               </p>
-
-              {/* <button
-                type="button"
-                className="nes-btn is-error  custom-nes-error text-xs md:text-base"
-                onClick={() => {
-                  setShowModal(true);
-                  setTaskState(task.title);
-                }}
-              >
-                Submit Task
-              </button> */}
             </div>
           ))}
         </div>
       )}
-      {/* {showModal && <Modal task={taskState} setShowModal={setShowModal} />} */}
     </div>
   );
 };
