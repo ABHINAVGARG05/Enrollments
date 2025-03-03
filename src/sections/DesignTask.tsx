@@ -140,34 +140,75 @@ function Modal({
 }
 const designTaskData = [
   {
-    label: "video",
-    title: "Videoediting/Photography",
-    description:
-      "Create a 60-second reel highlighting MFC (Mozilla Firefox Club) events, drawing inspiration from past successes like Gravitas, Riviera, or any other relevant events. Utilize background music, templates, and scripting as needed to craft a compelling narrative. Be sure to capture the essence and excitement of these events while showcasing the diverse range of activities and experiences they offer. Instruction : Download any reel from our official Insta handle, and add motion text, background music, stock videos to recreate it.",
-    resources: [
-      "https://www.instagram.com/mfc_vit?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
-    ],
+    "label": "ui",
+    "title": "UI/UX",
+    "description": "Design the UI/UX for a new book-tracking app that motivates users to discover their own style and interests. Create a wireframe or prototype for key screens (e.g., dashboard, progress tracker, notifications). Implement features that encourage user engagement (e.g., streaks, reminders, social sharing). Ensure a visually appealing and user-friendly interface.",
+    "resources": [],
+    "for": "senior"
   },
   {
-    label: "ui",
-    title: "UI/UX",
-    description:
-      "Your mission is to overhaul the MFC website by designing and prototyping UI/UX modifications for an enhanced user experience. Referencing the current website (link provided below), identify areas for improvement and implement changes to streamline navigation, improve visual appeal, and optimize functionality. Consider factors like responsiveness, accessibility, and branding consistency throughout the redesign. Additionally, provide detailed documentation outlining your design rationale, wireframes, and interactive prototypes to guide the development process effectively.",
-    resources: ["https://www.mfcvit.in/"],
+    "label": "ui",
+    "title": "UI/UX",
+    "description": "Design a UI/UX experience for a personalized learning platform that adapts to users' skill levels and interests in real time. Create a high-fidelity prototype for core screens, including dashboard, course progress, AI-powered recommendations, and interactive lesson modules. Implement dynamic UI elements that adapt based on user performance (e.g., difficulty adjustments, personalized content suggestions). Integrate gamification elements such as XP points, badges, and learning challenges to increase engagement. Ensure a smooth onboarding flow that tailors the experience based on user preferences and prior knowledge. Optimize for both mobile and desktop experiences with a responsive design.",
+    "resources": [],
+    "for": "junior"
   },
   {
-    label: "poster",
-    title: "Graphic Design",
-    description:
+    "label": "ui",
+    "title": "UI/UX",
+    "description": "Redesign Amazon’s user interface in the style of Spotify. New design must maintain its identity from both of its predecessors. Must show functionality, even with basic prototyping. BONUS POINTS if a new, unique logo is made.",
+    "resources": [],
+    "for": "senior"
+  },
+  {
+    "label": "ui",
+    "title": "UI/UX",
+    "description": "Reimagine LinkedIn’s user interface with the aesthetics and user flow of TikTok while maintaining its core professional identity. The redesign should blend LinkedIn’s professional networking features with TikTok’s visually engaging, swipe-based interface. Create key screens, including a vertical feed for content, an intuitive job search page, and a reimagined profile layout. Implement interactive features such as quick reactions, short video resumes, and AI-powered networking suggestions. The prototype should demonstrate fluid navigation, content discovery, and engagement mechanics. BONUS POINTS if you design a fresh, modernized LinkedIn logo that reflects this new dynamic experience.",
+    "resources": [],
+    "for": "junior"
+  },
+  {
+    "label": "video",
+    "title": "Video Editing",
+    "description": "Make a jitter-lapse video of anything that the VIT campus has to offer. Minimum length of video has to be 15-20 seconds. Music choice will be taken into consideration.",
+    "resources": [],
+    "for": "junior"
+  },
+  {
+    "label": "video",
+    "title": "Video Editing",
+    "description": "Create a reel using any trending idea for a fictional event called Innovator Of The Year, which is a crossover of a hackathon and a treasure hunt. Engaging Storyline & Hook – Highlight the unique hackathon + treasure hunt crossover with a fast-paced, exciting intro. Dynamic Visuals & Audio – Use smooth transitions, trending audio, and text overlays to keep the audience engaged. Clear CTA & Branding – Include the event name, date, and sign-up details with a strong call to action.",
+    "resources": [],
+    "for": "senior"
+  },
+  {
+    "label": "video",
+    "title": "Video Editing",
+    "description": "Create a stop-motion promotional video showcasing a day in the life of a VIT student, capturing the energy and diversity of campus life. The video must be at least 20–30 seconds long and tell a cohesive story (e.g., morning classes, clubs, events, nightlife). Use smooth stop-motion animation with creative transitions between scenes. Music selection should enhance the storytelling and complement the fast-paced stop-motion style. BONUS POINTS for integrating motion graphics or animated text overlays to highlight key moments.",
+    "resources": [],
+    "for": "senior"
+  },
+  {
+    "label": "video",
+    "title": "Video Editing",
+    "description": "Produce a cinematic teaser trailer for a fictional competition, Innovator Royale, which blends a tech showdown with an escape-room-style challenge. The teaser should be 30–45 seconds long, building suspense and excitement. Incorporate high-energy editing, including fast cuts, dramatic music, and glitch effects to emphasize the high-stakes nature of the event. Use voiceover or impactful text animations to tease the competition’s mechanics and prizes. BONUS POINTS for including a cinematic logo animation for 'Innovator Royale' at the end.",
+    "resources": [],
+    "for": "junior"
+  },
+  
+  {
+    "label": "poster",
+    "title": "Graphic Design",
+    "description":
       "Your task is to recreate either a past event poster or a personalized poster that reflects your identity and interests. For the past event poster, choose any event from our archive, such as Gravitas or Riviera, and reimagine its promotional material with fresh creativity and design. Alternatively, craft a personalized poster that showcases who you are, including your passions, skills, and aspirations. Ensure that your poster design aligns with the organization's branding guidelines while incorporating innovative elements to captivate the audience's attention. Provide a brief rationale for your design choices and any inspiration sources utilized. Be prepared to present and discuss your poster during the evaluation process.",
-    resources: [],
+    "resources": [],
   },
 
   {
-    label: "3d",
-    title: "3D Modelling",
-    description: "Recreate the following 2D image to a 3D model.",
-    resources: [
+    "label": "3d",
+    "title": "3D Modelling",
+    "description": "Recreate the following 2D image to a 3D model.",
+    "resources": [
       "https://drive.google.com/file/d/1GeoLTRphTOrNCvwJDFMstL2hDUocp76L/view?usp=sharing",
     ],
   },
