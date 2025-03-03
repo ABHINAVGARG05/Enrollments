@@ -1,24 +1,70 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
+import secureLocalStorage from "react-secure-storage";
 interface Task {
   label: string;
   description: string;
   title: string;
   resources: string[];
+  for:string;
 }
 interface Props {
   selectedSubDomain: string;
   setSelectedSubDomain: React.Dispatch<React.SetStateAction<string>>;
 }
-const DesignTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
-  const [filteredTasks, setFilteredTask] = useState<Task[]>([]);
-  useEffect(() => {
-    const filteredTask = designTaskData.filter(
-      (task) => task.label === selectedSubDomain
-    );
-    if (filteredTask) {
-      setFilteredTask(filteredTask);
-    }
-  }, [selectedSubDomain]);
+// const DesignTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
+//   const [filteredTasks, setFilteredTask] = useState<Task[]>([]);
+//   useEffect(() => {
+//     const filteredTask = designTaskData.filter(
+//       (task) => task.label === selectedSubDomain
+//     );
+//     if (filteredTask) {
+//       setFilteredTask(filteredTask);
+//     }
+//   }, [selectedSubDomain]);
+  const DesignTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
+    const [filteredTasks, setFilteredTask] = useState<Task[]>([]);
+    const [isSC, setIsSC] = useState(false);
+    // const [showModal, setShowModal] = useState(false);
+    // const [taskState, setTaskState] = useState("");
+    useEffect(() => {
+      // Based on the sub-domain we are filtering the task
+      const filteredTask = designTaskData.filter(
+        (task) =>
+          
+          task.label === selectedSubDomain &&
+          (isSC === true ? task.for === "senior" : task.for === "junior")
+      );
+      //console.log("hello",isSC)
+      if (filteredTask) {
+        setFilteredTask(filteredTask);
+      }
+    }, [selectedSubDomain, isSC]);
+    useLayoutEffect(() => {
+      const userDetailsstore = secureLocalStorage.getItem("userDetails");
+      
+      if (typeof userDetailsstore !== "string") {
+        console.warn("userDetailsstore is not a string:", userDetailsstore);
+        setIsSC(false); // Default to false if storage data is invalid
+        return;
+      }
+    
+      try {
+        const userDetails = JSON.parse(userDetailsstore);
+        console.log("Parsed userDetails:", userDetails);
+    
+        if (typeof userDetails.data.isSC === "boolean") {
+          setIsSC(userDetails.data.isSC);
+          console.log(userDetails.data.isSC);
+        } else {
+          console.warn("Invalid isSC value:", userDetails.data.isSC);
+          setIsSC(false);
+        }
+      } catch (error) {
+        console.error("Error parsing userDetails:", error);
+        setIsSC(false);
+      }
+    }, []);
+    
 
   return (
     <div
@@ -202,6 +248,15 @@ const designTaskData = [
     "description":
       "Your task is to recreate either a past event poster or a personalized poster that reflects your identity and interests. For the past event poster, choose any event from our archive, such as Gravitas or Riviera, and reimagine its promotional material with fresh creativity and design. Alternatively, craft a personalized poster that showcases who you are, including your passions, skills, and aspirations. Ensure that your poster design aligns with the organization's branding guidelines while incorporating innovative elements to captivate the audience's attention. Provide a brief rationale for your design choices and any inspiration sources utilized. Be prepared to present and discuss your poster during the evaluation process.",
     "resources": [],
+    "for":"junior"
+  },
+  {
+    "label": "poster",
+    "title": "Graphic Design",
+    "description":
+      "Your task is to recreate either a past event poster or a personalized poster that reflects your identity and interests. For the past event poster, choose any event from our archive, such as Gravitas or Riviera, and reimagine its promotional material with fresh creativity and design. Alternatively, craft a personalized poster that showcases who you are, including your passions, skills, and aspirations. Ensure that your poster design aligns with the organization's branding guidelines while incorporating innovative elements to captivate the audience's attention. Provide a brief rationale for your design choices and any inspiration sources utilized. Be prepared to present and discuss your poster during the evaluation process.",
+    "resources": [],
+    "for":"senior"
   },
 
   {
@@ -211,5 +266,15 @@ const designTaskData = [
     "resources": [
       "https://drive.google.com/file/d/1GeoLTRphTOrNCvwJDFMstL2hDUocp76L/view?usp=sharing",
     ],
+    "for":"junior"
+  },
+  {
+    "label": "3d",
+    "title": "3D Modelling",
+    "description": "Recreate the following 2D image to a 3D model.",
+    "resources": [
+      "https://drive.google.com/file/d/1GeoLTRphTOrNCvwJDFMstL2hDUocp76L/view?usp=sharing",
+    ],
+    "for":"senior"
   },
 ];
