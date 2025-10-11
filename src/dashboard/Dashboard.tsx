@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
+import secureLocalStorage from "react-secure-storage";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import Navbar from "../components/Navbar";
@@ -38,6 +39,40 @@ useEffect(() => {
 
 
 
+  const profileLocked = (() => {
+    // Prefer backend claim
+    const jwtToken = Cookies.get("jwtToken");
+    try {
+      if (jwtToken) {
+        const decoded = jwtDecode<CustomJwtPayload>(jwtToken);
+        if (decoded?.isProfileDone) return true;
+      }
+    } catch {
+      // ignore decode errors
+    }
+    // Fallback to local flags
+    try {
+      const localDone = (secureLocalStorage.getItem && (secureLocalStorage.getItem("profileComplete") as any)) ?? false;
+      if (localDone === true || localDone === "true") return true;
+      const ud = secureLocalStorage.getItem("userDetails") as string | null;
+      if (ud) {
+        const parsed = JSON.parse(ud);
+        if (parsed?.isProfileDone || parsed?.data?.isProfileDone) return true;
+      }
+    } catch {
+      // noop
+    }
+    return false;
+  })();
+
+  const safeSetTabIndex = useCallback((index: number) => {
+    if (profileLocked && index === 0) {
+      setTabIndex(1);
+      return;
+    }
+    setTabIndex(index);
+  }, [profileLocked, setTabIndex]);
+
   const renderTabContent = () => {
     switch (tabIndex) {
       case 0:
@@ -59,7 +94,7 @@ useEffect(() => {
     <div className="w-full h-full flex flex-col md:flex-row justify-center items-center sm:flex p-4 ">
       <Navbar />
       <BoundingBox>
-        <Header tabIndex={tabIndex} setTabIndex={setTabIndex} />
+        <Header tabIndex={tabIndex} setTabIndex={safeSetTabIndex} profileLocked={profileLocked} />
         {renderTabContent()}
       </BoundingBox>
     </div>

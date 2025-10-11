@@ -19,6 +19,7 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   const [coreType, setCoreType] = useState("junior");
   // const { tabIndex, setTabIndex } = useTabStore();
   const [subdomain, setSubDomain] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     question1: "",
@@ -93,15 +94,15 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
 
     if (subdomain.length === 0) {
       setOpenToast(true);
-      setToastContent({ message: "Please select at least one sub-domain!" });
+      setToastContent({ message: "Please select at least one sub-domain!", type: "warning" });
       return;
     }
-
-    secureLocalStorage.setItem("MangSub",true);
 
     const id = secureLocalStorage.getItem("id");
     if (!id) {
       console.error("User id not found in secureLocalStorage");
+      setOpenToast(true);
+      setToastContent({ message: "User ID not found. Please log in again.", type: "error" });
       return;
     }
 
@@ -118,6 +119,7 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     };
 
     try {
+      setLoading(true);
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/upload/management/${id}`,
         updatedFormData,
@@ -130,11 +132,18 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
       );
       console.log("Response:", response.data);
       if (response.data) {
-        fetchUserDetails();
+        secureLocalStorage.setItem("MangSub", true);
+        setOpenToast(true);
+        setToastContent({ message: "Task Submitted Successfully!", type: "success" });
+        await fetchUserDetails();
       }
       // console.log(response.data);
     } catch (error) {
       console.error(error);
+      setOpenToast(true);
+      setToastContent({ message: "Failed to submit task. Please try again or contact support.", type: "error" });
+    } finally {
+      setLoading(false);
     }
   };
   const fetchUserDetails = async () => {
@@ -161,8 +170,7 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
 
       if (response.data.managementIsDone) {
         setIsManagementDone(true);
-        setOpenToast(true);
-        setToastContent({ message: "Task Submitted Successfully!" });
+        // toast already shown on submit
       }
     } catch (error: any) {
       console.error("Fetch User Details Error:", error.response?.data || error.message);
@@ -313,8 +321,9 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
         <button
           type="submit"
           className="nes-btn is-error w-full text-xs md:text-sm"
+          disabled={loading}
         >
-          Submit
+          {loading ? "Submitting..." : "Submit"}
         </button>
       </form>
     </>

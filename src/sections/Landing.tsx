@@ -122,7 +122,7 @@ const Landing = () => {
   };
 
   return (
-    <div className="w-full flex-grow h-[100vh] md:h-full relative flex justify-center items-center text-dark p-4 md:p-12">
+    <div className="w-full flex-grow h-[100vh] md:h-full relative flex justify-center items-center text-dark p-4">
       {openToast && (
         <CustomToast
           setToast={setOpenToast}

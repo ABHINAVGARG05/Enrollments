@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import TechTaskSubmission from "./TechTaskSubmission.";
+import TechTaskSubmission from "./TechTaskSubmission";
 import DesignTaskSubmission from "./DesignTaskSubmission";
 import ManagementTaskSubmission from "./ManagementTaskSubmission";
 import secureLocalStorage from "react-secure-storage";

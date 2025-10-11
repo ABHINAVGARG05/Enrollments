@@ -1,22 +1,24 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+
 export type ToastContent = {
-  type?: string;
+  type?: "success" | "error" | "info" | "warning" | string;
   message?: string;
   duration?: number;
   customStyle?: string;
 };
+
 interface Props {
-  type?: string;
+  type?: "success" | "error" | "info" | "warning" | string;
   message?: string;
   duration?: number;
   customStyle?: string;
   setToast?: React.Dispatch<React.SetStateAction<boolean>>;
   setToastContent?: React.Dispatch<React.SetStateAction<ToastContent>>;
-  onClose?: () => void; 
+  onClose?: () => void;
 }
 
 const CustomToast = ({
-  type,
+  type = "info",
   message,
   duration = 3000,
   customStyle,
@@ -24,25 +26,39 @@ const CustomToast = ({
   setToastContent,
   onClose,
 }: Props) => {
-  //   const [render, setRender] = useState(true);
   useEffect(() => {
-    // setRender(true);
     const timeout = setTimeout(() => {
-      //   setRender(false);
       setToast && setToast(false);
       setToastContent && setToastContent({});
       onClose && onClose();
     }, duration);
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, []);
-  //   if (!render) return null;
+    return () => clearTimeout(timeout);
+  }, [duration, onClose, setToast, setToastContent]);
+
+  const bgClass = useMemo(() => {
+    switch (type) {
+      case "success":
+        return "bg-green-500";
+      case "error":
+        return "bg-red-500";
+      case "warning":
+        return "bg-yellow-400 text-black";
+      case "info":
+      default:
+        return "bg-blue-500";
+    }
+  }, [type]);
+
   return (
     <div
-      className={`absolute top-4 right-4 p-4 z-[1000] min-w-[300px] max-w-[500px] ${
-        type && type === "error" ? "bg-red-500" : "bg-green-500"
-      } rounded-md text-xs text-white ${customStyle}`}
+      role="alert"
+      aria-live="assertive"
+      className={`absolute top-4 right-4 p-4 z-[1000] min-w-[280px] max-w-[520px] ${bgClass} rounded-md text-xs md:text-sm text-white shadow-lg ${customStyle || ""}`}
+      onClick={() => {
+        setToast && setToast(false);
+        setToastContent && setToastContent({});
+        onClose && onClose();
+      }}
     >
       {message}
     </div>

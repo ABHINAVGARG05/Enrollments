@@ -208,7 +208,7 @@ const Task = () => {
   }
 
   return (
-    <div className="w-full profile py-6 flex gap-4 flex-col lg:flex-row">
+    <div className="w-full h-full profile py-6 flex gap-4 flex-col lg:flex-row">
       <div className="w-full nes-container is-rounded is-centered lg:w-[30%] invert">
         <div className="h-auto mb-4 text-lg">Domains</div>
         <div className="flex flex-col justify-between gap-4 lg:gap-8">
@@ -254,7 +254,7 @@ const Task = () => {
         </div>
       </div>
 
-      <div className="nes-container is-rounded is-dark with-title is-centered dark-nes-container w-full lg:w-[90%] relative dark-container-nes">
+  <div className="nes-container is-rounded is-dark with-title is-centered dark-nes-container w-full lg:w-[90%] relative dark-container-nes max-h-[75vh] overflow-y-auto">
         {selectedSubDomain !== "" && (
           <button
             type="button"

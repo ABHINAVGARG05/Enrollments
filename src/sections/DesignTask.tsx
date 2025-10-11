@@ -1,28 +1,34 @@
 import { useEffect, useState } from "react";
+
 interface Task {
   label: string;
   description: string;
   title: string;
-  resources: string[];
+  for: string;
+  requirements?: string;
+  resources?: string[];
 }
+
 interface Props {
   selectedSubDomain: string;
   setSelectedSubDomain: React.Dispatch<React.SetStateAction<string>>;
 }
+
 const DesignTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
-  const [filteredTasks, setFilteredTask] = useState<Task[]>([]);
+  const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
+
   useEffect(() => {
     const filteredTask = designTaskData.filter(
       (task) => task.label === selectedSubDomain
     );
-    if (filteredTask) {
-      setFilteredTask(filteredTask);
+    if (filteredTask.length > 0) {
+      setFilteredTasks(filteredTask);
     }
   }, [selectedSubDomain]);
 
   return (
     <div
-      className={`w-full h-full overflow-y-scroll -task-container ${
+      className={`w-full h-full overflow-y-auto -task-container ${
         selectedSubDomain === "" ? "flex items-center" : ""
       }`}
     >
@@ -45,17 +51,16 @@ const DesignTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
           <button
             type="button"
             onClick={() => setSelectedSubDomain("3d")}
-            className="nes-btn is-error  w-[47%] md:w-[22%] aspect-[2] custom-nes-error text-xs"
+            className="nes-btn is-error w-[47%] md:w-[22%] aspect-[2] custom-nes-error text-xs"
           >
             3D
           </button>
           <button
             type="button"
             onClick={() => setSelectedSubDomain("video")}
-            className="nes-btn is-error  w-[100%] min-w-fit h-fit lg:w-[22%] md:aspect-[2] custom-nes-error text-xs"
+            className="nes-btn is-error w-[100%] min-w-fit h-fit lg:w-[22%] md:aspect-[2] custom-nes-error text-xs"
           >
-            Videoediting/ <br />
-            Photography
+            Video Editing / <br /> Photography
           </button>
         </div>
       )}
@@ -67,16 +72,16 @@ const DesignTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
               className="nes-container is-dark with-title dark-container-nes"
               key={index}
             >
-              <p className="title ">{task.title}</p>
+              <p className="title">{task.title}</p>
               <p className="text-xs text-left leading-4 desc-task">
                 {task.description}
               </p>
-              {task.resources.length > 0 && (
+              {task.resources && task.resources.length > 0 && (
                 <div className="flex justify-between flex-col md:flex-row">
                   <span className="md:text-sm text-xs">Resources:</span>
                   <span className="flex flex-col md:text-sm text-xs md:flex-row">
                     {task.resources.map((resource, index) => (
-                      <a href={resource} target="_blank" key={index}>
+                      <a href={resource} target="_blank" key={index} rel="noopener noreferrer">
                         Resource {index + 1} &nbsp;
                       </a>
                     ))}
@@ -87,12 +92,12 @@ const DesignTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
           ))}
         </div>
       )}
-      {/* {showModal && <Modal task={taskState} setShowModal={setShowModal} />} */}
     </div>
   );
 };
 
 export default DesignTask;
+
 function Modal({
   task,
   setShowModal,
@@ -130,7 +135,7 @@ function Modal({
           >
             Cancel
           </button>
-          <button className="nes-btn is-error" type="submit" onClick={() => {}}>
+          <button className="nes-btn is-error" type="submit">
             Submit
           </button>
         </menu>
@@ -138,34 +143,60 @@ function Modal({
     </div>
   );
 }
-const designTaskData = [
+
+const designTaskData: Task[] = [
   {
-    label: "video",
-    title: "Videoediting/Photography",
+    label: "UI/UX",
+    title: "Book-Tracking App UI/UX Design",
     description:
-      "Create a 60-second reel highlighting MFC (Mozilla Firefox Club) events, drawing inspiration from past successes like Gravitas, Riviera, or any other relevant events. Utilize background music, templates, and scripting as needed to craft a compelling narrative. Be sure to capture the essence and excitement of these events while showcasing the diverse range of activities and experiences they offer. Instruction : Download any reel from our official Insta handle, and add motion text, background music, stock videos to recreate it.",
-    resources: [
-      "https://www.instagram.com/mfc_vit?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
-    ],
+      "Design the UI/UX for a new book-tracking app that motivates users to discover their own style and interests.",
+    for: "senior",
+    requirements:
+      "Create a wireframe or prototype for key screens (e.g. dashboard, progress tracker, notifications). Implement features that encourage user engagement (e.g., streaks, reminders, social sharing). Ensure a visually appealing and user-friendly interface.",
+    resources: [],
   },
   {
-    label: "ui",
-    title: "UI/UX",
+    label: "UI/UX",
+    title: "Personalized Learning Platform UI/UX Design",
     description:
-      "Your mission is to overhaul the MFC website by designing and prototyping UI/UX modifications for an enhanced user experience. Referencing the current website (link provided below), identify areas for improvement and implement changes to streamline navigation, improve visual appeal, and optimize functionality. Consider factors like responsiveness, accessibility, and branding consistency throughout the redesign. Additionally, provide detailed documentation outlining your design rationale, wireframes, and interactive prototypes to guide the development process effectively.",
-    resources: ["https://www.mfcvit.in/"],
+      "Design a UI/UX experience for a personalized learning platform that adapts to users' skill levels and interests in real time.",
+    for: "junior",
+    requirements:
+      "Create a high-fidelity prototype for core screens, including dashboard, course progress, AI-powered recommendations, and interactive lesson modules. Implement dynamic UI elements that adapt based on user performance (e.g., difficulty adjustments, personalized content suggestions). Integrate gamification elements such as XP points, badges, and learning challenges to increase engagement. Ensure a smooth onboarding flow that tailors the experience based on user preferences and prior knowledge. Optimize for both mobile and desktop experiences with a responsive design.",
+    resources: [],
+  },
+  {
+    label: "UI/UX",
+    title: "Amazon UI Redesign in Spotify Style",
+    description:
+      "Redesign Amazon’s user interface in the style of Spotify while maintaining both identities.",
+    for: "senior",
+    requirements:
+      "New design must maintain its identity from both of its predecessors. Must show functionality, even with basic prototyping. BONUS POINTS if a new, unique logo is made.",
+    resources: [],
+  },
+  {
+    label: "UI/UX",
+    title: "LinkedIn UI Redesign with TikTok Elements",
+    description:
+      "Reimagine LinkedIn’s user interface with the aesthetics and user flow of TikTok while maintaining its professional identity.",
+    for: "junior",
+    requirements:
+      "The redesign should blend LinkedIn’s professional networking features with TikTok’s visually engaging, swipe-based interface. Create key screens, including a vertical feed for content, an intuitive job search page, and a reimagined profile layout. Implement interactive features such as quick reactions, short video resumes, and AI-powered networking suggestions. The prototype should demonstrate fluid navigation, content discovery, and engagement mechanics. BONUS POINTS if you design a fresh, modernized LinkedIn logo that reflects this new dynamic experience.",
+    resources: [],
   },
   {
     label: "poster",
     title: "Graphic Design",
+    for:"junior",
     description:
-      "Your task is to recreate either a past event poster or a personalized poster that reflects your identity and interests. For the past event poster, choose any event from our archive, such as Gravitas or Riviera, and reimagine its promotional material with fresh creativity and design. Alternatively, craft a personalized poster that showcases who you are, including your passions, skills, and aspirations. Ensure that your poster design aligns with the organization's branding guidelines while incorporating innovative elements to captivate the audience's attention. Provide a brief rationale for your design choices and any inspiration sources utilized. Be prepared to present and discuss your poster during the evaluation process.",
+      "Recreate a past event poster or a personalized poster that reflects your identity and interests.",
     resources: [],
   },
-
   {
     label: "3d",
     title: "3D",
+    for:"junior",
     description: "Recreate the following 2D image to a 3D model.",
     resources: [
       "https://drive.google.com/file/d/1GeoLTRphTOrNCvwJDFMstL2hDUocp76L/view?usp=sharing",

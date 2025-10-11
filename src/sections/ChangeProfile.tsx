@@ -3,6 +3,7 @@ import { ToastContent } from "../components/CustomToast";
 import axios from "axios";
 import Cookies from "js-cookie";
 import Navbar from "../components/Navbar";
+import BoundingBox from "../components/BoundingBox";
 import secureLocalStorage from "react-secure-storage";
 import { useNavigate } from "react-router-dom";
 import Toast from "../components/CustomToast"; // Import Toast component
@@ -254,34 +255,37 @@ const ChangeProfile = () => {
 
   if (isLoading) {
     return (
-      <div className="w-full min-h-screen h-full bg-black p-12 flex flex-grow flex-col md:flex-row">
+      <div className="w-full min-h-screen h-full bg-black p-4 flex flex-grow flex-col md:flex-row">
         <Navbar />
-        <div className="border-2 border-dashed border-prime h-full flex-grow p-4 text-white flex flex-col gap-4 items-center justify-center">
+        <BoundingBox className="items-center justify-center">
           <div className="nes-container is-rounded is-dark">
             <p>Loading profile data...</p>
           </div>
-        </div>
+        </BoundingBox>
       </div>
     );
   }
 
   return (
-    <div className="w-full min-h-screen h-full bg-black p-12 flex flex-grow flex-col md:flex-row">
+    <div className="w-full min-h-screen h-full bg-black p-4 flex flex-grow flex-col md:flex-row">
       <Navbar />
-      <div
-        className="border-2 border-dashed border-prime h-full flex-grow p-4 text-white flex flex-col gap-4 items-center md:justify-center"
-        style={{ background: "rgba(0,0,0,0)" }}
-      >
-        <div className="nes-container is-rounded is-dark w-full md:w-fit">
-          <h1 className="text-sm text-center md:text-left md:text-xl lg:text-3xl">
-            Update Your Profile
-          </h1>
+      <BoundingBox className="text-white">
+        <div className="w-full max-w-[1100px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
+        <div className="nes-container is-rounded is-dark w-full h-[60vh] overflow-y-auto flex flex-col">
+          <h1 className="text-sm text-center md:text-left md:text-xl lg:text-2xl">Profile Info</h1>
           <hr className="h-1 bg-white" />
-          <form onSubmit={handleUserDomain}>
-            <section className="flex items-start text-xs md:text-base lg:items-center flex-col lg:flex-row mt-8">
-              <p className="w-full text-sn md:text-xl">Update domain:</p>
-              <div className="flex flex-col w-full">
-                <label>
+          <div className="mt-4 text-xs md:text-sm leading-snug">
+            You can update the domains you’re interested in. This helps us route tasks and communication to the right teams.
+          </div>
+        </div>
+        <div className="nes-container is-rounded is-dark w-full h-[60vh] overflow-y-auto flex flex-col">
+          <h2 className="text-sm text-center md:text-left md:text-xl lg:text-2xl">Update Your Profile</h2>
+          <hr className="h-1 bg-white" />
+          <form onSubmit={handleUserDomain} className="mt-6 h-full flex flex-col">
+            <section className="flex items-start text-xs md:text-base flex-col gap-3">
+              <p className="w-full text-sn md:text-lg">Select domain(s):</p>
+              <div className="flex flex-col w-full gap-2">
+                <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     className="nes-checkbox is-dark"
@@ -290,11 +294,9 @@ const ChangeProfile = () => {
                     onChange={handleCheckboxChange}
                     disabled={isSubmitting}
                   />
-                  <span className="text-xs md:text-sm lg:text-base">
-                    Technical
-                  </span>
+                  <span className="text-xs md:text-sm lg:text-base">Technical</span>
                 </label>
-                <label>
+                <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     className="nes-checkbox is-dark"
@@ -303,11 +305,9 @@ const ChangeProfile = () => {
                     onChange={handleCheckboxChange}
                     disabled={isSubmitting}
                   />
-                  <span className="text-xs md:text-sm lg:text-base">
-                    Design
-                  </span>
+                  <span className="text-xs md:text-sm lg:text-base">Design</span>
                 </label>
-                <label>
+                <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
                     className="nes-checkbox is-dark"
@@ -316,23 +316,23 @@ const ChangeProfile = () => {
                     onChange={handleCheckboxChange}
                     disabled={isSubmitting}
                   />
-                  <span className="text-xs md:text-sm lg:text-base">
-                    Management
-                  </span>
+                  <span className="text-xs md:text-sm lg:text-base">Management</span>
                 </label>
               </div>
             </section>
-            <button
-              type="submit"
-              className="nes-btn is-success float-right"
-              style={{ marginBlock: "10px" }}
-              disabled={!isDomainChanged || isSubmitting}
-            >
-              {isSubmitting ? "Updating..." : "Update →"}
-            </button>
+            <div className="mt-6 flex w-full justify-end mt-auto">
+              <button
+                type="submit"
+                className="nes-btn is-success"
+                disabled={!isDomainChanged || isSubmitting}
+              >
+                {isSubmitting ? "Updating..." : "Update →"}
+              </button>
+            </div>
           </form>
         </div>
-        
+        </div>
+
         {/* Toast notification */}
         {openToast && (
           <Toast
@@ -341,7 +341,7 @@ const ChangeProfile = () => {
             onClose={handleToastClose}
           />
         )}
-      </div>
+      </BoundingBox>
     </div>
   );
 };

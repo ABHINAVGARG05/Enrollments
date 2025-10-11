@@ -40,8 +40,8 @@ const ResetPassword = () => {
       if (response) {
         setOpenToast(true);
         setToastContent({
-          message: "OK",
-          // type: "error",
+          message: "Password updated successfully",
+          type: "success",
         });
         // toast.error("OK", {
         //   className: "custom-bg",
@@ -58,7 +58,7 @@ const ResetPassword = () => {
       console.log(error);
       setOpenToast(true);
       setToastContent({
-        message: "Invalid Username or Password",
+        message: "Invalid username or password",
         type: "error",
       });
       // toast.error("Invalid Username or Password", {

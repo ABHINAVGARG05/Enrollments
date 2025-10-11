@@ -210,6 +210,16 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
               <input
                 type="checkbox"
                 className="nes-checkbox is-dark"
+                value="frontend"
+                checked={subdomain.includes("cyber-sec")}
+                onChange={handleCheckboxChange}
+              />
+              <span className="text-xs md:text-xs">Frontend</span>
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                className="nes-checkbox is-dark"
                 value="backend"
                 checked={subdomain.includes("backend")}
                 onChange={handleCheckboxChange}

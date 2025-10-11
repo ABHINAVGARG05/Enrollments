@@ -45,7 +45,7 @@ const TechTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
 
   return (
     <div
-      className={`w-full h-full overflow-y-scroll -task-container ${
+      className={`w-full h-full overflow-y-auto -task-container ${
         selectedSubDomain === "" ? "flex items-center" : ""
       }`}
     >
@@ -101,7 +101,7 @@ const TechTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
       )}
 
       {selectedSubDomain !== "" && (
-        <div className="w-full mt-8 h-full flex flex-col gap-8 md:gap-4">
+  <div className="w-full mt-8 h-full flex flex-col gap-8 md:gap-4">
           {filteredTasks.map((task, index) => (
             <div
               className="nes-container is-dark with-title  dark-container-nes"

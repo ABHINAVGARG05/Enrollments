@@ -16,6 +16,7 @@ interface CustomJwtPayload extends JwtPayload {
 const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
 const { tabIndex, setTabIndex } = useTabStore();
   const [subdomain, setSubDomain] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
   interface FormData {
     [key: string]: string | [string, string];
   }
@@ -68,15 +69,15 @@ const { tabIndex, setTabIndex } = useTabStore();
 
     if (subdomain.length === 0) {
       setOpenToast(true);
-      setToastContent({ message: "Please select at least one sub-domain!" });
+      setToastContent({ message: "Please select at least one sub-domain!", type: "warning" });
       return;
     }
 
     const id = secureLocalStorage.getItem("id");
-    secureLocalStorage.setItem("DesgSub",true);
-
     if (!id) {
       console.error("User id not found in secureLocalStorage");
+      setOpenToast(true);
+      setToastContent({ message: "User ID not found. Please log in again.", type: "error" });
       return;
     }
 
@@ -89,6 +90,7 @@ const { tabIndex, setTabIndex } = useTabStore();
     };
 
     try {
+      setLoading(true);
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/upload/design/${id}`,
         updatedFormData,
@@ -100,11 +102,18 @@ const { tabIndex, setTabIndex } = useTabStore();
       );
       // console.log("response", response);
       if (response.data) {
-        fetchUserDetails();
+        secureLocalStorage.setItem("DesgSub", true);
+        setOpenToast(true);
+        setToastContent({ message: "Task Submitted Successfully!", type: "success" });
+        await fetchUserDetails();
       }
       // console.log(response.data);
     } catch (error) {
       console.error(error);
+      setOpenToast(true);
+      setToastContent({ message: "Failed to submit task. Please try again or contact support.", type: "error" });
+    } finally {
+      setLoading(false);
     }
   };
   const fetchUserDetails = async () => {
@@ -128,8 +137,7 @@ const { tabIndex, setTabIndex } = useTabStore();
       secureLocalStorage.setItem("userDetails", JSON.stringify(response.data));
       if (response.data.designIsDone) {
         setIsDesignDone(true);
-        setOpenToast(true);
-        setToastContent({ message: "Task Submitted Successfully!" });
+        // toast already shown on submit
       }
       // console.log(response.data);
 
@@ -318,8 +326,9 @@ const { tabIndex, setTabIndex } = useTabStore();
         <button
           type="submit"
           className="nes-btn is-error w-full text-xs md:text-sm"
+          disabled={loading}
         >
-          Submit
+          {loading ? "Submitting..." : "Submit"}
         </button>
       </form>
     </>

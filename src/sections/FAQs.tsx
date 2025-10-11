@@ -3,7 +3,7 @@ import Faqcomp from "../components/Faqcomp";
 import Navbar from "../components/Navbar";
 const FAQs = () => {
   return (
-    <div className="w-full h-full flex flex-col md:flex-row justify-center items-center p-4 md:p-12">
+    <div className="w-full h-full flex flex-col md:flex-row justify-center items-center p-4">
       <Navbar />
       <BoundingBox >
         <div className="faq w-full h-full overflow-y-auto">

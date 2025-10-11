@@ -10,6 +10,7 @@ interface Tab {
 interface HeaderProps {
   tabIndex: number;
   setTabIndex: (index: number) => void;
+  profileLocked?: boolean; // when true, the profile tab (id:0) is disabled
 }
 
 const tabs: Tab[] = [
@@ -19,7 +20,7 @@ const tabs: Tab[] = [
   { id: 3, label: "4", description: "Application Status" },
 ];
 
-const Header = ({ tabIndex, setTabIndex }: HeaderProps) => {
+const Header = ({ tabIndex, setTabIndex, profileLocked = false }: HeaderProps) => {
   const handleKeyPress = (event: React.KeyboardEvent, tabId: number, isDisabled: boolean | undefined) => {
     if (!isDisabled && (event.key === "Enter" || event.key === " ")) {
       setTabIndex(tabId);
@@ -29,14 +30,15 @@ const Header = ({ tabIndex, setTabIndex }: HeaderProps) => {
   return (
     <div className="w-full flex justify-between md:justify-around relative h-[3rem] md:h-[5rem]">
 
-      {tabs.map((tab) => (
+      {tabs.map((tab) => {
+        const isDisabled = tab.disabled || (profileLocked && tab.id === 0);
+        return (
         <button
           key={tab.id}
-          className={`nes-btn btn-header ${tabIndex === tab.id ? "is-success" : ""} ${tab.disabled ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-          onClick={() => !tab.disabled && setTabIndex(tab.id)}
+          className={`nes-btn btn-header ${tabIndex === tab.id ? "is-success" : ""} ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+          onClick={() => !isDisabled && setTabIndex(tab.id)}
           // onKeyDown={(event) => handleKeyPress(event, tab.id, tab.disabled)}
-          disabled={tab.disabled}
+          disabled={isDisabled}
           aria-selected={tabIndex === tab.id} 
           role="tab"
         >
@@ -50,7 +52,8 @@ const Header = ({ tabIndex, setTabIndex }: HeaderProps) => {
             )) : tab.description}
           </p>
         </button>
-      ))}
+        );
+      })}
     </div>
   );
 };

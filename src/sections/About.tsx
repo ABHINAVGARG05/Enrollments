@@ -2,7 +2,7 @@ import BoundingBox from "../components/BoundingBox";
 import Navbar from "../components/Navbar";
 const About = () => {
   return (
-    <div className="w-full min-h-screen h-full flex flex-col md:flex-row justify-center items-center p-4 md:p-12 overflow-auto">
+    <div className="w-full min-h-screen h-full flex flex-col md:flex-row justify-center items-center p-4 overflow-auto">
       <Navbar />
       <BoundingBox className="relative  overflow-auto">
         <div className="w-full h-full text-center relative">

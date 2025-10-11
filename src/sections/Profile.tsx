@@ -5,7 +5,6 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import CustomToast, { ToastContent } from "../components/CustomToast";
 import { useTabStore } from "../store";
 import secureLocalStorage from "react-secure-storage";
-import { debounce } from "lodash";
 import { z } from "zod";
 import BoundingBox from "../components/BoundingBox";
 import { jwtDecode, JwtPayload } from "jwt-decode";
@@ -226,8 +225,7 @@ const Profile = () => {
   // Initialize form from stored data
   useEffect(() => {
     const userDetailsStr = secureLocalStorage.getItem("userDetails") as string | null;
-    const token = Cookies.get("refreshToken")
-    console.log(token)
+  const token = Cookies.get("refreshToken")
     if(token) {
       const decoded = jwtDecode<CustomJwtPayload>(token);
       if(decoded.isProfileDone) {
@@ -245,32 +243,23 @@ const Profile = () => {
         domain: userDetails.domain || [],
       });
     } else {
-      fetchUserDetails().then((userDetails) => {
-        setIsProfileComplete(true);
-        alert(userDetails)
-      });
+      fetchUserDetails().catch(() => { /* handled in hook */ });
   }}, [fetchUserDetails]);
 
-  // Update tab index when profile is complete
+  // Update tab index when profile is complete and show notice
   useEffect(() => {
     if (isProfileComplete) {
+      setToast({ message: "Profile is already completed.", type: ToastType.SUCCESS, duration: TOAST_DURATION });
       setTabIndex(1);
     }
   }, [isProfileComplete, setTabIndex]);
 
-  // Debounced form field updates
-  const debouncedSetFormState = useMemo(
-    () => debounce((field: keyof ProfileFormState, value: string | Domain[]) => {
-      setFormState((prev) => ({ ...prev, [field]: value }));
-    }, 300),
-    []
-  );
-
+  // Immediate form updates for snappy typing
   const handleInputChange = useCallback(
     (field: keyof ProfileFormState, value: string) => {
-      debouncedSetFormState(field, value);
+      setFormState((prev) => ({ ...prev, [field]: value }));
     },
-    [debouncedSetFormState]
+    []
   );
 
   const handleDomainChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -311,17 +300,22 @@ const Profile = () => {
 
     try {
       const data = await updateProfile(formState);
+      // Mark locally as completed for immediate lock
+      secureLocalStorage.setItem("profileComplete", true);
+      // Refetch latest details from backend
       await fetchUserDetails();
-      secureLocalStorage.setItem(
-        "userDetails",
-        JSON.stringify({ ...formState, isProfileDone: true })
-      );
+      // Lock in UI immediately
       setIsProfileComplete(true);
       setToast({
         message: data.message || "Profile updated successfully!",
         type: ToastType.SUCCESS,
         duration: TOAST_DURATION,
       });
+      // Soft, subtle reload to ensure all providers/stores pick newer flags without visible flicker
+      setTimeout(() => {
+        // Use replace to avoid extra history entry; Vite dev preserves state; in prod this is quick
+        window.location.reload();
+      }, 400);
     } catch (error) {
       setToast({
         message: updateError || "Failed to update profile",
@@ -364,7 +358,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="w-full profile py-4 flex gap-2 flex-col lg:flex-row ">
+  <div className="w-full profile py-4 flex gap-4 flex-col lg:flex-row ">
       {toast && (
         <CustomToast
           setToast={() => setToast(null)}
@@ -377,14 +371,11 @@ const Profile = () => {
 
       {isProfileComplete ? (
         <div className="min-h-[75vh] w-[90%] lg:w-[70%] text-center text-white mx-auto text-sm md:text-xl flex items-center justify-center">
-          You've already completed your profile!
-          <br />
-          <br />
-          If you want to update your domains, go to the profile section
+          You've already completed your profile and it is locked.
         </div>
       ) : (
         <>
-          <div className="nes-container is-rounded is-dark dark-nes-container w-full lg:w-[30%] flex flex-col p-4">
+          <div className="nes-container is-rounded is-dark dark-nes-container w-full lg:w-[30%] flex flex-col p-4 h-[70vh] overflow-y-auto">
             {/* ✅ Centered Title */}
             <div className="h-auto mb-4 text-lg">Hello World</div>
 
@@ -393,7 +384,7 @@ const Profile = () => {
               Got a sec? We need you to spice up your profile with the right deets. Drop your name, contacts, Domains, and whatever else floats your boat. It helps us help you better! Cheers!
             </div>
           </div>
-          <div className="nes-container is-rounded w-full lg:w-[70%] sm-[100%] is-dark dark-nes-container overflow-y-scroll z-[1000]">
+          <div className="nes-container is-rounded w-full lg:w-[70%] is-dark dark-nes-container h-[70vh] overflow-y-auto z-[1000]">
             <form
               className="flex flex-col gap-8 md:gap-4 w-full"
               onSubmit={handleSubmit}
