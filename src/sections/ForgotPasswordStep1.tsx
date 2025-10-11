@@ -54,7 +54,7 @@ const ForgotPassword = () => {
           autoClose: 3000,
           theme: "dark",
         });
-        console.log("response", response);
+        // console.log("response", response);
       }
     } catch (error) {
       console.error("An unexpected error occurred:", error);

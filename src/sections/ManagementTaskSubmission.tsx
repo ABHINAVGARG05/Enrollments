@@ -130,7 +130,7 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
           },
         }
       );
-      console.log("Response:", response.data);
+      // console.log("Response:", response.data);
       if (response.data) {
         secureLocalStorage.setItem("MangSub", true);
         setOpenToast(true);

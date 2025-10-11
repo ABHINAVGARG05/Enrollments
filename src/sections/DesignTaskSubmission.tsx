@@ -157,8 +157,8 @@ const { tabIndex, setTabIndex } = useTabStore();
     if (decoded?.isDesignDone) {
       desg = decoded?.isDesignDone;
     }
-    console.log("refresh--->", decoded);
-    console.log(desg);
+    // console.log("refresh--->", decoded);
+    // console.log(desg);
   }
   if (secureLocalStorage.getItem("DesgSub") || desg) {
     return (
@@ -218,7 +218,7 @@ const { tabIndex, setTabIndex } = useTabStore();
                 checked={subdomain.includes("3d")}
                 onChange={handleCheckboxChange}
               />
-              <span className="text-xs md:text-xs">3D</span>
+              <span className="text-xs md:text-xs">3D Modelling</span>
             </label>
             <label>
               <input

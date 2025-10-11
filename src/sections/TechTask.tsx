@@ -5,6 +5,7 @@ interface Task {
   description: string;
   title: string;
   resources?: string[];
+  for:string;
 }
 interface Props {
   selectedSubDomain: string;
@@ -30,18 +31,40 @@ const TechTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
   // useEffect(() => {
   //   const isSenior = secureLocalStorage.getItem("isSC");
   //   setIsSC();
+  // }, [isSC]); 
+  // useEffect(() => {
+  //   const isSenior = secureLocalStorage.getItem("isSC");
+  //   setIsSC();
   // }, [isSC]);
 
   useLayoutEffect(() => {
-    const userDetailsstore = secureLocalStorage.getItem(
-      "userDetails"
-    ) as string;
-    if (userDetailsstore) {
+    const userDetailsstore = secureLocalStorage.getItem("userDetails");
+    
+    if (typeof userDetailsstore !== "string") {
+      console.warn("userDetailsstore is not a string:", userDetailsstore);
+      setIsSC(false); // Default to false if storage data is invalid
+      return;
+    }
+  
+    try {
       const userDetails = JSON.parse(userDetailsstore);
-      setIsSC(userDetails.isSC);
+      console.log("Parsed userDetails:", userDetails);
+  
+      if (typeof userDetails.data.isSC === "boolean") {
+        setIsSC(userDetails.data.isSC);
+        console.log(userDetails.data.isSC);
+      } else {
+        console.warn("Invalid isSC value:", userDetails.isSC);
+        setIsSC(false);
+      }
+    } catch (error) {
+      console.error("Error parsing userDetails:", error);
+      setIsSC(false);
     }
   }, []);
-  // console.log(isSC);
+  
+  
+  
 
   return (
     <div

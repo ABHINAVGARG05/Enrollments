@@ -36,7 +36,7 @@ const FAQs = () => {
           <Faqcomp
             que={"What is the selection process?"}
             ans={
-              "Recruitment task will be followed by an interview conducted by Board Members."
+              "Recruitment task will be followed by an interview conducted by the Core Committee."
             }
           />
         </div>

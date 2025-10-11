@@ -91,7 +91,7 @@ const useUserDetails = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      console.log(data)
+      // console.log(data)
       secureLocalStorage.setItem("userDetails", JSON.stringify(data));
       return data;
     } catch (error) {
@@ -163,7 +163,7 @@ const useProfileUpdate = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      console.log(data)
+      // console.log(data)
       return data;
     } catch (error) {
       const message = error instanceof AxiosError 
@@ -225,7 +225,8 @@ const Profile = () => {
   // Initialize form from stored data
   useEffect(() => {
     const userDetailsStr = secureLocalStorage.getItem("userDetails") as string | null;
-  const token = Cookies.get("refreshToken")
+    const token = Cookies.get("refreshToken")
+    // console.log(token)
     if(token) {
       const decoded = jwtDecode<CustomJwtPayload>(token);
       if(decoded.isProfileDone) {
