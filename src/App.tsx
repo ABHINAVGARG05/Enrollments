@@ -11,6 +11,7 @@ import MainWrapper from "./wrappers/MainWrapper";
 import About from "./sections/About";
 import FAQs from "./sections/FAQs";
 import ChangeProfile from "./sections/ChangeProfile";
+import Meeting from "./sections/Meeting"
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/faq" element={<FAQs />} />
             <Route path="/profile" element={<ChangeProfile />} />
+            <Route path="/meeting" element={<Meeting />} />
           </Routes>
         </Router>
       </MainWrapper>
