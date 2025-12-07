@@ -12,8 +12,9 @@ const NavbarComponent = () => {
     { id: 1, label: "About", src: "/mfc-logo.png", route: "/about" },
     { id: 2, label: "FAQs", src: "/faq.png", route: "/faq" },
     { id: 3, label: "Profile", src: "/profile.png", route: "/profile" },
+    { id: 4, label: "Meeting", src: "/meeting.png", route: "/meeting" },
     {
-      id: 4,
+      id: 5,
       label: "Logout",
       src: "/logout.png",
       route: "/",
