@@ -8,7 +8,8 @@ const Interface = () => {
   const [showComponents, setShowComponents] = useState(false);
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
+    // let timeout: NodeJS.Timeout;
+    let timeout: ReturnType<typeof setTimeout>;
     if (isPlayButton) {
       timeout = setTimeout(() => {
         setShowComponents(true);
