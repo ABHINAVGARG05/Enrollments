@@ -82,7 +82,7 @@ const ApplicationStatus = () => {
       </div>
 
       <div className="text-white h-full w-full lg:w-[90%]">
-        <div className="w-full bg-black h-full nes-container is-rounded is-centered with-title is-centered is-dark">
+        <div className="w-full bg-black h-full nes-container is-rounded is-centered with-title is-centered is-dark status-box">
           <div className="h-auto mb-4 text-lg">Status</div>
           {selectedDomain === -1 && <div className="text-xs">Select Domain to see Submissions</div>}
           {Array.isArray(domains) && domains.includes("tech") && selectedDomain === 0 && <TechApplicationStatus />}
