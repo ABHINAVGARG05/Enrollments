@@ -25,6 +25,18 @@ body {
 .profile {
   height: calc(100% - 5rem);
 }
+.task-box {
+  height: calc(100% + 7px);  
+  transform: translateY(-7px); 
+}
+.tasksubmission-box{
+    height: calc(100% + 14px);  
+  transform: translateY(-7px); 
+}
+.status-box{
+  height: calc(100% + 6px);  
+  transform: translateY(-6px); 
+}
 ::-webkit-scrollbar {
   width: 0em;
 }
