@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState } from "react";
 import BoundingBox from "../components/BoundingBox";
 import Navbar from "../components/Navbar";
 
-// --- TYPES ---
 interface EventItem {
   year: string;
   title: string;
@@ -10,7 +9,6 @@ interface EventItem {
   status: "completed" | "loading";
 }
 
-// --- DATA ---
 const events: EventItem[] = [
   { year: "year", title: "event name", desc: "description", status: "completed" },
   { year: "year", title: "event name", desc: "description", status: "completed" },
@@ -25,12 +23,12 @@ const About: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [displayedText, setDisplayedText] = useState("");
 
-  // --- TYPEWRITER EFFECT ---
+
   useEffect(() => {
     let index = 0;
     let timer: any;
 
-    // Wait 1.2s for the Glitch Animation to finish before typing starts
+    
     const startDelay = setTimeout(() => {
       timer = setInterval(() => {
         if (index < fullDescription.length) {
@@ -48,7 +46,7 @@ const About: React.FC = () => {
     };
   }, []);
 
-  // --- HORIZONTAL SCROLL LOGIC ---
+  
   useEffect(() => {
     if (scrollContainerRef.current) {
       const el = scrollContainerRef.current;
