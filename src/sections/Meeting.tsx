@@ -1,6 +1,45 @@
 import BoundingBox from "../components/BoundingBox";
 import Navbar from "../components/Navbar";
+import { useState } from 'react';
 const Meeting = () => {
+  const [loading, setLoading] = useState(false);
+
+  const handleCancelMeeting = async (idOfMeetingToCancel: string) => {
+    if (loading) return; // Prevent double clicks
+    setLoading(true);
+
+    // Make sure this matches your Backend URL
+    const url = "http://localhost:5001/cancel"; 
+    
+    const dataToSend = {
+        meetingId: idOfMeetingToCancel
+    };
+
+    try {
+        const response = await fetch(url, {
+            method: "POST", 
+            headers: {
+                "Content-Type": "application/json", 
+            },
+            body: JSON.stringify(dataToSend), 
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            alert("Meeting cancelled successfully!");
+            console.log("Server response:", result);
+        } else {
+            alert("Failed to cancel: " + (result.message || "Unknown error"));
+        }
+
+    } catch (error) {
+        console.error("Network error:", error);
+        alert("Could not connect to the backend.");
+    } finally {
+        setLoading(false);
+    }
+  };
   return (
     <div className="w-full min-h-screen h-full flex flex-col md:flex-row justify-center items-center p-4 overflow-auto">
       <Navbar />
