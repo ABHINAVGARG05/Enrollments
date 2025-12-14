@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useState } from "react";
+import TaskModal from "../components/TaskModal";
 import secureLocalStorage from "react-secure-storage";
 interface Task {
   label: string;
@@ -66,6 +67,14 @@ const TechTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
   
   
 
+  const [showModal, setShowModal] = useState(false);
+  const [activeTask, setActiveTask] = useState<Task | null>(null);
+
+  const openTask = (task: Task) => {
+    setActiveTask(task);
+    setShowModal(true);
+  };
+
   return (
     <div
       className={`w-full h-full overflow-y-auto -task-container ${
@@ -124,42 +133,23 @@ const TechTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
       )}
 
       {selectedSubDomain !== "" && (
-  <div className="w-full mt-8 h-full flex flex-col gap-8 md:gap-4">
+        <div className="w-full mt-8 h-full flex flex-col gap-3 md:gap-4">
           {filteredTasks.map((task, index) => (
             <div
-              className="nes-container is-dark with-title  dark-container-nes"
               key={index}
+              role="button"
+              tabIndex={0}
+              onClick={() => openTask(task)}
+              onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && openTask(task)}
+              className="nes-container is-dark with-title dark-container-nes px-4 py-3 cursor-pointer flex flex-col items-center justify-center text-center"
             >
-              <p className="title">{task.title}</p>
-              <p className="text-xs md:text-sm text-left leading-4 desc-task">
-                {task.description}
-              </p>
-              {task.resources && task.resources.length > 0 && (
-                <div className="flex justify-between flex-col md:flex-row">
-                  <span className="md:text-sm text-xs">Resources:</span>
-                  <span className="flex flex-col md:text-sm text-xs md:flex-row">
-                    {task.resources &&
-                      task.resources.map((resource, index) => (
-                        <a href={resource} target="_blank" key={index}>
-                          Resource {index + 1} &nbsp;
-                        </a>
-                      ))}
-                  </span>
-                </div>
-              )}
-              {/* <button
-                type="button"
-                className="nes-btn is-error  custom-nes-error"
-                onClick={() => {
-                  setShowModal(true);
-                  setTaskState(task.title);
-                }}
-              >
-                Submit Task
-              </button> */}
+              <p className="title text-sm m-0 w-full">{task.title}</p>
             </div>
           ))}
         </div>
+      )}
+      {showModal && activeTask && (
+        <TaskModal task={activeTask} onClose={() => setShowModal(false)} />
       )}
       {/* {showModal && <Modal task={taskState} setShowModal={setShowModal} />} */}
     </div>
