@@ -55,7 +55,9 @@ const Fox = (props: JSX.IntrinsicElements["group"]) => {
   }, [animationIndex, actions, names]);
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout | null = null;
+    // let timeout: NodeJS.Timeout | null = null;
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+
 
     if (group.current && animationIndex === 7) {
       const onCompleteHandler = () => {
@@ -104,7 +106,8 @@ const Fox = (props: JSX.IntrinsicElements["group"]) => {
 
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout | null = null;
+    // let timeout: NodeJS.Timeout | null = null;
+    let timeout: ReturnType<typeof setTimeout> | null = null;
 
     if (group.current && animationIndex === 5) {
       const onCompleteHandler = () => {

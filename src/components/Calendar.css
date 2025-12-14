@@ -1,0 +1,119 @@
+ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  font-family: Verdana, sans-serif;
+}
+
+/* Month header */
+.month {
+  padding: 30px 25px;
+  width: 100%;
+  background: #fc7a00;
+  text-align: center;
+}
+
+.month ul li {
+  color: white;
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+}
+
+/* Weekdays */
+.weekdays {
+  width: 100%;
+  padding: 10px 0;
+  background-color: #ddd;
+      margin: 0px;
+}
+
+.weekdays li {
+  display: inline-block;
+  width: 13.6%;
+  color: #666;
+  text-align: center;
+  font-size: 1rem;
+}
+
+/* Days */
+.days {
+  width: 100%;
+  padding: 10px 0;
+  background: #eee;
+}
+
+.days li {
+  display: inline-block;
+  width: 13.6%;
+  margin-bottom: 8px;
+  text-align: center;
+  font-size: 12px;
+}
+
+/* Disabled dates */
+.days li .deactive {
+  padding: 6px;
+  color: rgb(184, 184, 184);
+}
+
+/* Clickable dates */
+.days li .date {
+  padding: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  color: #fc7a00;
+}
+
+/* Hover effect */
+.days li .date:hover {
+  background: #ff9f43;
+  color: white;
+}
+
+/* Selected date */
+.days li .selected {
+  background: #8b3d00;
+  color: white;
+}
+
+.days li span {
+  display: inline-block;
+  padding: 6px;
+  width: 28px;
+  text-align: center;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+/* Non-selectable */
+.deactive {
+  color: #b8b8b8;
+  cursor: not-allowed;
+}
+
+/* Selectable */
+.clickable {
+  cursor: pointer;
+  background: #eee;
+  color: #fc7a00;
+}
+
+.days li .date:not(.clickable) {
+  color: #333;
+}
+
+
+.clickable:hover {
+  background: #ff9f43;
+  color: white;
+}
+
+/* Selected date */
+.selected {
+  background: #8b3d00 !important;
+  color: white;
+}
