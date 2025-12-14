@@ -340,7 +340,6 @@ const Meeting = () => {
                   </label>
                 </div>
 
-
                 <p style={{ fontSize: "0.9rem" }}>
                   Scheduled Time:-{" "}
                   {scheduledDateTime ? (
