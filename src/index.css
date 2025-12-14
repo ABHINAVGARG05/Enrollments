@@ -347,3 +347,8 @@ input[type="password"] {
     rotate: 360deg;
   }
 }
+* {
+  word-spacing: 5px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
