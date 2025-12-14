@@ -267,6 +267,14 @@ const Task = () => {
           </button>
         )}
         <div className="h-auto mb-4 mt-2 text-lg">Tasks</div>
+        {selectedSubDomain !== "" && selectedDomain !== DOMAIN_MAP.management && (
+          <div className="mb-4">
+            <p className="text-xs">
+              <span className="text-red-500 font-semibold">NOTE:</span>
+              <span className="text-white"> Click to View Description</span>
+            </p>
+          </div>
+        )}
         <div className="w-full h-full flex items-center relative">
           {domains.includes("tech") && selectedDomain === 0 && (
             <TechTask

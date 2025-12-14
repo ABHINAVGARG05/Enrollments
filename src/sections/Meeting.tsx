@@ -1,212 +1,45 @@
 import BoundingBox from "../components/BoundingBox";
 import Navbar from "../components/Navbar";
-import Calendar from "../components/Calendar";
-import Button from "../components/Button";
-import secureLocalStorage from "react-secure-storage";
-import Cookies from "js-cookie";
-import { useState, useEffect } from "react";
-import axios from "axios";
-
+import { useState } from 'react';
 const Meeting = () => {
-  const [statusTech, setStatusTech] = useState(false);
-  const [statusDesign, setStatusDesign] = useState(false);
-  const [statusManagement, setStatusManagement] = useState(false);
-  const [date, setDate] = useState<number | null>(null);
-  const [time, setTime] = useState<string>("");
-  const [id, setId] = useState<string>("");
-  const [gmeet, setGmeet] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(false);
-  const isSelectedTime = (value: string) => time === value;
-  const [scheduledDateTime, setScheduledDateTime] = useState<{
-    date: number;
-    time: string;
-  } | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleDate: (data: number) => void = (data) => {
-    setDate(data);
-    console.log(date);
-  };
+  const handleCancelMeeting = async (idOfMeetingToCancel: string) => {
+    if (loading) return; // Prevent double clicks
+    setLoading(true);
 
-  const handleTime = (data: string) => {
-    setTime(data);
-    console.log(time);
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const id = secureLocalStorage.getItem("id");
-      if (!id) {
-        console.error("User id not found in secureLocalStorage");
-        return;
-      }
-
-      // console.log("id12", id);
-      const token = Cookies.get("jwtToken");
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_BASE_URL}/applicatiostatus/statustech/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        // console.log("response", response);
-        if (response.data) {
-          setStatusTech(response.data.passed);
-          console.log(response.data.passed);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const id = secureLocalStorage.getItem("id");
-      if (!id) {
-        console.error("User id not found in secureLocalStorage");
-        return;
-      }
-
-      // console.log("id12", id);
-      const token = Cookies.get("jwtToken");
-      try {
-        const response = await axios.get(
-          `${
-            import.meta.env.VITE_BASE_URL
-          }/applicatiostatus/statusdesign/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        // console.log("response", response);
-        if (response.data) {
-          setStatusDesign(response.data.passed);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const id = secureLocalStorage.getItem("id");
-      if (!id) {
-        console.error("User id not found in secureLocalStorage");
-        return;
-      }
-
-      // console.log("id12", id);
-      const token = Cookies.get("jwtToken");
-      try {
-        const response = await axios.get(
-          `${
-            import.meta.env.VITE_BASE_URL
-          }/applicatiostatus/statusmanagement/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        // console.log("response", response);
-        if (response.data) {
-          setStatusManagement(response.data.passed);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const domains: string[] = [];
-
-  if (statusTech) domains.push("Tech");
-  if (statusDesign) domains.push("Design");
-  if (statusManagement) domains.push("Management");
-
-  useEffect(() => {
-    const fetchId = async () => {
-      const id = secureLocalStorage.getItem("id");
-
-      if (typeof id === "string") {
-        setId(id);
-        console.log(id);
-      } else {
-        console.error("User id not found in local storage");
-      }
-    };
-    fetchId();
-  }, []);
-
-  useEffect(() => {
-    const stored = secureLocalStorage.getItem("storedDateTime");
-
-    if (typeof stored === "string") {
-      try {
-        const parsed = JSON.parse(stored);
-        setScheduledDateTime(parsed);
-      } catch (err) {
-        console.error("Invalid stored date/time");
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    const savedLink = secureLocalStorage.getItem("interviewLink");
-    if (typeof savedLink === "string") {
-      setGmeet(savedLink);
-    }
-  }, []);
-
-  const scheduleTime = `2025-12-${date}T${time}:00.000+05:30`;
-  console.log(scheduleTime);
-  // "2025-12-10T22:00:00.000+05:30"
-  const handleMeeting = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    setIsLoading(true);
-    const meetingDetails = {
-      candidateId: id,
-      domains,
-      scheduletime: scheduleTime,
+    // Make sure this matches your Backend URL
+    const url = "http://localhost:5001/cancel"; 
+    
+    const dataToSend = {
+        meetingId: idOfMeetingToCancel
     };
 
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/api/meet/schedule`,
-        meetingDetails
-      );
+        const response = await fetch(url, {
+            method: "POST", 
+            headers: {
+                "Content-Type": "application/json", 
+            },
+            body: JSON.stringify(dataToSend), 
+        });
 
-      console.log(response);
-      console.log(response.data.data.gmeetLink);
-      const link = response.data.data.gmeetLink;
-      const storeDate = {
-        date,
-        time,
-      };
-      setGmeet(link);
-      secureLocalStorage.setItem("interviewLink", link);
-      secureLocalStorage.setItem("storedDateTime", JSON.stringify(storeDate));
+        const result = await response.json();
 
-      setIsLoading(false);
+        if (response.ok) {
+            alert("Meeting cancelled successfully!");
+            console.log("Server response:", result);
+        } else {
+            alert("Failed to cancel: " + (result.message || "Unknown error"));
+        }
+
     } catch (error) {
-      console.log(error);
+        console.error("Network error:", error);
+        alert("Could not connect to the backend.");
     } finally {
-      setIsLoading(false);
+        setLoading(false);
     }
   };
-
   return (
     <div className="w-full min-h-screen h-full flex flex-col md:flex-row justify-center items-center p-4 overflow-auto">
       <Navbar />

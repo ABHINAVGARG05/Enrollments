@@ -101,26 +101,25 @@ export default ManagementTask;
 // }) {
 //   return (
 //     <div
-//       className="bg-black p-4 min-w-[90vw] md:min-w-[50vw] min-h-[30vh] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 nes-container is-dark is-rounded --submit-container"
-//       style={{ position: "absolute" }}
+//       className="max-w-5xl w-[98%] md:w-[90%] lg:w-[75%] z-50 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 nes-container is-dark is-rounded p-1 text-[11px]"
 //     >
 //       <form method="">
-//         <p className="title text-xl">Submit Task</p>
+//         <p className="title text-sm">Submit Task</p>
 //         <textarea
 //           id="textarea_field"
-//           className="nes-textarea is-dark min-h-[20rem] md:min-h-[10rem] text-xs md:text-sm max-h-[25rem] md:max-h-[20rem]"
+//           className="nes-textarea is-dark text-xs min-h-[6rem] max-h-[12rem] w-full"
 //           name={`${task}`}
 //         ></textarea>
-//         <menu className="dialog-menu mt-4">
+//         <menu className="dialog-menu mt-3">
 //           <button
-//             className="nes-btn text-xs md:text-base"
+//             className="nes-btn text-xs"
 //             type="button"
 //             onClick={() => setShowModal(false)}
 //           >
 //             Cancel
 //           </button>
 //           <button
-//             className="nes-btn is-error text-xs md:text-base"
+//             className="nes-btn is-error text-xs"
 //             type="submit"
 //             onClick={() => {}}
 //           >
