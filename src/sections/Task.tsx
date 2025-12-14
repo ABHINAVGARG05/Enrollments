@@ -254,7 +254,8 @@ const Task = () => {
         </div>
       </div>
 
-  <div className="nes-container is-rounded is-dark with-title is-centered dark-nes-container w-full lg:w-[90%] relative dark-container-nes max-h-[75vh] overflow-y-auto">
+  <div className="nes-container is-rounded is-dark with-title is-centered dark-nes-container w-full lg:w-[90%] relative dark-container-nes max-h-[75vh] overflow-y-auto task-box">
+
         {selectedSubDomain !== "" && (
           <button
             type="button"
