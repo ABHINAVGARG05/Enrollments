@@ -70,7 +70,7 @@ const Landing = () => {
         `${import.meta.env.VITE_BASE_URL}/auth/login`,
         inputs
       );
-
+      console.log(response);
       if (response.data.token) {
         Cookies.set("refreshToken",response.data.refreshToken,{secure:true})
         Cookies.set("jwtToken", response.data.token, { secure: true });
@@ -79,10 +79,12 @@ const Landing = () => {
           autoClose: 3000,
           theme: "dark",
         });
-
+        
         secureLocalStorage.setItem("id", response.data.id);
         secureLocalStorage.setItem("name", response.data.username);
         secureLocalStorage.setItem("email", response.data.email);
+        secureLocalStorage.setItem("gmeetLink", response.data.gmeetlink);
+        secureLocalStorage.setItem("scheduledTime", response.data.scheduledTime);
 
         await fetchUserDetails(response.data.id);
       } else if (response.data.error) {

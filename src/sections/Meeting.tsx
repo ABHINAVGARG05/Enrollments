@@ -1,45 +1,233 @@
 import BoundingBox from "../components/BoundingBox";
 import Navbar from "../components/Navbar";
-import { useState } from 'react';
+import Calendar from "../components/Calendar";
+import Button from "../components/Button";
+import secureLocalStorage from "react-secure-storage";
+import Cookies from "js-cookie";
+import { useState, useEffect } from "react";
+import axios from "axios";
+
 const Meeting = () => {
-  const [loading, setLoading] = useState(false);
+  const [statusTech, setStatusTech] = useState(false);
+  const [statusDesign, setStatusDesign] = useState(false);
+  const [statusManagement, setStatusManagement] = useState(false);
+  const [date, setDate] = useState<number | null>(null);
+  const [time, setTime] = useState<string>("");
+  const [id, setId] = useState<string>("");
+  const [gmeet, setGmeet] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
+  const isSelectedTime = (value: string) => time === value;
+  const [scheduledTime, setScheduledTime] = useState<string>("");
 
-  const handleCancelMeeting = async (idOfMeetingToCancel: string) => {
-    if (loading) return; // Prevent double clicks
-    setLoading(true);
+  // console.log(secureLocalStorage.getItem("userDetails"));
 
-    // Make sure this matches your Backend URL
-    const url = "http://localhost:5001/cancel"; 
-    
-    const dataToSend = {
-        meetingId: idOfMeetingToCancel
+  const handleDate: (data: number) => void = (data) => {
+    setDate(data);
+    // console.log(date);
+  };
+
+  const handleTime = (data: string) => {
+    setTime(data);
+    // console.log(time);
+  };
+
+  const formatDateTime = (isoString: string) => {
+    const date = new Date(isoString);
+
+    const formattedDate = date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+
+    const formattedTime = date.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+
+    return `${formattedDate}, ${formattedTime}`;
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const id = secureLocalStorage.getItem("id");
+      if (!id) {
+        console.error("User id not found in secureLocalStorage");
+        return;
+      }
+
+      // console.log("id12", id);
+      const token = Cookies.get("jwtToken");
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/applicatiostatus/statustech/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        // console.log("response", response);
+        if (response.data) {
+          setStatusTech(response.data.passed);
+          console.log(response.data.passed);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const id = secureLocalStorage.getItem("id");
+      if (!id) {
+        console.error("User id not found in secureLocalStorage");
+        return;
+      }
+
+      // console.log("id12", id);
+      const token = Cookies.get("jwtToken");
+      try {
+        const response = await axios.get(
+          `${
+            import.meta.env.VITE_BASE_URL
+          }/applicatiostatus/statusdesign/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        // console.log("response", response);
+        if (response.data) {
+          setStatusDesign(response.data.passed);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const id = secureLocalStorage.getItem("id");
+      if (!id) {
+        console.error("User id not found in secureLocalStorage");
+        return;
+      }
+
+      // console.log("id12", id);
+      const token = Cookies.get("jwtToken");
+      try {
+        const response = await axios.get(
+          `${
+            import.meta.env.VITE_BASE_URL
+          }/applicatiostatus/statusmanagement/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        // console.log("response", response);
+        if (response.data) {
+          setStatusManagement(response.data.passed);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  
+  const domains: string[] = [];
+
+  if (statusTech) domains.push("Tech");
+  if (statusDesign) domains.push("Design");
+  if (statusManagement) domains.push("Management");
+
+  useEffect(() => {
+    const fetchId = async () => {
+      const id = secureLocalStorage.getItem("id");
+
+      if (typeof id === "string") {
+        setId(id);
+        console.log(id);
+      } else {
+        console.error("User id not found in local storage");
+      }
+    };
+    fetchId();
+  }, []);
+
+  useEffect(() => {
+    const savedLink = secureLocalStorage.getItem("gmeetLink");
+    const savedTime = secureLocalStorage.getItem("scheduledTime");
+    if (typeof savedLink === "string") {
+      setGmeet(savedLink);
+    }
+    if (typeof savedTime === "string") {
+      setScheduledTime(savedTime);
+    }
+  }, []);
+
+  const scheduleTime = `2025-12-${date}T${time}:00.000+05:30`;
+  console.log(scheduleTime);
+  // "2025-12-10T22:00:00.000+05:30"
+  const handleMeeting = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    if (!date || !time) {
+      alert("Please select date and time");
+      setIsLoading(false);
+      return;
+    }
+
+    setIsLoading(true);
+    const meetingDetails = {
+      candidateId: id,
+      domains,
+      scheduletime: scheduleTime,
     };
 
     try {
-        const response = await fetch(url, {
-            method: "POST", 
-            headers: {
-                "Content-Type": "application/json", 
-            },
-            body: JSON.stringify(dataToSend), 
-        });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/meet/schedule`,
+        meetingDetails
+      );
 
-        const result = await response.json();
+      console.log(response);
+      console.log(response.data.data.gmeetLink);
+      const link = response.data.data.gmeetLink;
+      const time = response.data.data.scheduledTime;
 
-        if (response.ok) {
-            alert("Meeting cancelled successfully!");
-            console.log("Server response:", result);
-        } else {
-            alert("Failed to cancel: " + (result.message || "Unknown error"));
-        }
+      secureLocalStorage.setItem("gmeetLink", link);
+      secureLocalStorage.setItem("scheduledTime", time);
+      setGmeet(link);
+      setScheduledTime(time);
+      // const storeDate = {
+      //   date,
+      //   time,
+      // };
 
+      // secureLocalStorage.setItem("interviewLink", link);
+      // secureLocalStorage.setItem("storedDateTime", JSON.stringify(storeDate));
+      // console.log(secureLocalStorage.getItem("userDetails"));
+      setIsLoading(false);
     } catch (error) {
-        console.error("Network error:", error);
-        alert("Could not connect to the backend.");
+      console.log(error);
     } finally {
-        setLoading(false);
+      setIsLoading(false);
     }
   };
+
   return (
     <div className="w-full min-h-screen h-full flex flex-col md:flex-row justify-center items-center p-4 overflow-auto">
       <Navbar />
@@ -175,9 +363,9 @@ const Meeting = () => {
 
                 <p style={{ fontSize: "0.9rem" }}>
                   Scheduled Time:-{" "}
-                  {scheduledDateTime ? (
+                  {scheduledTime ? (
                     <strong style={{ color: "#fc7a00" }}>
-                      Dec {scheduledDateTime.date}, {scheduledDateTime.time}
+                      {formatDateTime(scheduledTime)}
                     </strong>
                   ) : (
                     <span style={{ color: "#aaa" }}>Not scheduled yet</span>

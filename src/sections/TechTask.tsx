@@ -49,11 +49,11 @@ const TechTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
   
     try {
       const userDetails = JSON.parse(userDetailsstore);
-      console.log("Parsed userDetails:", userDetails);
+      // console.log("Parsed userDetails:", userDetails);
   
       if (typeof userDetails.data.isSC === "boolean") {
         setIsSC(userDetails.data.isSC);
-        console.log(userDetails.data.isSC);
+        // console.log(userDetails.data.isSC);
       } else {
         console.warn("Invalid isSC value:", userDetails.isSC);
         setIsSC(false);

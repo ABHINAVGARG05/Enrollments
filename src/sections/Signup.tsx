@@ -251,7 +251,7 @@ const Signup: React.FC = () => {
                 placeholder="Enter your Registration Number"
                 type="text"
                 value={regno}
-                onChange={(e) => setRegno(e.target.value.toUpperCase())}
+                onChange={(e) => setRegno(e.target.value.toUpperCase().trim())}
                 required={true}
                 className=" text-black"
               />
