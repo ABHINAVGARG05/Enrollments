@@ -35,9 +35,9 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
 
   useEffect(() => {
     const token = Cookies.get("jwtToken");
-    if(token) {
+    if (token) {
       const decoded = jwtDecode<CustomJwtPayload>(token);
-      if(decoded?.isTechDone){
+      if (decoded?.isTechDone) {
         setIsTechDone(true);
       }
     }
@@ -84,12 +84,12 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
       if (!id) {
         throw new Error("User id not found in secureLocalStorage");
       }
-      
+
       const token = Cookies.get("jwtToken");
       if (!token) {
         throw new Error("JWT token not found");
       }
-      
+
       const response = await axios.get(
         `${import.meta.env.VITE_BASE_URL}/user/user/${id}`,
         {
@@ -120,11 +120,13 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     }
 
     const id = secureLocalStorage.getItem("id");
-    
+
     if (!id) {
       console.error("User id not found in secureLocalStorage");
       setOpenToast(true);
-      setToastContent({ message: "User ID not found. Please try logging in again." });
+      setToastContent({
+        message: "User ID not found. Please try logging in again.",
+      });
       return;
     }
 
@@ -132,7 +134,9 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     if (!token) {
       console.error("JWT token not found");
       setOpenToast(true);
-      setToastContent({ message: "Authentication token missing. Please log in again." });
+      setToastContent({
+        message: "Authentication token missing. Please log in again.",
+      });
       return;
     }
 
@@ -151,7 +155,7 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
           },
         }
       );
-      
+
       if (response.data) {
         secureLocalStorage.setItem("TechSub", true);
         setIsTechDone(true);
@@ -162,15 +166,18 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     } catch (error) {
       console.error("Error submitting tech task:", error);
       setOpenToast(true);
-      setToastContent({ 
-        message: "Failed to submit task. Please try again or contact support." 
+      setToastContent({
+        message: "Failed to submit task. Please try again or contact support.",
       });
     }
   };
 
   // Check if tech task is already submitted
-  if (isTechDone || secureLocalStorage.getItem("TechSub") === true || 
-      secureLocalStorage.getItem("TechSub") === "true") {
+  if (
+    isTechDone ||
+    secureLocalStorage.getItem("TechSub") === true ||
+    secureLocalStorage.getItem("TechSub") === "true"
+  ) {
     return (
       <div className="p-4">
         You've successfully submitted the Tech Task. You can now track the
@@ -308,7 +315,7 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
           ))}
         </section>
         <p className="text-prime text-xs md:text-sm mt-4 md:mt-0">
-          Note: Once submitted you cannot revert back
+          Note: Once submitted you cannot revert
         </p>
         <button
           type="submit"
