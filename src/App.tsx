@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import Dashboard from "./dashboard/Dashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
 import ForgotPassword from "./sections/ForgotPasswordStep1";
 import Landing from "./sections/Landing";
 import ResetPassword from "./sections/ResetPassword";
@@ -23,16 +25,24 @@ function App() {
       <MainWrapper>
         <Router>
           <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/verifyotp" element={<VerifyOTP />} />
-            <Route path="/resetpassword" element={<ResetPassword />} />
-            <Route path="/forgotpassword" element={<ForgotPassword />} />
+            {/* Public pages: Landing, Signup, Auth flows */}
+            <Route path="/" element={<PublicRoute><Landing /></PublicRoute>} />
+            <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
+            <Route path="/verifyotp" element={<PublicRoute><VerifyOTP /></PublicRoute>} />
+            <Route path="/resetpassword" element={<PublicRoute><ResetPassword /></PublicRoute>} />
+            <Route path="/forgotpassword" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+
+            {/* Protected pages - require auth */}
+            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><ChangeProfile /></ProtectedRoute>} />
+            <Route path="/meeting" element={<ProtectedRoute><Meeting /></ProtectedRoute>} />
+
+            {/* Misc */}
             <Route path="/about" element={<About />} />
             <Route path="/faq" element={<FAQs />} />
-            <Route path="/profile" element={<ChangeProfile />} />
-            <Route path="/meeting" element={<Meeting />} />
+
+            {/* Catch-all: show landing for unauthenticated, redirect logged-in users to dashboard via PublicRoute */}
+            <Route path="*" element={<PublicRoute><Landing /></PublicRoute>} />
           </Routes>
         </Router>
       </MainWrapper>
