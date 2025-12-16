@@ -124,9 +124,9 @@ const TaskSubmission = () => {
   <div className="w-full h-full nes-container is-rounded is-dark dark-nes-container text-sm overflow-hidden relative tasksubmission-box">
     <div className="h-auto mb-4 text-lg">Task Submission</div>
     <div className="faq h-[calc(100%-3rem)] overflow-y-auto overflow-x-hidden pr-4">
-      {selectedDomain === -1 && (
+          {selectedDomain === -1 && (
         <div className="min-h-40 flex items-center justify-center text-center">
-          Select any domain to submit task.
+          Select a domain to submit a task.
         </div>
       )}
       {domains?.includes("tech") && selectedDomain === 0 && (

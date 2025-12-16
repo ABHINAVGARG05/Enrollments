@@ -164,7 +164,7 @@ const Landing = () => {
                     : "text-prime text-base lg:text-2xl mt-10 opacity-100"
                 }
               >
-                Wanna play with Mr.Fox Jr??
+                  Want to play with Mr. Fox Jr?
               </div>
               <div className="relative w-[95%] h-[55vh] pb-[15vh] flex items-center justify-center">
                 {!isPlayButton && <PlayBtn />}

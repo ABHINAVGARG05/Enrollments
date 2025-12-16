@@ -70,7 +70,7 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     if (subdomain.length === 0) {
       setOpenToast(true);
       setToastContent({
-        message: "Please select at least one sub-domain!",
+        message: "Please select at least one subdomain!",
         type: "warning",
       });
       return;
@@ -188,7 +188,7 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
         submitted the tasks.
       </div> */}
       <section className="mb-2  text-xs md:text-sm">
-        Append all your design tasks in following manner:
+        Add all your design tasks in the following format:
         <br />
         <span className="text-prime">
           [Project Title 1] - [Figma / Gdrive / Other Link]
@@ -199,7 +199,7 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
         </span>
       </section>
       <form onSubmit={handleSubmitTechTask}>
-        <h2>Choose Sub-Domain</h2>
+        <h2>Choose a subdomain</h2>
         <div className="flex">
           <div className="flex md:flex-row flex-col md:gap-4 flex-wrap justify-center">
             <label>
@@ -241,7 +241,7 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
                 onChange={handleCheckboxChange}
               />
               <span className="text-[0.6rem] md:text-xs">
-                Videoediting/Photography
+                Video Editing / Photography
               </span>
             </label>
           </div>
@@ -333,7 +333,7 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
           ))}
         </section>
         <p className="text-prime text-xs md:text-sm mt-4 md:mt-0">
-          Note: Once submitted you cannot revert
+          Note: Once submitted, this cannot be undone.
         </p>
         <button
           type="submit"

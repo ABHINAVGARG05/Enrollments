@@ -24,12 +24,13 @@ const ApplicationStatus = () => {
   useEffect(() => {
     try {
       const userDetailsStr = secureLocalStorage.getItem("userDetails");
-      
+
       if (userDetailsStr && typeof userDetailsStr === "string") {
         const userDetails = JSON.parse(userDetailsStr) as UserDetails;
 
-        const userDomains = userDetails?.domain || userDetails?.data?.domain || [];
-        
+        const userDomains =
+          userDetails?.domain || userDetails?.data?.domain || [];
+
         if (userDomains.length > 0) {
           setDomains(userDomains);
         }
@@ -84,10 +85,18 @@ const ApplicationStatus = () => {
       <div className="text-white h-full w-full lg:w-[90%]">
         <div className="w-full bg-black h-full nes-container is-rounded is-centered with-title is-centered is-dark status-box">
           <div className="h-auto mb-4 text-lg">Status</div>
-          {selectedDomain === -1 && <div className="text-xs">Select Domain to see Submissions</div>}
-          {Array.isArray(domains) && domains.includes("tech") && selectedDomain === 0 && <TechApplicationStatus />}
-          {Array.isArray(domains) && domains.includes("design") && selectedDomain === 1 && <DesignApplicationStatus />}
-          {Array.isArray(domains) && domains.includes("management") && selectedDomain === 2 && <ManagementApplicationStatus />}
+          {selectedDomain === -1 && (
+            <div className="text-xs">Select a domain to see submissions.</div>
+          )}
+          {Array.isArray(domains) &&
+            domains.includes("tech") &&
+            selectedDomain === 0 && <TechApplicationStatus />}
+          {Array.isArray(domains) &&
+            domains.includes("design") &&
+            selectedDomain === 1 && <DesignApplicationStatus />}
+          {Array.isArray(domains) &&
+            domains.includes("management") &&
+            selectedDomain === 2 && <ManagementApplicationStatus />}
         </div>
       </div>
     </div>

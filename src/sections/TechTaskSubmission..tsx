@@ -115,7 +115,7 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
 
     if (subdomain.length === 0) {
       setOpenToast(true);
-      setToastContent({ message: "Please select at least one sub-domain!" });
+      setToastContent({ message: "Please select at least one subdomain!" });
       return;
     }
 
@@ -200,7 +200,7 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
         </span>
       </section>
       <form onSubmit={handleSubmitTechTask}>
-        <h2>Choose Sub-Domain</h2>
+        <h2>Choose Subdomain</h2>
         <div className="flex">
           <div className="flex flex-row gap-4 flex-wrap justify-center">
             <label>

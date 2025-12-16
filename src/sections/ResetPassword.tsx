@@ -108,7 +108,7 @@ const ResetPassword = () => {
               />
               <Input
                 label={"confirmPassword"}
-                placeholder="confirm Password"
+                placeholder="Confirm Password"
                 type="password"
                 value={confirmpassword}
                 onChange={(e) => setConfirmPassword(e.target.value.trim())}
@@ -124,7 +124,7 @@ const ResetPassword = () => {
             
               <div className="text-white text-sm md:text-lg cursor-pointer w-full absolute bottom-0 py-1">
                 <NavLink to="/" className="nes-btn is-error custom-nes-error text-xs">
-                  Back To Login page
+                  Back to login
                 </NavLink>
               </div>
             </section>
