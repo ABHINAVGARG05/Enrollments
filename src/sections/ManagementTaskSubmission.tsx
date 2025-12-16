@@ -11,7 +11,7 @@ interface Props {
 }
 
 interface CustomJwtPayload extends JwtPayload {
-  isManagementDone?: boolean; 
+  isManagementDone?: boolean;
 }
 
 const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
@@ -43,9 +43,9 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
 
   useEffect(() => {
     const token = Cookies.get("jwtToken");
-    if(token) {
+    if (token) {
       const decoded = jwtDecode<CustomJwtPayload>(token);
-      if(decoded?.isManagementDone){
+      if (decoded?.isManagementDone) {
         setIsManagementDone(true);
       }
     }
@@ -94,7 +94,10 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
 
     if (subdomain.length === 0) {
       setOpenToast(true);
-      setToastContent({ message: "Please select at least one sub-domain!", type: "warning" });
+      setToastContent({
+        message: "Please select at least one sub-domain!",
+        type: "warning",
+      });
       return;
     }
 
@@ -102,12 +105,16 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     if (!id) {
       console.error("User id not found in secureLocalStorage");
       setOpenToast(true);
-      setToastContent({ message: "User ID not found. Please log in again.", type: "error" });
+      setToastContent({
+        message: "User ID not found. Please log in again.",
+        type: "error",
+      });
       return;
     }
 
     // console.log("id1", id);
-    const token = Cookies.get("jwtToken") || secureLocalStorage.getItem("jwtToken");
+    const token =
+      Cookies.get("jwtToken") || secureLocalStorage.getItem("jwtToken");
     if (!token) {
       console.error("JWT token is missing. Authentication required.");
       return;
@@ -134,14 +141,20 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
       if (response.data) {
         secureLocalStorage.setItem("MangSub", true);
         setOpenToast(true);
-        setToastContent({ message: "Task Submitted Successfully!", type: "success" });
+        setToastContent({
+          message: "Task Submitted Successfully!",
+          type: "success",
+        });
         await fetchUserDetails();
       }
       // console.log(response.data);
     } catch (error) {
       console.error(error);
       setOpenToast(true);
-      setToastContent({ message: "Failed to submit task. Please try again or contact support.", type: "error" });
+      setToastContent({
+        message: "Failed to submit task. Please try again or contact support.",
+        type: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -153,7 +166,8 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
       if (!id) {
         throw new Error("User id not found in secureLocalStorage");
       }
-      const token = Cookies.get("jwtToken") || secureLocalStorage.getItem("jwtToken");
+      const token =
+        Cookies.get("jwtToken") || secureLocalStorage.getItem("jwtToken");
 
       const response = await axios.get(
         `${import.meta.env.VITE_BASE_URL}/user/user/${id}`,
@@ -173,7 +187,10 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
         // toast already shown on submit
       }
     } catch (error: any) {
-      console.error("Fetch User Details Error:", error.response?.data || error.message);
+      console.error(
+        "Fetch User Details Error:",
+        error.response?.data || error.message
+      );
     }
   };
   const [isManagementDone, setIsManagementDone] = useState(false);
@@ -189,7 +206,7 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     }
     //console.log("refresh--->", decoded)
   }
-  if(secureLocalStorage.getItem("MangSub") || mang) {
+  if (secureLocalStorage.getItem("MangSub") || mang) {
     //setOpenToast(true);
     // setToastContent({
     //   message:"Task Submitted Successfully",
@@ -199,9 +216,8 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   if (secureLocalStorage.getItem("MangSub")) {
     return (
       <div className="p-4">
-        You've successfully submitted the Management Task. You can now track
-        the status of your application in the designated "Application Status"
-        tab.
+        You've successfully submitted the Management Task. You can now track the
+        status of your application in the designated "Application Status" tab.
       </div>
     );
   }
@@ -316,7 +332,7 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
           )}
         </section>
         <p className="text-prime text-xs md:text-sm mt-4 md:mt-0">
-          Note: Once submitted you cannot revert back
+          Note: Once submitted you cannot revert
         </p>
         <button
           type="submit"

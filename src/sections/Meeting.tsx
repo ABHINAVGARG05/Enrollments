@@ -6,6 +6,7 @@ import secureLocalStorage from "react-secure-storage";
 import Cookies from "js-cookie";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Meeting = () => {
   const [statusTech, setStatusTech] = useState(false);
@@ -18,6 +19,10 @@ const Meeting = () => {
   const [isLoading, setIsLoading] = useState(false);
   const isSelectedTime = (value: string) => time === value;
   const [scheduledTime, setScheduledTime] = useState<string>("");
+  const [showBooked, setShowBooked] = useState(false);
+  const [secondsLeft, setSecondsLeft] = useState(10);
+  const navigate = useNavigate();
+  const [justBooked, setJustBooked] = useState(false);
 
   // console.log(secureLocalStorage.getItem("userDetails"));
 
@@ -147,7 +152,6 @@ const Meeting = () => {
     fetchData();
   }, []);
 
-  
   const domains: string[] = [];
 
   if (statusTech) domains.push("Tech");
@@ -182,6 +186,31 @@ const Meeting = () => {
   const scheduleTime = `2025-12-${date}T${time}:00.000+05:30`;
   console.log(scheduleTime);
   // "2025-12-10T22:00:00.000+05:30"
+
+
+  useEffect(() => {
+  if (gmeet && justBooked) {
+    setShowBooked(true);
+    setSecondsLeft(10);
+
+    const interval = setInterval(() => {
+      setSecondsLeft((prev) => prev - 1);
+    }, 1000);
+
+    const timeout = setTimeout(() => {
+      setShowBooked(false);
+      setJustBooked(false); 
+      clearInterval(interval);
+    }, 10000);
+
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+    };
+  }
+}, [gmeet, justBooked]);
+
+
   const handleMeeting = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     if (!date || !time) {
@@ -212,6 +241,7 @@ const Meeting = () => {
       secureLocalStorage.setItem("scheduledTime", time);
       setGmeet(link);
       setScheduledTime(time);
+      setJustBooked(true); 
       // const storeDate = {
       //   date,
       //   time,
@@ -227,6 +257,34 @@ const Meeting = () => {
       setIsLoading(false);
     }
   };
+
+  const handleCancel = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    
+
+    console.log(id);
+
+    try{
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/api/meet/cancel`, 
+        { candidateId: id }
+      )
+
+      console.log(response);
+      Cookies.remove("jwtToken");
+      secureLocalStorage.clear();
+
+      setGmeet("");
+      setScheduledTime("");
+      setShowBooked(false);
+
+      navigate("/");
+      
+    } catch(error){
+      console.error(error);
+    }
+
+  }
 
   return (
     <div className="w-full min-h-screen h-full flex flex-col md:flex-row justify-center items-center p-4 overflow-auto">
@@ -386,14 +444,25 @@ const Meeting = () => {
                   className={
                     "text-white font-medium py-2 px-4 rounded-md transition-all duration-300"
                   }
-                  onClick={handleMeeting}
-                  disabled={gmeet !== ""}
+                  // onClick={handleMeeting}
+                  // disabled={gmeet !== ""}
+                  onClick={
+                    gmeet && !showBooked
+                      ? handleCancel
+                      : handleMeeting
+                  }
+                  disabled={isLoading}
                 >
-                  {gmeet
-                    ? "Slot Booked"
+                  {
+                    showBooked
+                    ? `Congratulations! Slot Booked (${secondsLeft}s)`
+                    : gmeet
+                    ? "Cancel Meeting"
                     : isLoading
                     ? "Hold Tight! Booking Your Slot"
-                    : "Book Your Slot"}
+                    : "Book Your Slot"
+                  }
+
                   {/* TODO:- When meeting is canceled. clear link from the local storage. */}
                 </Button>
               </div>

@@ -58,7 +58,9 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
     if (checked) {
-      setSubDomain((prevDomains) => Array.from(new Set([...prevDomains, value])));
+      setSubDomain((prevDomains) =>
+        Array.from(new Set([...prevDomains, value]))
+      );
     } else {
       setSubDomain((prevDomains) => prevDomains.filter((d) => d !== value));
     }
@@ -111,21 +113,30 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
 
     if (subdomain.length === 0) {
       setOpenToast(true);
-      setToastContent({ message: "Please select at least one sub-domain!", type: "warning" });
+      setToastContent({
+        message: "Please select at least one sub-domain!",
+        type: "warning",
+      });
       return;
     }
 
     const id = secureLocalStorage.getItem("id");
     if (!id) {
       setOpenToast(true);
-      setToastContent({ message: "User ID not found. Please try logging in again.", type: "error" });
+      setToastContent({
+        message: "User ID not found. Please try logging in again.",
+        type: "error",
+      });
       return;
     }
 
     const token = Cookies.get("jwtToken");
     if (!token) {
       setOpenToast(true);
-      setToastContent({ message: "Authentication token missing. Please log in again.", type: "error" });
+      setToastContent({
+        message: "Authentication token missing. Please log in again.",
+        type: "error",
+      });
       return;
     }
 
@@ -151,7 +162,10 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
         secureLocalStorage.setItem("TechSub", true);
         setIsTechDone(true);
         setOpenToast(true);
-        setToastContent({ message: "Task Submitted Successfully!", type: "success" });
+        setToastContent({
+          message: "Task Submitted Successfully!",
+          type: "success",
+        });
         fetchUserDetails();
       }
     } catch (error) {
@@ -299,7 +313,7 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
           ))}
         </section>
         <p className="text-prime text-xs md:text-sm mt-4 md:mt-0">
-          Note: Once submitted you cannot revert back
+          Note: Once submitted you cannot revert
         </p>
         <button
           type="submit"
