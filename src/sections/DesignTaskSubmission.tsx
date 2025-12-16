@@ -11,10 +11,10 @@ interface Props {
 }
 
 interface CustomJwtPayload extends JwtPayload {
-  isDesignDone?: boolean; 
+  isDesignDone?: boolean;
 }
 const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
-const { tabIndex, setTabIndex } = useTabStore();
+  const { tabIndex, setTabIndex } = useTabStore();
   const [subdomain, setSubDomain] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   interface FormData {
@@ -69,7 +69,10 @@ const { tabIndex, setTabIndex } = useTabStore();
 
     if (subdomain.length === 0) {
       setOpenToast(true);
-      setToastContent({ message: "Please select at least one sub-domain!", type: "warning" });
+      setToastContent({
+        message: "Please select at least one sub-domain!",
+        type: "warning",
+      });
       return;
     }
 
@@ -77,7 +80,10 @@ const { tabIndex, setTabIndex } = useTabStore();
     if (!id) {
       console.error("User id not found in secureLocalStorage");
       setOpenToast(true);
-      setToastContent({ message: "User ID not found. Please log in again.", type: "error" });
+      setToastContent({
+        message: "User ID not found. Please log in again.",
+        type: "error",
+      });
       return;
     }
 
@@ -104,14 +110,20 @@ const { tabIndex, setTabIndex } = useTabStore();
       if (response.data) {
         secureLocalStorage.setItem("DesgSub", true);
         setOpenToast(true);
-        setToastContent({ message: "Task Submitted Successfully!", type: "success" });
+        setToastContent({
+          message: "Task Submitted Successfully!",
+          type: "success",
+        });
         await fetchUserDetails();
       }
       // console.log(response.data);
     } catch (error) {
       console.error(error);
       setOpenToast(true);
-      setToastContent({ message: "Failed to submit task. Please try again or contact support.", type: "error" });
+      setToastContent({
+        message: "Failed to submit task. Please try again or contact support.",
+        type: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -321,7 +333,7 @@ const { tabIndex, setTabIndex } = useTabStore();
           ))}
         </section>
         <p className="text-prime text-xs md:text-sm mt-4 md:mt-0">
-          Note: Once submitted you cannot revert back
+          Note: Once submitted you cannot revert
         </p>
         <button
           type="submit"
@@ -353,19 +365,19 @@ const quizSubQuestions = [
     domain: "design",
     label: "design_que11",
     question:
-      "During a usability test for SwiftPay’s bill-splitting feature, a participant, Sophia, repeatedly makes a mistake but dismisses it as \"not paying attention.\" You suspect a UI flaw but can’t make changes yet. How do you confirm if it’s user error or a design issue without influencing the results?",
+      'During a usability test for SwiftPay’s bill-splitting feature, a participant, Sophia, repeatedly makes a mistake but dismisses it as "not paying attention." You suspect a UI flaw but can’t make changes yet. How do you confirm if it’s user error or a design issue without influencing the results?',
   },
   {
     domain: "design",
     label: "design_que12",
     question:
-      "You’re editing a documentary for Echo Films about farmers facing climate change. The most emotional interview, featuring David, is suddenly cut by the producer, Linda, who says, \"The client thinks it’s too bleak.\" Losing it weakens the story. How do you convince Linda to keep the integrity of the film while addressing client concerns?",
+      'You’re editing a documentary for Echo Films about farmers facing climate change. The most emotional interview, featuring David, is suddenly cut by the producer, Linda, who says, "The client thinks it’s too bleak." Losing it weakens the story. How do you convince Linda to keep the integrity of the film while addressing client concerns?',
   },
   {
     domain: "design",
     label: "design_que13",
     question:
-      "ViralView, a media company, sends you raw footage for an ad campaign but provides no script, storyboard, or guidance—just a message from the creative director, James: \"Make something great.\" With a tight deadline and unclear expectations, how do you decide on storytelling, editing style, and pacing to ensure the final product impresses?",
+      'ViralView, a media company, sends you raw footage for an ad campaign but provides no script, storyboard, or guidance—just a message from the creative director, James: "Make something great." With a tight deadline and unclear expectations, how do you decide on storytelling, editing style, and pacing to ensure the final product impresses?',
   },
 ];
 const quizQuestions = [
