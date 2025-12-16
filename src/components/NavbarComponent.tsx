@@ -12,9 +12,10 @@ const NavbarComponent = () => {
     { id: 1, label: "About", src: "/mfc-logo.png", route: "/about" },
     { id: 2, label: "FAQs", src: "/faq.png", route: "/faq" },
     { id: 3, label: "Profile", src: "/profile.png", route: "/profile" },
-    { id: 4, label: "Meeting", src: "/meeting.png", route: "/meeting" },
+    // { id: 4, label: "Meeting", src: "/meeting.png", route: "/meeting" }, //Removed Meeting tab joh visible tha in the sidebar, if readding, logout ka id bhi update karlena
+
     {
-      id: 5,
+      id: 4,
       label: "Logout",
       src: "/logout.png",
       route: "/",
@@ -26,7 +27,7 @@ const NavbarComponent = () => {
   ];
 
   return (
-    <nav className="nav h-full w-full md:max-w-[100px] flex flex-row md:flex-col justify-around items-center border-dashed border-2 border-spacing-4 md:border-spacing-8 border-prime md:border-r-0 p-4 md:p-0 sm:border-b-2" >
+    <nav className="nav h-full w-full md:max-w-[100px] flex flex-row md:flex-col justify-around items-center border-dashed border-2 border-spacing-4 md:border-spacing-8 border-prime md:border-r-0 p-4 md:p-0 sm:border-b-2">
       {menuItems.map((item) => (
         <div
           key={item.id}
