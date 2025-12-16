@@ -43,7 +43,7 @@ const events: EventItem[] = [
 ];
 
 const fullDescription =
-  "Mozilla Firefox Club - VIT has been a beacon of innovation within VIT's student developer community for the last 10 years, boasting a dynamic ensemble of over 150 dedicated core and board members. Moreover, our influential presence extends beyond borders, with a robust social media footprint across various open-source communities.";
+  "Moozilla Firefox Club - VIT has been a beacon of innovation within VIT's student developer community for the last 10 years, boasting a dynamic ensemble of over 150 dedicated core and board members. Moreover, our influential presence extends beyond borders, with a robust social media footprint across various open-source communities.";
 
 const About: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
