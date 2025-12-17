@@ -30,7 +30,7 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   });
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, checked } = e.target as HTMLInputElement;
+    const { value, checked } = e.target;
     if (checked) {
       setSubDomain((prevDomains) => [...prevDomains, value]);
     } else {
@@ -258,79 +258,39 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
         <section className="my-2  text-xs md:text-sm">
           <span className="text-prime">Answer some general questions:</span>
           <br />
-          {quizQuestions.map((quiz, index) => (
-            <div
-              style={{
-                backgroundColor: "rgba(0,0,0,0)",
-                padding: "1rem",
-              }}
-              key={index}
-              className="nes-field is-inline flex flex-col mb-6"
-            >
-              <label
-                style={{ color: "#fff" }}
-                className="w-full text-label text-xs "
-              >
-                {quiz.question}
-              </label>
-              <br />
-              <div
-                style={{ backgroundColor: "#212529", padding: "1rem 0" }}
-                className="w-full flex flex-wrap justify-between"
-              >
-                {/* {quiz.options.map((option, index) => (
-                  <label
-                    className="w-full md:w-[45%] text-xs mb-4"
-                    key={index + 19992}
-                  >
-                    <input
-                      type="radio"
-                      className="nes-radio is-dark"
-                      name={quiz.question}
-                      value={option}
-                      onChange={(e) => handleInputChange(e, quiz.question)}
-                    />
-                    <span>{option}</span>
-                  </label>
-                ))} */}
-              </div>
-              <textarea
-                id="textarea_field"
-                className="nes-textarea is-dark min-h-[5rem]"
-                required
-                name={quiz.label}
-                placeholder="Write here..."
-              ></textarea>
-            </div>
-          ))}
-          {quizSubQuestions.map((quiz, index) => (
-            <div
-              style={{
-                backgroundColor: "rgba(0,0,0,0)",
-                padding: "1rem",
-              }}
-              key={index}
-              className="nes-field is-inline flex flex-col mb-6"
-            >
-              <label
-                style={{ color: "#fff" }}
-                className="w-full text-label text-xs "
-              >
-                {quiz.question}
-              </label>
-              <br />
+          
+          
+          {quizSubQuestions.map(
+  (quiz, index) =>
+    quiz.subdomain &&
+    subdomain.includes(quiz.subdomain) && (
+      <div
+        style={{
+          backgroundColor: "rgba(0,0,0,0)",
+          padding: "1rem",
+        }}
+        key={index}
+        className="nes-field is-inline flex flex-col mb-6"
+      >
+        <label
+          style={{ color: "#fff" }}
+          className="w-full text-label text-xs "
+        >
+          {quiz.question}
+        </label>
 
-              <textarea
-                id="textarea_field"
-                className="nes-textarea is-dark min-h-[5rem]"
-                // required
-                name={`question${index + 9}`}
-                placeholder="Write here..."
-                onChange={(e) => handleInputChange(e, quiz.question)}
-                required
-              ></textarea>
-            </div>
-          ))}
+        <textarea
+          id="textarea_field"
+          className="nes-textarea is-dark min-h-[5rem]"
+          name={`question${index + 9}`}
+          placeholder="Write here..."
+          onChange={(e) => handleInputChange(e, quiz.question)}
+          required
+        />
+      </div>
+    )
+)}
+
         </section>
         <p className="text-prime text-xs md:text-sm mt-4 md:mt-0">
           Note: Once submitted, this cannot be undone.
@@ -351,119 +311,37 @@ export default DesignTaskSubmission;
 const quizSubQuestions = [
   {
     domain: "design",
+    subdomain: "graphicdesign",
     label: "design_que9",
     question:
       'BrightHive, a fast-growing AI startup, needs a modern logo. After extensive research and iterations, you present a design that the marketing team and COO approve. However, the CEO, Alex, says, "Something feels off, but I can’t explain why." With no clear feedback and a tight deadline, how do you refine the design while ensuring alignment with the company’s vision?',
   },
   {
     domain: "design",
+    subdomain: "ui/ux",
     label: "design_que10",
     question:
       'At GoFleet, a logistics platform, you present a redesigned dashboard backed by user data. Midway, senior VP Michael interrupts, saying, "This looks way more complicated than before." His opinion could influence the final decision. With only five minutes to respond, how do you justify your design and keep the project moving forward?',
   },
   {
     domain: "design",
+    subdomain: "ui/ux",
     label: "design_que11",
     question:
       'During a usability test for SwiftPay’s bill-splitting feature, a participant, Sophia, repeatedly makes a mistake but dismisses it as "not paying attention." You suspect a UI flaw but can’t make changes yet. How do you confirm if it’s user error or a design issue without influencing the results?',
   },
   {
     domain: "design",
+    subdomain: "videoediting/photography",
     label: "design_que12",
     question:
       'You’re editing a documentary for Echo Films about farmers facing climate change. The most emotional interview, featuring David, is suddenly cut by the producer, Linda, who says, "The client thinks it’s too bleak." Losing it weakens the story. How do you convince Linda to keep the integrity of the film while addressing client concerns?',
   },
   {
     domain: "design",
+    subdomain: "videoediting/photography",
     label: "design_que13",
     question:
       'ViralView, a media company, sends you raw footage for an ad campaign but provides no script, storyboard, or guidance—just a message from the creative director, James: "Make something great." With a tight deadline and unclear expectations, how do you decide on storytelling, editing style, and pacing to ensure the final product impresses?',
-  },
-];
-const quizQuestions = [
-  {
-    domain: "design",
-    label: "design_que1",
-    question:
-      "In Figma, what feature allows multiple designers to collaborate simultaneously on the same design file?",
-    options: [
-      "Version control",
-      "Real-time Editing",
-      "Component libraries",
-      "Auto-layout",
-    ],
-  },
-  {
-    domain: "design",
-    label: "design_que2",
-    question:
-      "Which tool in Adobe Photoshop is used to remove unwanted elements from a photo seamlessly?",
-    options: [
-      "Clone Stamp Tool",
-      "Magic Wand Tool",
-      "Gradient Tool",
-      "Crop Tool",
-    ],
-  },
-  {
-    domain: "design",
-    label: "design_que3",
-    question:
-      "When creating a motion graphic in Adobe After Effects, what is the purpose of the 'Keyframe'?",
-    options: [
-      "To lock a layer in place",
-      "To mark the beginning and end of an animation",
-      "To apply a special effect",
-      "To adjust the brightness and contrast",
-    ],
-  },
-  {
-    domain: "design",
-    label: "design_que4",
-    question:
-      "Which file format is commonly used for 3D models and can be imported into various 3D rendering software?",
-    options: [".SVG", ".OBJ", ".PSD", ".PNG"],
-  },
-  {
-    domain: "design",
-    label: "design_que5",
-    question: "In video editing, what does the term 'cutaway' refer to?",
-    options: [
-      "A transition between scenes",
-      "Removing unwanted parts of a video clip",
-      "Inserting a secondary shot to cover a jump in continuity",
-      "Adjusting the audio levels of a clip",
-    ],
-  },
-  {
-    domain: "design",
-    label: "design_que6",
-    question:
-      "Which tool in Canva allows users to apply pre-designed styles and formatting to their designs?",
-    options: ["Effects tool", "Layouts tool", "Brand Kit", "Templates tool"],
-  },
-  {
-    domain: "design",
-    label: "design_que7",
-    question:
-      "What is the purpose of the 'Bezier Curve' tool in vector graphic design software like Adobe Illustrator?",
-    options: [
-      "To create straight lines",
-      "To create complex shapes with smooth curves",
-      "To fill shapes with color",
-      "To crop images",
-    ],
-  },
-  {
-    domain: "design",
-    label: "design_que8",
-    question:
-      "When rendering a 3D scene, what does the term 'ray tracing' refer to?",
-    options: [
-      "Simulating the behavior of light rays to create realistic lighting and reflections",
-      "Creating wireframe models",
-      "Applying textures to 3D models",
-      "Adjusting the camera angle",
-    ],
   },
 ];
