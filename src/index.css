@@ -26,8 +26,8 @@ body {
   height: calc(100% - 5rem);
 }
 .task-box {
-  height: calc(100% + 7px);  
-  transform: translateY(-7px); 
+  height: auto;
+  transform: none;
 }
 .tasksubmission-box{
     height: calc(100% + 14px);  
