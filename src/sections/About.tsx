@@ -10,36 +10,11 @@ interface EventItem {
 }
 
 const events: EventItem[] = [
-  {
-    year: "year",
-    title: "event name",
-    desc: "description",
-    status: "completed",
-  },
-  {
-    year: "year",
-    title: "event name",
-    desc: "description",
-    status: "completed",
-  },
-  {
-    year: "year",
-    title: "event name",
-    desc: "description",
-    status: "completed",
-  },
-  {
-    year: "year",
-    title: "event name",
-    desc: "description",
-    status: "completed",
-  },
-  {
-    year: "2025",
-    title: "Future Ready",
-    desc: "[Status: Downloading...]",
-    status: "loading",
-  },
+  { year: "2024", title: "Scavenger of the Year", desc: "Chase. Solve. Conquer.", status: "completed" },
+  { year: "2024", title: "InnovationX", desc: "Synergistic Hackathon", status: "completed" },
+  { year: "2024", title: "Code to Survive", desc: "Murder mystery coding escape room.", status: "completed" },
+  { year: "2024", title: "TechWars", desc: "Code. Conquer. Dominate.", status: "completed" },
+  { year: "2025", title: "Future Ready", desc: "[Status: Downloading...]", status: "loading" },
 ];
 
 const fullDescription =
@@ -84,9 +59,12 @@ const About: React.FC = () => {
   }, []);
 
   return (
-    <div className="w-full h-screen flex flex-row overflow-hidden bg-[#0a0a0a] font-mono relative">
+    // CHANGE: Added 'overflow-x-auto overflow-y-auto' for mobile to fix cut-off margins.
+    // 'md:overflow-hidden' ensures desktop stays locked as requested.
+    <div className="w-full h-screen flex flex-col md:flex-row overflow-x-auto overflow-y-auto md:overflow-hidden bg-[#0a0a0a] font-mono relative">
+      
       {/* NAVBAR */}
-      <div className="navbar-fix z-50 shrink-0 ml-2 h-full flex items-center justify-center">
+      <div className="navbar-fix z-50 shrink-0 w-full h-auto md:h-full md:w-auto md:ml-2 flex items-center justify-center pt-4 md:pt-0">
         <Navbar />
       </div>
 
@@ -104,6 +82,7 @@ const About: React.FC = () => {
         .cursor-blink { animation: blink 1s step-end infinite; }
         @keyframes blink { 50% { opacity: 0; } }
 
+        /* Adjusted padding rule to be less aggressive on mobile if needed */
         .navbar-fix > * { padding-left: 12px !important; }
 
         /* DOUBLE GLITCH ANIMATION */
@@ -134,7 +113,7 @@ const About: React.FC = () => {
               <div className="flex items-center gap-2 pl-2">
                 <span className="text-[#ff9500] font-bold">🦊</span>
                 <span className="text-black font-bold text-xs tracking-tight">
-                  Mozilla Firefox - About.exe
+                  Mozilla Firefox
                 </span>
               </div>
               <div className="flex gap-1">
@@ -161,15 +140,15 @@ const About: React.FC = () => {
             {/* Main Content Area */}
             <div className="w-full h-full overflow-y-auto overflow-x-hidden p-6 md:p-8 bg-black text-white retro-scrollbar">
               <div className="flex flex-col items-center">
+                
                 <h1
-                  className="text-[1.5rem] md:text-[2.2rem] text-prime mb-6 text-glow font-bold tracking-wider text-center"
-                  style={{ fontFamily: '"Courier New", monospace' }}
+                  className="text-[1.5rem] md:text-[2.5rem] text-prime mb-6 font-bold tracking-wider text-center select-none"
+                  style={{ textShadow: "3px 3px 0px red" }}
                 >
-                  MOZILLA FIREFOX CLUB
+                MOZILLA FIREFOX CLUB
                 </h1>
 
-                {/* Typewriter Description */}
-                <div className="w-full h-fit border border-gray-700 bg-[#111] p-4 text-justify md:text-center text-xs md:text-sm text-green-400 font-mono mb-2 shadow-inner min-h-[100px]">
+                <div className="w-full h-fit border border-gray-700 bg-[#111] p-4 text-justify md:text-center text-xs md:text-sm text-green-400 font-mono mb-2 shadow-inner min-h-[100px] select-none">
                   <p>
                     {displayedText}
                     <span className="cursor-blink inline-block w-2 h-4 bg-green-400 ml-1 align-middle"></span>
@@ -179,8 +158,7 @@ const About: React.FC = () => {
                 {/* Timeline */}
                 <div className="w-full mb-4">
                   <div className="flex justify-between text-xs text-gray-400 mb-0 px-2 font-mono">
-                    <span>Downloading History...</span>
-                    <span>99% Complete</span>
+                      
                   </div>
 
                   <div
@@ -215,14 +193,8 @@ const About: React.FC = () => {
                             )}
 
                             <div className="text-center px-1">
-                              <h3
-                                className={`font-bold font-mono text-[10px] uppercase leading-tight mb-1 ${
-                                  item.status === "completed"
-                                    ? "text-green-500"
-                                    : "text-orange-500"
-                                }`}
-                              >
-                                {item.title}
+                              <h3 className={`font-bold font-mono text-[10px] uppercase leading-tight mb-1 ${item.status === 'completed' ? 'text-green-500' : 'text-orange-500'}`}>
+                                  {item.title}
                               </h3>
                             </div>
                           </div>
@@ -267,15 +239,8 @@ const About: React.FC = () => {
 
             {/* Status Bar */}
             <div className="w-full bg-[#C0C0C0] border-t-2 border-gray-500 p-1 flex justify-between items-center text-[10px] text-black shrink-0">
-              <span>Done</span>
-              <div className="flex gap-2 pr-2">
-                <span className="border border-gray-500 px-1 bg-white">
-                  INS
-                </span>
-                <span className="border border-gray-500 px-1 bg-white">
-                  CAP
-                </span>
-              </div>
+               <div className="flex gap-2 pr-2">
+               </div>
             </div>
           </div>
         </BoundingBox>
