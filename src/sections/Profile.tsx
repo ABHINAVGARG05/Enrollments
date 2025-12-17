@@ -9,8 +9,8 @@ import { z } from "zod";
 import BoundingBox from "../components/BoundingBox";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 interface CustomJwtPayload extends JwtPayload {
-  isProfileDone?: boolean; 
-  domain ?: [];
+  isProfileDone?: boolean;
+  domain?: [];
 }
 
 // Constants
@@ -60,15 +60,24 @@ interface ValidationError {
 const profileSchema = z.object({
   mobile: z.string().regex(MOBILE_REGEX, "Mobile number must be 10 digits"),
   emailpersonal: z.string().regex(EMAIL_REGEX, "Invalid email format"),
-  participatedEvent: z.string().max(MAX_EVENT_LENGTH, "Participation event details too long"),
-  volunteeredEvent: z.string().max(MAX_EVENT_LENGTH, "Volunteering event details too long"),
-  domain: z.array(z.enum([Domain.TECH, Domain.DESIGN, Domain.MANAGEMENT])).min(1, "Select at least one domain"),
+  participatedEvent: z
+    .string()
+    .max(MAX_EVENT_LENGTH, "Participation event details too long"),
+  volunteeredEvent: z
+    .string()
+    .max(MAX_EVENT_LENGTH, "Volunteering event details too long"),
+  domain: z
+    .array(z.enum([Domain.TECH, Domain.DESIGN, Domain.MANAGEMENT]))
+    .min(1, "Select at least one domain"),
 });
 
 // Custom Hooks
 const useAuth = () => {
   const getToken = useCallback(() => Cookies.get("jwtToken") || "", []);
-  const getUserId = useCallback(() => secureLocalStorage.getItem("id") as string | null, []);
+  const getUserId = useCallback(
+    () => secureLocalStorage.getItem("id") as string | null,
+    []
+  );
   return { getToken, getUserId };
 };
 
@@ -95,9 +104,10 @@ const useUserDetails = () => {
       secureLocalStorage.setItem("userDetails", JSON.stringify(data));
       return data;
     } catch (error) {
-      const message = error instanceof AxiosError 
-        ? error.response?.data?.message || "Failed to fetch user details"
-        : "An unexpected error occurred";
+      const message =
+        error instanceof AxiosError
+          ? error.response?.data?.message || "Failed to fetch user details"
+          : "An unexpected error occurred";
       setError(message);
       throw error;
     } finally {
@@ -148,33 +158,37 @@ const useProfileUpdate = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const updateProfile = useCallback(async (formData: ProfileFormState) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const id = getUserId();
-      if (!id) throw new Error("User ID not found");
+  const updateProfile = useCallback(
+    async (formData: ProfileFormState) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const id = getUserId();
+        if (!id) throw new Error("User ID not found");
 
-      const token = getToken();
-      const { data } = await axios.put(
-        `${API_BASE_URL}/user/updateuser/${id}`,
-        formData,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      // console.log(data)
-      return data;
-    } catch (error) {
-      const message = error instanceof AxiosError 
-        ? error.response?.data?.message || "Failed to update profile"
-        : "An unexpected error occurred";
-      setError(message);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  }, [getToken, getUserId]);
+        const token = getToken();
+        const { data } = await axios.put(
+          `${API_BASE_URL}/user/updateuser/${id}`,
+          formData,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        // console.log(data)
+        return data;
+      } catch (error) {
+        const message =
+          error instanceof AxiosError
+            ? error.response?.data?.message || "Failed to update profile"
+            : "An unexpected error occurred";
+        setError(message);
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [getToken, getUserId]
+  );
 
   return { updateProfile, isLoading, error };
 };
@@ -207,8 +221,16 @@ const useProfileUpdate = () => {
 // Main Component
 const Profile = () => {
   const { setTabIndex } = useTabStore();
-  const { fetchUserDetails, isLoading: isFetching, error: fetchError } = useUserDetails();
-  const { updateProfile, isLoading: isUpdating, error: updateError } = useProfileUpdate();
+  const {
+    fetchUserDetails,
+    isLoading: isFetching,
+    error: fetchError,
+  } = useUserDetails();
+  const {
+    updateProfile,
+    isLoading: isUpdating,
+    error: updateError,
+  } = useProfileUpdate();
 
   const [formState, setFormState] = useState<ProfileFormState>({
     mobile: "",
@@ -218,19 +240,25 @@ const Profile = () => {
     domain: [],
   });
 
-  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
+  const [validationErrors, setValidationErrors] = useState<ValidationError[]>(
+    []
+  );
   const [toast, setToast] = useState<ToastContent | null>(null);
-  const [isProfileComplete, setIsProfileComplete] = useState<boolean | null>(null);
+  const [isProfileComplete, setIsProfileComplete] = useState<boolean | null>(
+    null
+  );
 
   // Initialize form from stored data
   useEffect(() => {
-    const userDetailsStr = secureLocalStorage.getItem("userDetails") as string | null;
-    const token = Cookies.get("refreshToken")
+    const userDetailsStr = secureLocalStorage.getItem("userDetails") as
+      | string
+      | null;
+    const token = Cookies.get("refreshToken");
     // console.log(token)
-    if(token) {
+    if (token) {
       const decoded = jwtDecode<CustomJwtPayload>(token);
-      if(decoded.isProfileDone) {
-        setIsProfileComplete(decoded?.isProfileDone)
+      if (decoded.isProfileDone) {
+        setIsProfileComplete(decoded?.isProfileDone);
       }
     }
     if (userDetailsStr) {
@@ -244,13 +272,20 @@ const Profile = () => {
         domain: userDetails.domain || [],
       });
     } else {
-      fetchUserDetails().catch(() => { /* handled in hook */ });
-  }}, [fetchUserDetails]);
+      fetchUserDetails().catch(() => {
+        /* handled in hook */
+      });
+    }
+  }, [fetchUserDetails]);
 
   // Update tab index when profile is complete and show notice
   useEffect(() => {
     if (isProfileComplete) {
-      setToast({ message: "Profile is already completed.", type: ToastType.SUCCESS, duration: TOAST_DURATION });
+      setToast({
+        message: "Profile is already completed.",
+        type: ToastType.SUCCESS,
+        duration: TOAST_DURATION,
+      });
       setTabIndex(1);
     }
   }, [isProfileComplete, setTabIndex]);
@@ -263,15 +298,18 @@ const Profile = () => {
     []
   );
 
-  const handleDomainChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, checked } = e.target;
-    setFormState((prev) => ({
-      ...prev,
-      domain: checked
-        ? [...prev.domain, value as Domain]
-        : prev.domain.filter((domain) => domain !== value),
-    }));
-  }, []);
+  const handleDomainChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { value, checked } = e.target;
+      setFormState((prev) => ({
+        ...prev,
+        domain: checked
+          ? [...prev.domain, value as Domain]
+          : prev.domain.filter((domain) => domain !== value),
+      }));
+    },
+    []
+  );
 
   const validateForm = useCallback(() => {
     const result = profileSchema.safeParse(formState);
@@ -359,11 +397,11 @@ const Profile = () => {
   }
 
   return (
-  <div className="w-full profile py-4 flex gap-4 flex-col lg:flex-row ">
+    <div className="w-full profile py-4 flex gap-4 flex-col lg:flex-row ">
       {toast && (
         <CustomToast
           setToast={() => setToast(null)}
-          setToastContent={() => { }}
+          setToastContent={() => {}}
           message={toast.message}
           type={toast.type}
           duration={toast.duration}
@@ -382,7 +420,9 @@ const Profile = () => {
 
             {/* ✅ Auto-Adjusting, Scrollable Text Content */}
             <div className="flex-1 overflow-y-auto break-words text-light p-2 text-xs md:text-sm lg:text-base leading-tight md:leading-normal">
-              Got a sec? We need you to spice up your profile with the right deets. Drop your name, contacts, Domains, and whatever else floats your boat. It helps us help you better! Cheers!
+              Please complete your profile with your contact details, domains,
+              and any relevant information. This helps us match tasks and
+              communications to you.
             </div>
           </div>
           <div className="nes-container is-rounded w-full lg:w-[70%] is-dark dark-nes-container h-[70vh] overflow-y-auto z-[1000]">
@@ -390,7 +430,7 @@ const Profile = () => {
               className="flex flex-col gap-8 md:gap-4 w-full"
               onSubmit={handleSubmit}
             >
-              <section className="flex items-start text-xs md:text-base lg:items-center flex-col lg:flex-row leading-tight md:leading-normal" >
+              <section className="flex items-start text-xs md:text-base lg:items-center flex-col lg:flex-row leading-tight md:leading-normal">
                 <label className="w-full lg:w-[40%] text-sm">
                   Mobile Number:
                 </label>
@@ -400,11 +440,15 @@ const Profile = () => {
                     placeholder="Your mobile"
                     type="text"
                     value={formState.mobile}
-                    onChange={(e) => handleInputChange("mobile", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("mobile", e.target.value)
+                    }
                     className={getFieldError("mobile") ? "is-error" : ""}
                   />
                   {getFieldError("mobile") && (
-                    <p className="text-red-500 text-xs mt-1">{getFieldError("mobile")}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {getFieldError("mobile")}
+                    </p>
                   )}
                 </div>
               </section>
@@ -419,11 +463,15 @@ const Profile = () => {
                     placeholder="Personal Email"
                     type="text"
                     value={formState.emailpersonal}
-                    onChange={(e) => handleInputChange("emailpersonal", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("emailpersonal", e.target.value)
+                    }
                     className={getFieldError("emailpersonal") ? "is-error" : ""}
                   />
                   {getFieldError("emailpersonal") && (
-                    <p className="text-red-500 text-xs mt-1">{getFieldError("emailpersonal")}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {getFieldError("emailpersonal")}
+                    </p>
                   )}
                 </div>
               </section>
@@ -468,16 +516,17 @@ const Profile = () => {
                     </span>
                   </label>
                   {getFieldError("domain") && (
-                    <p className="text-red-500 text-xs mt-1">{getFieldError("domain")}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {getFieldError("domain")}
+                    </p>
                   )}
                 </div>
               </section>
 
               <section className="flex items-start text-xs md:text-base flex-col">
                 <label className="w-full text-sm">
-                  Have you volunteered in any of the MFC event:
-                  <br />
-                  If yes, enter event name
+                  Have you volunteered in any MFC events? If yes, enter the
+                  event name.
                 </label>
                 <div className="w-full">
                   <Input
@@ -485,20 +534,25 @@ const Profile = () => {
                     placeholder="Enter event details"
                     type="text"
                     value={formState.volunteeredEvent}
-                    onChange={(e) => handleInputChange("volunteeredEvent", e.target.value)}
-                    className={getFieldError("volunteeredEvent") ? "is-error" : ""}
+                    onChange={(e) =>
+                      handleInputChange("volunteeredEvent", e.target.value)
+                    }
+                    className={
+                      getFieldError("volunteeredEvent") ? "is-error" : ""
+                    }
                   />
                   {getFieldError("volunteeredEvent") && (
-                    <p className="text-red-500 text-xs mt-1">{getFieldError("volunteeredEvent")}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {getFieldError("volunteeredEvent")}
+                    </p>
                   )}
                 </div>
               </section>
 
               <section className="flex items-start text-xs md:text-base flex-col">
                 <label className="w-full text-sm">
-                  Have you participated in any of the MFC event:
-                  <br />
-                  If yes, enter event name
+                  Have you participated in any MFC events?<br></br> If yes,
+                  enter the event name.
                 </label>
                 <div className="w-full">
                   <Input
@@ -506,11 +560,17 @@ const Profile = () => {
                     placeholder="Enter event details"
                     type="text"
                     value={formState.participatedEvent}
-                    onChange={(e) => handleInputChange("participatedEvent", e.target.value)}
-                    className={getFieldError("participatedEvent") ? "is-error" : ""}
+                    onChange={(e) =>
+                      handleInputChange("participatedEvent", e.target.value)
+                    }
+                    className={
+                      getFieldError("participatedEvent") ? "is-error" : ""
+                    }
                   />
                   {getFieldError("participatedEvent") && (
-                    <p className="text-red-500 text-xs mt-1">{getFieldError("participatedEvent")}</p>
+                    <p className="text-red-500 text-xs mt-1">
+                      {getFieldError("participatedEvent")}
+                    </p>
                   )}
                 </div>
               </section>

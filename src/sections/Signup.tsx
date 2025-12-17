@@ -170,7 +170,9 @@ const Signup: React.FC = () => {
               IS RECRUITING
             </span>
             <div className="mt-6 text-sm md:text-base hidden md:block">
-              <div className="text-white mb-2 md:mb-4">Already have an account?</div>
+              <div className="text-white mb-2 md:mb-4">
+                Already have an account?
+              </div>
               <NavLink
                 className="nes-btn bg-prime hover:bg-orange-600 text-white px-4 py-2 rounded transition-all duration-300"
                 to="/"
@@ -209,11 +211,15 @@ const Signup: React.FC = () => {
               <h1 className="text-2xl sm:text-3xl md:text-[3rem] font-bold text-prime tracking-wide">
                 MOZILLA FIREFOX
               </h1>
-              <span className="text-base sm:text-4xl text-light mt-2">IS RECRUITING</span>
+              <span className="text-base sm:text-4xl text-light mt-2">
+                IS RECRUITING
+              </span>
             </div>
 
             <div className="text-center mt-6 block md:hidden">
-              <h2 className="text-lg sm:text-xl font-bold text-white">SIGNUP PAGE</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-white">
+                SIGNUP PAGE
+              </h2>
             </div>
 
             <form
@@ -256,7 +262,9 @@ const Signup: React.FC = () => {
                 className=" text-black"
               />
               {formErrors.registerNumber && (
-                <div className="text-xs text-prime">{formErrors.registerNumber}</div>
+                <div className="text-xs text-prime">
+                  {formErrors.registerNumber}
+                </div>
               )}
 
               <Input
@@ -282,7 +290,9 @@ const Signup: React.FC = () => {
                 className=" text-black"
               />
               {formErrors.confirmPassword && (
-                <div className="text-xs text-prime">{formErrors.confirmPassword}</div>
+                <div className="text-xs text-prime">
+                  {formErrors.confirmPassword}
+                </div>
               )}
 
               <Button
@@ -304,7 +314,6 @@ const Signup: React.FC = () => {
                 )}
               </Button>
             </form>
-
 
             <div className="mt-8 block md:hidden text-center">
               <div className="text-white mb-4">Already have an account?</div>
@@ -340,9 +349,7 @@ const Signup: React.FC = () => {
               </section>
             </div>
 
-            <div className="mt-8 block">
-
-            </div>
+            <div className="mt-8 block"></div>
           </div>
         </div>
         <img

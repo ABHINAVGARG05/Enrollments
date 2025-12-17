@@ -26,9 +26,7 @@ function App() {
         <Router>
           <Routes>
             {/* Public pages: Landing, Signup, Auth flows */}
-            <Route path="/" element={<PublicRoute><Landing /></PublicRoute>} />
             <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
-            <Route path="/verifyotp" element={<PublicRoute><VerifyOTP /></PublicRoute>} />
             <Route path="/resetpassword" element={<PublicRoute><ResetPassword /></PublicRoute>} />
             <Route path="/forgotpassword" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
 
@@ -38,6 +36,8 @@ function App() {
             <Route path="/meeting" element={<ProtectedRoute><Meeting /></ProtectedRoute>} />
 
             {/* Misc */}
+            <Route path="/" element={<Landing />} />
+            <Route path="/verifyotp" element={<VerifyOTP />} />
             <Route path="/about" element={<About />} />
             <Route path="/faq" element={<FAQs />} />
 

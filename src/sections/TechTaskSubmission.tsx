@@ -114,7 +114,7 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     if (subdomain.length === 0) {
       setOpenToast(true);
       setToastContent({
-        message: "Please select at least one sub-domain!",
+        message: "Please select at least one subdomain!",
         type: "warning",
       });
       return;
@@ -208,7 +208,7 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
         </span>
       </section>
       <form onSubmit={handleSubmitTechTask}>
-        <h2>Choose Sub-Domain</h2>
+        <h2>Choose a subdomain</h2>
         <div className="flex">
           <div className="flex flex-row gap-4 flex-wrap justify-center">
             <label>
@@ -285,7 +285,7 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
         <section className="my-2 text-xs md:text-sm">
           <span className="text-prime">Answer some general questions:</span>
           <br />
-          {quizQuestions.map((quiz, index) => (
+          {/* {quizQuestions.map((quiz, index) => (
             <div
               style={{
                 backgroundColor: "rgba(0,0,0,0)",
@@ -310,7 +310,37 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
                 required
               ></textarea>
             </div>
-          ))}
+          ))} */}
+          {quizQuestions.map(
+            (quiz, index) =>
+              quiz.subdomain &&
+              subdomain.includes(quiz.subdomain) && (
+                <div
+                  style={{
+                    backgroundColor: "rgba(0,0,0,0)",
+                    padding: "1rem",
+                  }}
+                  className="nes-field is-inline flex flex-col mt-4"
+                  key={index}
+                >
+                  <label
+                    style={{ color: "#fff" }}
+                    className="w-full text-label text-xs"
+                  >
+                    {quiz.question}
+                  </label>
+                  <br />
+                  <textarea
+                    id={`textarea_field_${index + 2}`}
+                    className="nes-textarea is-dark min-h-[5rem]"
+                    name={`question${index + 2}`}
+                    placeholder="Write here..."
+                    onChange={(e) => handleInputChange(e, quiz.question)}
+                    required
+                  />
+                </div>
+              )
+          )}
         </section>
         <p className="text-prime text-xs md:text-sm mt-4 md:mt-0">
           Note: Once submitted you cannot revert
@@ -330,23 +360,27 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
 const quizQuestions = [
   {
     domain: "tech",
+    subdomain: "frontend",
     label: "tech_que1",
     question: "What is npm, and how does a developer use it?",
   },
   {
     domain: "tech",
+    subdomain: "backend",
     label: "tech_que2",
     question:
       "What is the difference between a compiled language and an interpreted language?",
   },
   {
     domain: "tech",
+    subdomain: "cp",
     label: "tech_que3",
     question:
       "Research XOR Linked Lists and explain how they work in your own words.",
   },
   {
     domain: "tech",
+    subdomain: "app",
     label: "tech_que4",
     question:
       "Suppose you want to hide some data in a multimedia file. What would be your approach?",

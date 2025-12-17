@@ -10,25 +10,49 @@ interface EventItem {
 }
 
 const events: EventItem[] = [
-  { year: "year", title: "event name", desc: "description", status: "completed" },
-  { year: "year", title: "event name", desc: "description", status: "completed" },
-  { year: "year", title: "event name", desc: "description", status: "completed" },
-  { year: "year", title: "event name", desc: "description", status: "completed" },
-  { year: "2025", title: "Future Ready", desc: "[Status: Downloading...]", status: "loading" },
+  {
+    year: "year",
+    title: "event name",
+    desc: "description",
+    status: "completed",
+  },
+  {
+    year: "year",
+    title: "event name",
+    desc: "description",
+    status: "completed",
+  },
+  {
+    year: "year",
+    title: "event name",
+    desc: "description",
+    status: "completed",
+  },
+  {
+    year: "year",
+    title: "event name",
+    desc: "description",
+    status: "completed",
+  },
+  {
+    year: "2025",
+    title: "Future Ready",
+    desc: "[Status: Downloading...]",
+    status: "loading",
+  },
 ];
 
-const fullDescription = "Moozilla Firefox Club - VIT has been a beacon of innovation within VIT's student developer community for the last 10 years, boasting a dynamic ensemble of over 150 dedicated core and board members. Moreover, our influential presence extends beyond borders, with a robust social media footprint across various open-source communities.";
+const fullDescription =
+  "Moozilla Firefox Club - VIT has been a beacon of innovation within VIT's student developer community for the last 10 years, boasting a dynamic ensemble of over 150 dedicated core and board members. Moreover, our influential presence extends beyond borders, with a robust social media footprint across various open-source communities.";
 
 const About: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [displayedText, setDisplayedText] = useState("");
 
-
   useEffect(() => {
     let index = 0;
     let timer: any;
 
-    
     const startDelay = setTimeout(() => {
       timer = setInterval(() => {
         if (index < fullDescription.length) {
@@ -38,7 +62,7 @@ const About: React.FC = () => {
           clearInterval(timer);
         }
       }, 20);
-    }, 1200); 
+    }, 1200);
 
     return () => {
       clearTimeout(startDelay);
@@ -46,7 +70,6 @@ const About: React.FC = () => {
     };
   }, []);
 
-  
   useEffect(() => {
     if (scrollContainerRef.current) {
       const el = scrollContainerRef.current;
@@ -62,7 +85,6 @@ const About: React.FC = () => {
 
   return (
     <div className="w-full h-screen flex flex-row overflow-hidden bg-[#0a0a0a] font-mono relative">
-      
       {/* NAVBAR */}
       <div className="navbar-fix z-50 shrink-0 ml-2 h-full flex items-center justify-center">
         <Navbar />
@@ -104,22 +126,27 @@ const About: React.FC = () => {
 
       {/* CONTENT WRAPPER */}
       <div className="flex-1 h-full flex items-center justify-center p-6 min-w-0 z-10 relative">
-        
         {/* RESIZED WINDOW + GLITCH ANIMATION */}
         <BoundingBox className="relative w-[95%] max-w-[1100px] h-[90%] max-h-[800px] flex flex-col items-center justify-center animate-glitch">
-          
           <div className="w-full h-full flex flex-col border-2 border-gray-500 bg-black shadow-[8px_8px_0px_rgba(50,50,50,0.5)] overflow-hidden">
-            
             {/* Title Bar */}
             <div className="w-full bg-[#C0C0C0] border-b-2 border-gray-500 p-1 flex justify-between items-center select-none shrink-0">
               <div className="flex items-center gap-2 pl-2">
                 <span className="text-[#ff9500] font-bold">🦊</span>
-                <span className="text-black font-bold text-xs tracking-tight">Mozilla Firefox - About.exe</span>
+                <span className="text-black font-bold text-xs tracking-tight">
+                  Mozilla Firefox - About.exe
+                </span>
               </div>
               <div className="flex gap-1">
-                <div className="w-4 h-4 bg-[#C0C0C0] border-t-2 border-l-2 border-white border-b-2 border-r-2 border-gray-700 text-black text-[10px] flex items-center justify-center font-bold shadow-sm cursor-pointer">_</div>
-                <div className="w-4 h-4 bg-[#C0C0C0] border-t-2 border-l-2 border-white border-b-2 border-r-2 border-gray-700 text-black text-[10px] flex items-center justify-center font-bold shadow-sm cursor-pointer">□</div>
-                <div className="w-4 h-4 bg-[#C0C0C0] border-t-2 border-l-2 border-white border-b-2 border-r-2 border-gray-700 text-black text-[10px] flex items-center justify-center font-bold shadow-sm cursor-pointer">X</div>
+                <div className="w-4 h-4 bg-[#C0C0C0] border-t-2 border-l-2 border-white border-b-2 border-r-2 border-gray-700 text-black text-[10px] flex items-center justify-center font-bold shadow-sm cursor-pointer">
+                  _
+                </div>
+                <div className="w-4 h-4 bg-[#C0C0C0] border-t-2 border-l-2 border-white border-b-2 border-r-2 border-gray-700 text-black text-[10px] flex items-center justify-center font-bold shadow-sm cursor-pointer">
+                  □
+                </div>
+                <div className="w-4 h-4 bg-[#C0C0C0] border-t-2 border-l-2 border-white border-b-2 border-r-2 border-gray-700 text-black text-[10px] flex items-center justify-center font-bold shadow-sm cursor-pointer">
+                  X
+                </div>
               </div>
             </div>
 
@@ -152,11 +179,11 @@ const About: React.FC = () => {
                 {/* Timeline */}
                 <div className="w-full mb-4">
                   <div className="flex justify-between text-xs text-gray-400 mb-0 px-2 font-mono">
-                     <span>Downloading History...</span>
-                     <span>99% Complete</span>
+                    <span>Downloading History...</span>
+                    <span>99% Complete</span>
                   </div>
-                  
-                  <div 
+
+                  <div
                     ref={scrollContainerRef}
                     className="retro-scrollbar flex items-start overflow-x-auto w-full px-2 pt-24 pb-6"
                   >
@@ -164,29 +191,38 @@ const About: React.FC = () => {
                       {events.map((item, index) => (
                         <div key={index} className="flex">
                           <div className="flex flex-col items-center w-[140px] group relative">
-                            
                             {/* Tooltip (COMPACT) */}
                             <div className="absolute bottom-[130%] mb-2 hidden group-hover:block z-50 w-40 transition-all duration-100 origin-bottom scale-0 group-hover:scale-100">
                               <div className="bg-[#C0C0C0] border-t-2 border-l-2 border-white border-b-2 border-r-2 border-black pt-[2px] px-[2px] pb-0 text-center shadow-[4px_4px_0px_rgba(0,0,0,0.5)]">
-                                 <div className="bg-blue-900 text-white text-[10px] font-bold px-1 text-left mb-[2px]">Info.txt</div>
-                                 <p className="text-black font-mono text-[10px] leading-none p-[2px] bg-white border border-gray-400 text-left block">
-                                    {item.desc}
-                                 </p>
+                                <div className="bg-blue-900 text-white text-[10px] font-bold px-1 text-left mb-[2px]">
+                                  Info.txt
+                                </div>
+                                <p className="text-black font-mono text-[10px] leading-none p-[2px] bg-white border border-gray-400 text-left block">
+                                  {item.desc}
+                                </p>
                               </div>
                             </div>
 
-                            <span className="text-gray-400 font-bold mb-2 font-mono text-xs">{item.year}</span>
-                            
+                            <span className="text-gray-400 font-bold mb-2 font-mono text-xs">
+                              {item.year}
+                            </span>
+
                             {/* Node */}
-                            {item.status === 'completed' ? (
-                               <div className="w-5 h-5 bg-green-500 border-2 border-green-300 shadow-[0_0_10px_rgba(0,255,0,0.5)] mb-3 cursor-pointer group-hover:bg-white group-hover:border-green-500 transition-colors"></div>
+                            {item.status === "completed" ? (
+                              <div className="w-5 h-5 bg-green-500 border-2 border-green-300 shadow-[0_0_10px_rgba(0,255,0,0.5)] mb-3 cursor-pointer group-hover:bg-white group-hover:border-green-500 transition-colors"></div>
                             ) : (
-                               <div className="w-5 h-5 bg-orange-500 border-2 border-orange-300 animate-pulse mb-3 cursor-wait"></div>
+                              <div className="w-5 h-5 bg-orange-500 border-2 border-orange-300 animate-pulse mb-3 cursor-wait"></div>
                             )}
-                            
+
                             <div className="text-center px-1">
-                              <h3 className={`font-bold font-mono text-[10px] uppercase leading-tight mb-1 ${item.status === 'completed' ? 'text-green-500' : 'text-orange-500'}`}>
-                                 {item.title}
+                              <h3
+                                className={`font-bold font-mono text-[10px] uppercase leading-tight mb-1 ${
+                                  item.status === "completed"
+                                    ? "text-green-500"
+                                    : "text-orange-500"
+                                }`}
+                              >
+                                {item.title}
                               </h3>
                             </div>
                           </div>
@@ -194,9 +230,9 @@ const About: React.FC = () => {
                           {/* Connector */}
                           {index !== events.length - 1 && (
                             <div className="mt-[30px] w-[40px] h-[4px] bg-[#333] mx-1 relative top-[-6px] border border-gray-600">
-                               {item.status === 'completed' && (
-                                  <div className="h-full w-full bg-green-600"></div>
-                               )}
+                              {item.status === "completed" && (
+                                <div className="h-full w-full bg-green-600"></div>
+                              )}
                             </div>
                           )}
                         </div>
@@ -207,23 +243,40 @@ const About: React.FC = () => {
 
                 {/* Social Icons */}
                 <section className="icon-list flex gap-6 mt-2 mb-2 w-full justify-center">
-                  <a href="https://www.instagram.com/mfc_vit" className="hover:scale-110 transition-transform"><i className="nes-icon instagram is-medium"></i></a>
-                  <a href="mailto:mozillafirefox@vit.ac.in" className="hover:scale-110 transition-transform"><i className="nes-icon gmail is-medium"></i></a>
-                  <a href="https://www.linkedin.com/company/mfcvit?originalSubdomain=in" className="hover:scale-110 transition-transform"><i className="nes-icon linkedin is-medium"></i></a>
+                  <a
+                    href="https://www.instagram.com/mfc_vit"
+                    className="hover:scale-110 transition-transform"
+                  >
+                    <i className="nes-icon instagram is-medium"></i>
+                  </a>
+                  <a
+                    href="mailto:mozillafirefox@vit.ac.in"
+                    className="hover:scale-110 transition-transform"
+                  >
+                    <i className="nes-icon gmail is-medium"></i>
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/company/mfcvit?originalSubdomain=in"
+                    className="hover:scale-110 transition-transform"
+                  >
+                    <i className="nes-icon linkedin is-medium"></i>
+                  </a>
                 </section>
-                
               </div>
             </div>
-            
+
             {/* Status Bar */}
             <div className="w-full bg-[#C0C0C0] border-t-2 border-gray-500 p-1 flex justify-between items-center text-[10px] text-black shrink-0">
-               <span>Done</span>
-               <div className="flex gap-2 pr-2">
-                  <span className="border border-gray-500 px-1 bg-white">INS</span>
-                  <span className="border border-gray-500 px-1 bg-white">CAP</span>
-               </div>
+              <span>Done</span>
+              <div className="flex gap-2 pr-2">
+                <span className="border border-gray-500 px-1 bg-white">
+                  INS
+                </span>
+                <span className="border border-gray-500 px-1 bg-white">
+                  CAP
+                </span>
+              </div>
             </div>
-
           </div>
         </BoundingBox>
       </div>

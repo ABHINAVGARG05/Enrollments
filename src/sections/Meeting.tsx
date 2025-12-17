@@ -191,7 +191,7 @@ const Meeting = () => {
   useEffect(() => {
   if (gmeet && justBooked) {
     setShowBooked(true);
-    setSecondsLeft(10);
+    setSecondsLeft(5);
 
     const interval = setInterval(() => {
       setSecondsLeft((prev) => prev - 1);
@@ -201,7 +201,7 @@ const Meeting = () => {
       setShowBooked(false);
       setJustBooked(false); 
       clearInterval(interval);
-    }, 10000);
+    }, 5000);
 
     return () => {
       clearTimeout(timeout);
