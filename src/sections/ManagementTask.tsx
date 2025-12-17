@@ -31,14 +31,16 @@ const ManagementTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
     setFilteredTasks(filteredTask);
   }, [selectedSubDomain]);
 
+  
+
   return (
     <div
-      className={`w-full h-full overflow-y-scroll task-container ${
-        selectedSubDomain === "" ? "flex items-center" : ""
+      className={`w-full h-full overflow-y-auto task-container ${
+        selectedSubDomain === "" ? "flex items-center justify-center" : ""
       }`}
     >
       {selectedSubDomain === "" && (
-        <div className="flex justify-center flex-wrap w-full">
+        <div className="flex justify-center flex-wrap w-full gap-4 pt-4">
           <button
             type="button"
             onClick={() => setSelectedSubDomain("outreach")}
@@ -77,16 +79,15 @@ const ManagementTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
         <div className="w-full mt-8 h-full flex flex-col gap-4">
           {filteredTasks.map((task, index) => (
             <div
-              className="nes-container is-dark with-title dark-container-nes"
+              className="nes-container is-dark with-title dark-container-nes px-4 py-3 w-full"
               key={`task-${task.label}-${index}`}
             >
-              <p className="text-xs text-left leading-4 desc-task">
-                {task.question}
-              </p>
+              <p className="text-xs text-left leading-5 desc-task break-words whitespace-normal">{task.question}</p>
             </div>
           ))}
         </div>
       )}
+      
     </div>
   );
 };

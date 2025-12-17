@@ -275,7 +275,7 @@ const Task = () => {
             </p>
           </div>
         )}
-        <div className="w-full h-full flex items-center relative">
+        <div className="w-full h-full flex items-start relative">
           {domains.includes("tech") && selectedDomain === 0 && (
             <TechTask
               selectedSubDomain={selectedSubDomain}

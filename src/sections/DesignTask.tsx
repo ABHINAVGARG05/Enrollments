@@ -58,7 +58,7 @@ const DesignTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
 
   return (
     <div
-      className={`w-full h-full overflow-y-auto -task-container ${
+      className={`w-full h-full overflow-y-hidden -task-container ${
         selectedSubDomain === "" ? "flex items-center" : ""
       }`}
     >
