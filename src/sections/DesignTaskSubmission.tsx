@@ -278,7 +278,7 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
                 style={{ backgroundColor: "#212529", padding: "1rem 0" }}
                 className="w-full flex flex-wrap justify-between"
               >
-                {quiz.options.map((option, index) => (
+                {/* {quiz.options.map((option, index) => (
                   <label
                     className="w-full md:w-[45%] text-xs mb-4"
                     key={index + 19992}
@@ -292,7 +292,7 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
                     />
                     <span>{option}</span>
                   </label>
-                ))}
+                ))} */}
               </div>
               <textarea
                 id="textarea_field"
