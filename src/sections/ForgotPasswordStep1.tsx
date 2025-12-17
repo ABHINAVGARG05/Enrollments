@@ -105,7 +105,7 @@ const ForgotPassword = () => {
             >
               <Input
                 label={"email"}
-                placeholder="Vit-Email"
+                placeholder="VIT-Email"
                 type="text"
                 value={email}
                 onChange={(e) => setEmail(e.target.value.toLowerCase().trim())}
@@ -125,16 +125,20 @@ const ForgotPassword = () => {
               {regnoError && (
                 <p className="text-red-500 text-sm">{regnoError}</p>
               )}
-              <Button submit={true} className="w-full sm:w-auto mx-auto mb-10">Reset Password</Button>
+              <Button submit={true} className="w-full sm:w-auto mx-auto mb-10">
+                Reset Password
+              </Button>
             </form>
             <section className="text-center sm:mt-10  text-light w-full mx-auto">
-            <div className="text-black text-sm md:text-lg cursor-pointer w-full sm:w-auto mx-auto">
-              <NavLink to="/" className="text-black nes-btn is-error custom-nes-error block w-full sm:w-auto mx-auto">
-                &larr; Back
-              </NavLink>
-            </div>
-          </section>
-
+              <div className="text-black text-sm md:text-lg cursor-pointer w-full sm:w-auto mx-auto">
+                <NavLink
+                  to="/"
+                  className="text-black nes-btn is-error custom-nes-error block w-full sm:w-auto mx-auto"
+                >
+                  &larr; Back
+                </NavLink>
+              </div>
+            </section>
           </div>
         </div>
         <img

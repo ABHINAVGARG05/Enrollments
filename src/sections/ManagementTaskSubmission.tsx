@@ -95,7 +95,7 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     if (subdomain.length === 0) {
       setOpenToast(true);
       setToastContent({
-        message: "Please select at least one sub-domain!",
+        message: "Please select at least one subdomain!",
         type: "warning",
       });
       return;
@@ -229,7 +229,7 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
         submitted the tasks.
       </div> */}
       <section className="mb-4 text-xs md:text-sm">
-        Append all your management tasks in following manner:
+        Add all your management tasks in the following format:
         <br />
         <span className="text-prime">[SubDomain] - [Link 1]</span>
         <br />
@@ -238,7 +238,7 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
         </span>
       </section>
       <form onSubmit={handleSubmitDesignTask}>
-        <h2>Choose Sub-Domain</h2>
+        <h2>Choose a subdomain</h2>
         <div className="flex">
           <div className="flex flex-col md:flex-row md:gap-4 flex-wrap justify-center mb-4 md:mb-0">
             <label>
@@ -294,7 +294,7 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
 
         <section className="my-8  text-xs md:text-sm">
           <span className="text-prime">
-            Answer some general questions: (Choose a sub-domain in order to
+            Answer some general questions: (Choose a subdomain in order to
             procure your questions)
           </span>
           <br />
@@ -332,7 +332,7 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
           )}
         </section>
         <p className="text-prime text-xs md:text-sm mt-4 md:mt-0">
-          Note: Once submitted you cannot revert
+          Note: Once submitted, this cannot be undone.
         </p>
         <button
           type="submit"
