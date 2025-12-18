@@ -50,7 +50,7 @@ const ApplicationStatus = () => {
             <button
               type="button"
               onClick={() => setSelectedDomain(0)}
-              className={`nes-btn w-full lg:h-[30%] text-sm md:text-base domain-btn ${
+              className={`nes-btn w-full w-[47%] md:w-[100%] md:aspect-[3] text-sm md:text-base domain-btn ${
                 selectedDomain === 0 ? "is-primary" : ""
               }`}
             >
@@ -61,7 +61,7 @@ const ApplicationStatus = () => {
             <button
               onClick={() => setSelectedDomain(1)}
               type="button"
-              className={`nes-btn w-full lg:h-[30%] text-sm md:text-base domain-btn ${
+              className={`nes-btn w-full w-[47%] md:w-[100%] md:aspect-[3] text-sm md:text-base domain-btn ${
                 selectedDomain === 1 ? "is-primary" : ""
               }`}
             >
@@ -72,7 +72,7 @@ const ApplicationStatus = () => {
             <button
               onClick={() => setSelectedDomain(2)}
               type="button"
-              className={`nes-btn w-full lg:h-[30%] text-sm md:text-base domain-btn ${
+              className={`nes-btn w-full w-[47%] md:w-[100%] md:aspect-[3] text-sm md:text-base domain-btn ${
                 selectedDomain === 2 ? "is-primary" : ""
               }`}
             >
