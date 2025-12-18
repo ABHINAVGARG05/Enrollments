@@ -282,7 +282,7 @@ const Meeting = () => {
   };
 
   return (
-    <div className="w-full min-h-screen h-full flex flex-col md:flex-row justify-center items-center p-4 overflow-auto">
+    <div className="w-full min-h-screen h-full flex flex-col md:flex-row justify-center items-center pt-0 px-4 overflow-auto">
       <Navbar />
       <BoundingBox className="relative  overflow-auto">
         <div className="w-full h-full text-center relative">

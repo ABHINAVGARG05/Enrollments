@@ -49,7 +49,7 @@ const ManagementApplicationStatus = () => {
 
     <>
     <p className="text-prime text-sm ">{status}</p>
-    { redirect!=="" &&   <p className="text-prime text-sm" onClick={() => {navigate(redirect)}}>Schedule a Meeting</p> }
+    {redirect !== "" && <button type="button" className="nes-btn is-error nes-btn-task  w-[47%] md:w-[40%] aspect-[6] custom-nes-error text-s" onClick={() => { navigate(redirect) }}>Schedule a Meeting</button> }
   </> 
   )
 };

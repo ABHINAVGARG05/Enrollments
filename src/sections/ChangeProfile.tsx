@@ -259,7 +259,8 @@ const ChangeProfile = () => {
 
   if (isLoading) {
     return (
-      <div className="w-full min-h-screen h-full bg-black p-4 flex flex-grow flex-col md:flex-row">
+      // <div className="w-full min-h-screen h-full bg-black p-4 flex flex-grow flex-col md:flex-row">
+      <div className="w-full min-h-screen h-full bg-black pt-0 px-4 flex flex-grow flex-col md:flex-row">
         <Navbar />
         <BoundingBox className="items-center justify-center">
           <div className="nes-container is-rounded is-dark">
@@ -271,7 +272,8 @@ const ChangeProfile = () => {
   }
 
   return (
-    <div className="w-full min-h-screen h-full bg-black p-4 flex flex-grow flex-col md:flex-row">
+    // <div className="w-full min-h-screen h-full bg-black p-4 flex flex-grow flex-col md:flex-row">
+    <div className="w-full min-h-screen h-full bg-black flex flex-grow flex-col md:flex-row pt-0 px-4">
       <Navbar />
       <BoundingBox className="text-white">
         <div className="w-full max-w-[1100px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
