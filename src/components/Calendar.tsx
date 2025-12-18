@@ -5,7 +5,6 @@ interface CalendarProps {
   selectDate: (date: number) => void;
 }
 
-// 🔥 Change this anytime
 const ALLOWED_DATES = [10, 11, 12, 13];
 
 const Calendar: React.FC<CalendarProps> = ({ selectDate }) => {
@@ -37,7 +36,8 @@ const Calendar: React.FC<CalendarProps> = ({ selectDate }) => {
   };
 
   return (
-    <>
+    <div className="w-full overflow-x-auto">
+
       <div className="month">
         <ul>
           <li>January</li>
@@ -62,8 +62,9 @@ const Calendar: React.FC<CalendarProps> = ({ selectDate }) => {
 
         {Array.from({ length: 31 }, (_, i) => i + 1).map(renderDate)}
       </ul>
-    </>
+    </div>
   );
 };
 
 export default Calendar;
+

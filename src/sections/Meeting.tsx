@@ -187,29 +187,27 @@ const Meeting = () => {
   console.log(scheduleTime);
   // "2025-12-10T22:00:00.000+05:30"
 
-
   useEffect(() => {
-  if (gmeet && justBooked) {
-    setShowBooked(true);
-    setSecondsLeft(5);
+    if (gmeet && justBooked) {
+      setShowBooked(true);
+      setSecondsLeft(5);
 
-    const interval = setInterval(() => {
-      setSecondsLeft((prev) => prev - 1);
-    }, 1000);
+      const interval = setInterval(() => {
+        setSecondsLeft((prev) => prev - 1);
+      }, 1000);
 
-    const timeout = setTimeout(() => {
-      setShowBooked(false);
-      setJustBooked(false); 
-      clearInterval(interval);
-    }, 5000);
+      const timeout = setTimeout(() => {
+        setShowBooked(false);
+        setJustBooked(false);
+        clearInterval(interval);
+      }, 5000);
 
-    return () => {
-      clearTimeout(timeout);
-      clearInterval(interval);
-    };
-  }
-}, [gmeet, justBooked]);
-
+      return () => {
+        clearTimeout(timeout);
+        clearInterval(interval);
+      };
+    }
+  }, [gmeet, justBooked]);
 
   const handleMeeting = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -241,7 +239,7 @@ const Meeting = () => {
       secureLocalStorage.setItem("scheduledTime", time);
       setGmeet(link);
       setScheduledTime(time);
-      setJustBooked(true); 
+      setJustBooked(true);
       // const storeDate = {
       //   date,
       //   time,
@@ -260,15 +258,14 @@ const Meeting = () => {
 
   const handleCancel = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    
 
     console.log(id);
 
-    try{
+    try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BASE_URL}/api/meet/cancel`, 
+        `${import.meta.env.VITE_BASE_URL}/api/meet/cancel`,
         { candidateId: id }
-      )
+      );
 
       console.log(response);
       Cookies.remove("jwtToken");
@@ -279,12 +276,10 @@ const Meeting = () => {
       setShowBooked(false);
 
       navigate("/");
-      
-    } catch(error){
+    } catch (error) {
       console.error(error);
     }
-
-  }
+  };
 
   return (
     <div className="w-full min-h-screen h-full flex flex-col md:flex-row justify-center items-center p-4 overflow-auto">
@@ -298,21 +293,17 @@ const Meeting = () => {
             SCHEDULE A MEETING
           </h1>
           <div className="w-full h-full nes-container justify-center is-rounded is-dark text-2xl md:text-base text-left md:text-center overflow-auto max-h-[70vh] p-10">
-            <div style={{ display: "flex", width: "100%" }}>
-              <div style={{ width: "50%", marginRight: "20px" }}>
+            <div className="flex flex-col md:flex-row w-full gap-6">
+              <div className="w-full md:w-1/3">
                 <Calendar selectDate={handleDate} />
               </div>
 
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "15px",
-                }}
-              >
-                <div style={{ display: "flex" }}>
-                  <button
-                    className="nes-btn text-sm md:text-base domain-btn"
+              
+              <div className="flex flex-col gap-4 w-full md:w-2/3">
+
+                
+                <div className="flex flex-wrap gap-3">
+                  <button className="nes-btn domain-btn text-xs md:text-sm w-full sm:w-[48%] md:w-auto"
                     style={{
                       fontSize: "0.7rem",
                       backgroundColor: isSelectedTime("21:20")
@@ -327,7 +318,7 @@ const Meeting = () => {
                     9:20PM to 9:40PM
                   </button>
                   <button
-                    className="nes-btn text-sm md:text-base domain-btn"
+                    className="nes-btn domain-btn text-xs md:text-sm w-full sm:w-[48%] md:w-auto"
                     style={{
                       fontSize: "0.7rem",
                       backgroundColor: isSelectedTime("22:00")
@@ -342,7 +333,7 @@ const Meeting = () => {
                     10:00PM to 10:20PM
                   </button>
                   <button
-                    className="nes-btn text-sm md:text-base domain-btn"
+                    className="nes-btn domain-btn text-xs md:text-sm w-full sm:w-[48%] md:w-auto"
                     style={{
                       fontSize: "0.7rem",
                       backgroundColor: isSelectedTime("22:40")
@@ -358,23 +349,10 @@ const Meeting = () => {
                   </button>
                 </div>
 
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    gap: "30px",
-                    alignItems: "center",
-                    marginBottom: "55px",
-                  }}
-                >
-                  <label
-                    style={{
-                      fontSize: "0.8rem",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                    }}
-                  >
+                <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 items-start sm:items-center mb-6">
+
+                  <label className="flex items-center gap-2 text-sm">
+
                     <input
                       type="checkbox"
                       checked={statusTech}
@@ -384,14 +362,7 @@ const Meeting = () => {
                     Technical
                   </label>
 
-                  <label
-                    style={{
-                      fontSize: "0.8rem",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                    }}
-                  >
+                  <label className="flex items-center gap-2 text-sm">
                     <input
                       type="checkbox"
                       checked={statusDesign}
@@ -401,14 +372,7 @@ const Meeting = () => {
                     Design
                   </label>
 
-                  <label
-                    style={{
-                      fontSize: "0.8rem",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                    }}
-                  >
+                  <label className="flex items-center gap-2 text-sm">
                     <input
                       type="checkbox"
                       checked={statusManagement}
@@ -419,7 +383,7 @@ const Meeting = () => {
                   </label>
                 </div>
 
-                <p style={{ fontSize: "0.9rem" }}>
+                <p className="text-sm md:text-base">
                   Scheduled Time:-{" "}
                   {scheduledTime ? (
                     <strong style={{ color: "#fc7a00" }}>
@@ -446,22 +410,16 @@ const Meeting = () => {
                   }
                   // onClick={handleMeeting}
                   // disabled={gmeet !== ""}
-                  onClick={
-                    gmeet && !showBooked
-                      ? handleCancel
-                      : handleMeeting
-                  }
+                  onClick={gmeet && !showBooked ? handleCancel : handleMeeting}
                   disabled={isLoading}
                 >
-                  {
-                    showBooked
+                  {showBooked
                     ? `Congratulations! Slot Booked (${secondsLeft}s)`
                     : gmeet
                     ? "Cancel Meeting"
                     : isLoading
                     ? "Hold Tight! Booking Your Slot"
-                    : "Book Your Slot"
-                  }
+                    : "Book Your Slot"}
 
                   {/* TODO:- When meeting is canceled. clear link from the local storage. */}
                 </Button>

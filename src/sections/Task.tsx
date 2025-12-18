@@ -266,7 +266,7 @@ const Task = () => {
             <i className="nes-icon close is-small"></i>
           </button>
         )}
-        <div className="h-auto mb-4 mt-2 text-lg">Tasks</div>
+        <div className="h-auto mb-10 mt-4 text-lg">Tasks</div>
         {selectedSubDomain !== "" && selectedDomain !== DOMAIN_MAP.management && (
           <div className="mb-4">
             <p className="text-xs">
@@ -275,7 +275,7 @@ const Task = () => {
             </p>
           </div>
         )}
-        <div className="w-full h-full flex items-start relative">
+        <div className="w-full  flex items-start relative">
           {domains.includes("tech") && selectedDomain === 0 && (
             <TechTask
               selectedSubDomain={selectedSubDomain}

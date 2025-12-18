@@ -9,11 +9,23 @@ body {
 }
 
 /* Month header */
-.month {
+/* .month {
   padding: 30px 25px;
   width: 100%;
   background: #fc7a00;
   text-align: center;
+} */
+
+.month {
+  padding: 0px;
+  text-align: center;
+  background: #fc7a00;
+}
+
+@media (min-width: 768px) {
+  .month {
+    padding: 30px 25px;
+  }
 }
 
 .month ul li {
@@ -31,42 +43,64 @@ body {
       margin: 0px;
 }
 
-.weekdays li {
+/* .weekdays li {
   display: inline-block;
   width: 13.6%;
   color: #666;
   text-align: center;
   font-size: 1rem;
-}
+} */
 
 /* Days */
 .days {
   width: 100%;
-  padding: 10px 0;
+  padding: 0px 0;
   background: #eee;
 }
 
-.days li {
+.weekdays,
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+
+/* .days li {
   display: inline-block;
   width: 13.6%;
   margin-bottom: 8px;
   text-align: center;
   font-size: 12px;
+} */
+.weekdays li {
+  font-size: clamp(0.7rem, 2vw, 1rem);
+  text-align: center;
+}
+
+.days li {
+  font-size: clamp(0.65rem, 2vw, 0.85rem);
 }
 
 /* Disabled dates */
 .days li .deactive {
-  padding: 6px;
+  padding: 0px;
   color: rgb(184, 184, 184);
 }
 
 /* Clickable dates */
 .days li .date {
-  padding: 6px;
+  padding: 0px;
   cursor: pointer;
   transition: background 0.2s ease;
   color: #fc7a00;
 }
+
+.days li .date,
+.days li .deactive {
+  min-height: 36px;
+}
+
 
 /* Hover effect */
 .days li .date:hover {
@@ -80,13 +114,24 @@ body {
   color: white;
 }
 
-.days li span {
+/* .days li span {
   display: inline-block;
   padding: 6px;
   width: 28px;
   text-align: center;
   border-radius: 4px;
   transition: background 0.2s ease;
+} */
+
+.days li span {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 6px;
+  box-sizing: border-box;
 }
 
 /* Non-selectable */
