@@ -91,7 +91,7 @@ useEffect(() => {
     // console.log(tabIndex, "yoooo");
   },[tabIndex])
   return (
-    <div className="w-full h-full flex flex-col md:flex-row justify-center items-center sm:flex p-4 ">
+    <div className="w-full h-full flex flex-col md:flex-row justify-center items-center sm:flex px-4 ">
       <Navbar />
       <BoundingBox>
         <Header tabIndex={tabIndex} setTabIndex={safeSetTabIndex} profileLocked={profileLocked} />

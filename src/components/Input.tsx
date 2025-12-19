@@ -7,7 +7,7 @@ interface Props {
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   required?: boolean;
-  className?: string;  
+  className?: string;
 }
 
 const Input: React.FC<Props> = ({
@@ -17,14 +17,17 @@ const Input: React.FC<Props> = ({
   value,
   onChange,
   required = false,
-  className = "", 
+  className = "",
 }: Props) => {
   const [inputType, setInputType] = useState(type);
-  
+
+  // 🔥 Key logic: decide icon color
+  const isFilled = Boolean(value && value.length > 0);
+
   return (
-    <div className={`relative input-container flex flex-grow  ${className}`}>
+    <div className={`relative input-container flex flex-grow ${className}`}>
       <input
-        className="nes-input is-dark text-white outline-none"
+        className="nes-input is-dark text-white outline-none w-full"
         type={inputType}
         placeholder={placeholder}
         name={label}
@@ -32,19 +35,23 @@ const Input: React.FC<Props> = ({
         onChange={onChange}
         required={required}
       />
+
       {type === "password" && (
         <button
-          className="absolute top-1/2 -translate-y-1/2 right-2 h-1/2 w-100% outline-none border-0"
-          onClick={() => {
-            setInputType(inputType === "text" ? "password" : "text");
-          }}
           type="button"
+          className="absolute top-1/2 -translate-y-1/2 right-2 h-1/2 outline-none border-0 bg-transparent"
+          onClick={() =>
+            setInputType(inputType === "text" ? "password" : "text")
+          }
         >
-          {inputType === "password" ? (
-            <img src="/eye.png" alt="Show password" className="h-full mx-auto invert" />
-          ) : (
-            <img src="/invisible.png" alt="Hide password" className="h-full mx-auto invert" />
-          )}
+          <img
+            src={inputType === "password" ? "/eye.png" : "/invisible.png"}
+            alt="Toggle password visibility"
+            className="h-full mx-auto"
+            style={{
+              filter: isFilled ? "none" : "invert(1)",
+            }}
+          />
         </button>
       )}
     </div>

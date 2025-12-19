@@ -149,7 +149,7 @@ const Signup: React.FC = () => {
     }
   };
   return (
-    <div className="w-full flex-grow h-full md:h-full relative flex justify-center items-center text-dark  p-8">
+    <div className="w-full flex-grow h-full md:h-full relative flex justify-center items-center text-dark  p-4">
       {openToast && (
         <CustomToast
           setToast={setOpenToast}
