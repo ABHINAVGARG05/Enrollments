@@ -16,40 +16,40 @@ const FAQs = () => {
       question: 'What kinds of roles or positions are available within the club?',
       answer:
         'Role of Core Committee member is available for Technical, Management and Design domain.',
-      icon: '/fox-avatar.png',  // Changed from '🦊'
+      icon: '/fox-avatar.png',  
     },
     {
       category: 'APPLICATION',
       question: 'Can I apply for multiple roles simultaneously?',
       answer: 'Yes, one can apply for multiple domains.',
-      icon: '/fox-avatar.png',  // Changed from '🦊'
+      icon: '/fox-avatar.png',  
     },
     {
       category: 'DEADLINE',
       question: 'Is there a deadline for submitting applications?',
       answer:
         'The deadline will be informed in advanced based on the domain you choose to apply in.',
-      icon: '/fox-avatar.png',  // Changed from '🦊'
+      icon: '/fox-avatar.png', 
     },
     {
       category: 'SUBMISSION',
       question: 'How can I edit or update my application after submission?',
       answer: 'Submissions cannot be edited once uploaded.',
-      icon: '/fox-avatar.png',  // Changed from '🦊'
+      icon: '/fox-avatar.png', 
     },
     {
       category: 'GENERAL',
       question: 'What is the selection process?',
       answer:
         'Recruitment task will be followed by an interview conducted by the Core Committee.',
-      icon: '/fox-avatar.png',  // Changed from '🦊'
+      icon: '/fox-avatar.png', 
     },
   ];
   const toggleFaq = (index: number) => {
     setActiveIndex(activeIndex === index ? null : index);
   };
 
-  const filteredFaqs = faqData; // show all FAQs
+  const filteredFaqs = faqData; 
 
   // Track scroll on the internal FAQ container (faqRef)
   useEffect(() => {
@@ -122,9 +122,9 @@ const FAQs = () => {
                     className={`answer-section ${activeIndex === index ? 'active' : ''
                       }`}
                   >
-                    <div className="avatar avatar-bg">
+                    {/* <div className="avatar avatar-bg">
                       <img src="/target-avatar.png" alt="Target avatar" className="avatar-img" />
-                    </div>
+                    </div> */}
                     <div className="answer-text">{faq.answer}</div>
                   </div>
 

@@ -4,7 +4,7 @@ import Calendar from "../components/Calendar";
 import Button from "../components/Button";
 import secureLocalStorage from "react-secure-storage";
 import Cookies from "js-cookie";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -23,17 +23,29 @@ const Meeting = () => {
   const [secondsLeft, setSecondsLeft] = useState(10);
   const navigate = useNavigate();
   const [justBooked, setJustBooked] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // console.log(secureLocalStorage.getItem("userDetails"));
+  const timeSlots = [
+    { value: "21:20", label: "9:20PM to 9:40PM" },
+    { value: "22:00", label: "10:00PM to 10:20PM" },
+    { value: "22:40", label: "10:40PM to 11:00PM" },
+    { value: "11:00", label: "11:00AM to 11:20AM" },
+    { value: "11:20", label: "11:20AM to 11:40AM" },
+    { value: "14:00", label: "2:00PM to 2:20PM" },
+    { value: "15:00", label: "3:00PM to 3:20PM" },
+    { value: "16:00", label: "4:00PM to 4:20PM" },
+  ];
 
   const handleDate: (data: number) => void = (data) => {
     setDate(data);
-    // console.log(date);
+    console.log("Selected date:", data);
   };
 
   const handleTime = (data: string) => {
     setTime(data);
-    // console.log(time);
+    setDropdownOpen(false);
+    console.log("Selected time:", data);
   };
 
   const formatDateTime = (isoString: string) => {
@@ -62,7 +74,6 @@ const Meeting = () => {
         return;
       }
 
-      // console.log("id12", id);
       const token = Cookies.get("jwtToken");
       try {
         const response = await axios.get(
@@ -73,7 +84,6 @@ const Meeting = () => {
             },
           }
         );
-        // console.log("response", response);
         if (response.data) {
           setStatusTech(response.data.passed);
           console.log(response.data.passed);
@@ -94,12 +104,10 @@ const Meeting = () => {
         return;
       }
 
-      // console.log("id12", id);
       const token = Cookies.get("jwtToken");
       try {
         const response = await axios.get(
-          `${
-            import.meta.env.VITE_BASE_URL
+          `${import.meta.env.VITE_BASE_URL
           }/applicatiostatus/statusdesign/${id}`,
           {
             headers: {
@@ -107,7 +115,6 @@ const Meeting = () => {
             },
           }
         );
-        // console.log("response", response);
         if (response.data) {
           setStatusDesign(response.data.passed);
         }
@@ -127,12 +134,10 @@ const Meeting = () => {
         return;
       }
 
-      // console.log("id12", id);
       const token = Cookies.get("jwtToken");
       try {
         const response = await axios.get(
-          `${
-            import.meta.env.VITE_BASE_URL
+          `${import.meta.env.VITE_BASE_URL
           }/applicatiostatus/statusmanagement/${id}`,
           {
             headers: {
@@ -140,7 +145,6 @@ const Meeting = () => {
             },
           }
         );
-        // console.log("response", response);
         if (response.data) {
           setStatusManagement(response.data.passed);
         }
@@ -150,6 +154,16 @@ const Meeting = () => {
     };
 
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const domains: string[] = [];
@@ -183,9 +197,12 @@ const Meeting = () => {
     }
   }, []);
 
-  const scheduleTime = `2025-12-${date}T${time}:00.000+05:30`;
-  console.log(scheduleTime);
-  // "2025-12-10T22:00:00.000+05:30"
+  // Ensure date is properly padded (e.g., "05" instead of "5")
+  const formattedDate = date ? String(date).padStart(2, '0') : null;
+  const scheduleTime = formattedDate ? `2025-12-${formattedDate}T${time}:00.000+05:30` : "";
+
+  console.log("Schedule Time:", scheduleTime);
+  console.log("Date:", date, "Time:", time);
 
   useEffect(() => {
     if (gmeet && justBooked) {
@@ -211,6 +228,9 @@ const Meeting = () => {
 
   const handleMeeting = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+
+    console.log("Handle Meeting called - Date:", date, "Time:", time);
+
     if (!date || !time) {
       alert("Please select date and time");
       setIsLoading(false);
@@ -224,14 +244,17 @@ const Meeting = () => {
       scheduletime: scheduleTime,
     };
 
+    console.log("Sending meeting details:", meetingDetails);
+
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/meet/schedule`,
         meetingDetails
       );
 
-      console.log(response);
-      console.log(response.data.data.gmeetLink);
+      console.log("Response:", response);
+      console.log("GMeet Link:", response.data.data.gmeetLink);
+
       const link = response.data.data.gmeetLink;
       const time = response.data.data.scheduledTime;
 
@@ -240,20 +263,22 @@ const Meeting = () => {
       setGmeet(link);
       setScheduledTime(time);
       setJustBooked(true);
-      // const storeDate = {
-      //   date,
-      //   time,
-      // };
-
-      // secureLocalStorage.setItem("interviewLink", link);
-      // secureLocalStorage.setItem("storedDateTime", JSON.stringify(storeDate));
-      // console.log(secureLocalStorage.getItem("userDetails"));
       setIsLoading(false);
     } catch (error) {
-      console.log(error);
-    } finally {
+      console.log("Error booking meeting:", error);
+
+      if (axios.isAxiosError(error)) {
+        const backendMessage =
+          error.response?.data?.error ||
+          error.response?.data?.message ||
+          "Failed to book meeting";
+
+        alert(backendMessage);
+      }
+
       setIsLoading(false);
     }
+
   };
 
   const handleCancel = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -281,6 +306,8 @@ const Meeting = () => {
     }
   };
 
+  const selectedSlot = timeSlots.find(slot => slot.value === time);
+
   return (
     <div className="w-full min-h-screen h-full flex flex-col md:flex-row justify-center items-center pt-0 px-4 overflow-auto">
       <Navbar />
@@ -298,55 +325,83 @@ const Meeting = () => {
                 <Calendar selectDate={handleDate} />
               </div>
 
-              
+
               <div className="flex flex-col gap-4 w-full md:w-2/3">
 
-                
-                <div className="flex flex-wrap gap-3">
-                  <button className="nes-btn domain-btn text-xs md:text-sm w-full sm:w-[48%] md:w-auto"
+                {/* Dropdown for time slots */}
+                <div className="relative w-full" ref={dropdownRef}>
+                  <div
+                    className="nes-btn cursor-pointer"
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
                     style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      width: "100%",
                       fontSize: "0.7rem",
-                      backgroundColor: isSelectedTime("21:20")
-                        ? "#fc7a00"
-                        : undefined,
-                      color: isSelectedTime("21:20") ? "white" : undefined,
-                    }}
-                    onClick={() => {
-                      handleTime("21:20");
+                      textAlign: "left",
+                      backgroundColor: time ? "#fc7a00" : undefined,
+                      color: time ? "white" : undefined,
                     }}
                   >
-                    9:20PM to 9:40PM
-                  </button>
-                  <button
-                    className="nes-btn domain-btn text-xs md:text-sm w-full sm:w-[48%] md:w-auto"
-                    style={{
-                      fontSize: "0.7rem",
-                      backgroundColor: isSelectedTime("22:00")
-                        ? "#fc7a00"
-                        : undefined,
-                      color: isSelectedTime("22:00") ? "white" : undefined,
-                    }}
-                    onClick={() => {
-                      handleTime("22:00");
-                    }}
-                  >
-                    10:00PM to 10:20PM
-                  </button>
-                  <button
-                    className="nes-btn domain-btn text-xs md:text-sm w-full sm:w-[48%] md:w-auto"
-                    style={{
-                      fontSize: "0.7rem",
-                      backgroundColor: isSelectedTime("22:40")
-                        ? "#fc7a00"
-                        : undefined,
-                      color: isSelectedTime("22:40") ? "white" : undefined,
-                    }}
-                    onClick={() => {
-                      handleTime("22:40");
-                    }}
-                  >
-                    10:40PM to 11:00PM
-                  </button>
+                    <span>{selectedSlot ? selectedSlot.label : "Select Time Slot"}</span>
+                    <span
+                      style={{
+                        color: "#fff",
+                        fontSize: "1rem",
+                        fontWeight: "bold",
+                        transform: dropdownOpen ? "rotate(180deg)" : "rotate(0deg)",
+                        transition: "transform 0.3s",
+                        marginLeft: "1rem",
+                      }}
+                    >
+                      ▼
+                    </span>
+                  </div>
+
+                  {dropdownOpen && (
+                    <div
+                      className="absolute w-full z-50"
+                      style={{
+                        top: "100%",
+                        left: 0,
+                        marginTop: "0.25rem",
+                        maxHeight: "300px",
+                        overflowY: "auto",
+                        border: "4px solid #fff",
+                        padding: "0",
+                        background: "#212529",
+                      }}
+                    >
+                      {timeSlots.map((slot, index) => (
+                        <div
+                          key={slot.value}
+                          onClick={() => handleTime(slot.value)}
+                          className="cursor-pointer"
+                          style={{
+                            padding: "0.75rem 1rem",
+                            fontSize: "0.7rem",
+                            borderBottom: index !== timeSlots.length - 1 ? "2px solid #444" : "none",
+                            backgroundColor: isSelectedTime(slot.value) ? "#fc7a00" : "#212529",
+                            color: isSelectedTime(slot.value) ? "#fff" : "#fff",
+                            transition: "all 0.2s",
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!isSelectedTime(slot.value)) {
+                              e.currentTarget.style.backgroundColor = "#fc7a00";
+                            }
+                          }}
+                          onMouseLeave={(e) => {
+                            if (!isSelectedTime(slot.value)) {
+                              e.currentTarget.style.backgroundColor = "#212529";
+                            }
+                          }}
+                        >
+                          {slot.label}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 items-start sm:items-center mb-6">
@@ -356,7 +411,7 @@ const Meeting = () => {
                     <input
                       type="checkbox"
                       checked={statusTech}
-                      onChange={() => {}}
+                      onChange={() => { }}
                       style={{ width: "20px", height: "20px" }}
                     />
                     Technical
@@ -366,7 +421,7 @@ const Meeting = () => {
                     <input
                       type="checkbox"
                       checked={statusDesign}
-                      onChange={() => {}}
+                      onChange={() => { }}
                       style={{ width: "20px", height: "20px" }}
                     />
                     Design
@@ -376,7 +431,7 @@ const Meeting = () => {
                     <input
                       type="checkbox"
                       checked={statusManagement}
-                      onChange={() => {}}
+                      onChange={() => { }}
                       style={{ width: "20px", height: "20px" }}
                     />
                     Management
@@ -408,20 +463,16 @@ const Meeting = () => {
                   className={
                     "text-white font-medium py-2 px-4 rounded-md transition-all duration-300"
                   }
-                  // onClick={handleMeeting}
-                  // disabled={gmeet !== ""}
                   onClick={gmeet && !showBooked ? handleCancel : handleMeeting}
                   disabled={isLoading}
                 >
                   {showBooked
                     ? `Congratulations! Slot Booked (${secondsLeft}s)`
                     : gmeet
-                    ? "Cancel Meeting"
-                    : isLoading
-                    ? "Hold Tight! Booking Your Slot"
-                    : "Book Your Slot"}
-
-                  {/* TODO:- When meeting is canceled. clear link from the local storage. */}
+                      ? "Cancel Meeting"
+                      : isLoading
+                        ? "Hold Tight! Booking Your Slot"
+                        : "Book Your Slot"}
                 </Button>
               </div>
             </div>
