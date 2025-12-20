@@ -17,17 +17,18 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   const { tabIndex, setTabIndex } = useTabStore();
   const [subdomain, setSubDomain] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const id = secureLocalStorage.getItem("id");
+  const DRAFT_KEY = id ? `design_draft_${id}` : null;
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
+  const [savingFields, setSavingFields] = useState<Record<string, boolean>>({});
+
   interface FormData {
-    [key: string]: string | [string, string];
+    [key: string]: [string, string];
   }
 
-  const [formData, setFormData] = useState<FormData>({
-    question1: "",
-    question2: "",
-    question3: "",
-    question4: "",
-    question5: "",
-  });
+  const [isDraftLoaded, setIsDraftLoaded] = useState(false);
+  const [formData, setFormData] = useState<FormData>({});
+  const syncTimerRef = React.useRef<number | null>(null);
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
@@ -40,6 +41,152 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     }
   };
 
+  interface DesignDraft {
+    id: string;
+    formData: FormData;
+    subdomain: string[];
+    updatedAt: number;
+  }
+
+  const hydrateFromBackend = (task: any) => {
+    if (!task) return;
+
+    setSubDomain(task.subdomain || []);
+
+    const restoredFormData: FormData = {};
+
+    Object.entries(task).forEach(([key, value]) => {
+      if (key.startsWith("question") && Array.isArray(value) && value[0]) {
+        restoredFormData[key] = ["", value[0]];
+      }
+    });
+
+    setFormData(restoredFormData);
+  };
+
+  useEffect(() => {
+    if (!DRAFT_KEY || !isDraftLoaded) return;
+
+    const draft = {
+      id,
+      formData,
+      subdomain,
+      updatedAt: Date.now(),
+    };
+
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+  }, [formData, subdomain, isDraftLoaded]);
+
+  // first fetch from local, if not found then go for BE
+  useEffect(() => {
+    if (!id) return;
+
+    if (DRAFT_KEY) {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (raw) {
+        try {
+          const draft = JSON.parse(raw);
+          if (draft?.id === id) {
+            setFormData(draft.formData || {});
+            setSubDomain(draft.subdomain || []);
+          }
+        } catch (err) {
+          console.error("Failed to load local draft", err);
+        } finally {
+          setIsDraftLoaded(true);
+        }
+        return;
+      }
+    }
+
+    // not found in local storage, so we fetch from BE
+    const fetchDraftFromBackend = async () => {
+      try {
+        const token = Cookies.get("jwtToken");
+        if (!token) return;
+
+        const res = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/upload/design/${id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        const task = res.data?.data;
+
+        if (!task || task.isDone) {
+          setIsDraftLoaded(true);
+          return;
+        }
+
+        hydrateFromBackend(task);
+      } catch (err) {
+        console.error("Failed to fetch draft from backend", err);
+      } finally {
+        setIsDraftLoaded(true);
+      }
+    };
+
+    fetchDraftFromBackend();
+  }, [id]);
+
+  const syncDraftToServer = async () => {
+    if (!id) return;
+
+    const token = Cookies.get("jwtToken");
+    if (!token) return;
+
+    try {
+      await axios.patch(
+        `${import.meta.env.VITE_BASE_URL}/upload/design/${id}`,
+        buildBackendPayload(),
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setIsSavingDraft(false);
+      setSavingFields({});
+    } catch (err) {
+      console.error("Draft sync failed (will retry later)", err);
+    }
+  };
+
+  const buildBackendPayload = () => {
+    const payload: Record<string, any> = {};
+
+    payload.subdomain = subdomain;
+
+    // flatten formData
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value?.[1]?.trim()) {
+        payload[key] = [value[1]];
+      }
+    });
+
+    return payload;
+  };
+
+  useEffect(() => {
+    if (!isDraftLoaded) return;
+    if (!id) return;
+
+    if (syncTimerRef.current) {
+      clearTimeout(syncTimerRef.current);
+    }
+
+    syncTimerRef.current = window.setTimeout(() => {
+      syncDraftToServer();
+    }, 2000);
+
+    return () => {
+      if (syncTimerRef.current) {
+        clearTimeout(syncTimerRef.current);
+      }
+    };
+  }, [formData, subdomain, isDraftLoaded]);
+
   const handleInputChange = (
     e:
       | React.ChangeEvent<HTMLInputElement>
@@ -49,6 +196,12 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     const { name, value, type } = e.target as
       | HTMLInputElement
       | HTMLTextAreaElement;
+
+    setSavingFields((prev) => ({
+      ...prev,
+      [name]: true,
+    }));
+    setIsSavingDraft(true);
     if (type === "radio" && e.target instanceof HTMLInputElement) {
       if (e.target.checked) {
         setFormData((prevData) => ({
@@ -76,7 +229,7 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
       return;
     }
 
-    const id = secureLocalStorage.getItem("id");
+    // const id = secureLocalStorage.getItem("id");
     if (!id) {
       console.error("User id not found in secureLocalStorage");
       setOpenToast(true);
@@ -90,16 +243,17 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     // console.log("id1", id);
     const token = Cookies.get("jwtToken");
 
-    const updatedFormData = {
-      ...formData,
-      subdomain: subdomain.join(", "),
-    };
+    // const updatedFormData = {
+    //   ...formData,
+    //   subdomain: subdomain.join(", "),
+    // };
+    const payload = buildBackendPayload();
 
     try {
       setLoading(true);
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/upload/design/${id}`,
-        updatedFormData,
+        payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -114,6 +268,13 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
           message: "Task Submitted Successfully!",
           type: "success",
         });
+        if (DRAFT_KEY) {
+          localStorage.removeItem(DRAFT_KEY);
+        }
+        if (syncTimerRef.current) {
+          clearTimeout(syncTimerRef.current);
+        }
+
         await fetchUserDetails();
       }
       // console.log(response.data);
@@ -130,7 +291,7 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   };
   const fetchUserDetails = async () => {
     try {
-      const id = secureLocalStorage.getItem("id");
+      // const id = secureLocalStorage.getItem("id");
 
       if (!id) {
         throw new Error("User id not found in secureLocalStorage");
@@ -251,46 +412,52 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
           className="nes-textarea is-dark min-h-[15rem]"
           required
           name="question1"
+          value={formData.question1?.[1] || ""}
           onChange={(e) => handleInputChange(e, "question1")}
           placeholder="Write here..."
         ></textarea>
+        <p>{savingFields["question1"] ? "Saving..." : "Saved"}</p>
 
         <section className="my-2  text-xs md:text-sm">
           <span className="text-prime">Answer some general questions:</span>
           <br />
-          
-          
+
           {quizSubQuestions.map(
-  (quiz, index) =>
-    quiz.subdomain &&
-    subdomain.includes(quiz.subdomain) && (
-      <div
-        style={{
-          backgroundColor: "rgba(0,0,0,0)",
-          padding: "1rem",
-        }}
-        key={index}
-        className="nes-field is-inline flex flex-col mb-6"
-      >
-        <label
-          style={{ color: "#fff" }}
-          className="w-full text-label text-xs "
-        >
-          {quiz.question}
-        </label>
+            (quiz, index) =>
+              quiz.subdomain &&
+              subdomain.includes(quiz.subdomain) && (
+                <div
+                  style={{
+                    backgroundColor: "rgba(0,0,0,0)",
+                    padding: "1rem",
+                  }}
+                  key={index}
+                  className="nes-field is-inline flex flex-col mb-6"
+                >
+                  <label
+                    style={{ color: "#fff" }}
+                    className="w-full text-label text-xs "
+                  >
+                    {quiz.question}
+                  </label>
 
-        <textarea
-          id="textarea_field"
-          className="nes-textarea is-dark min-h-[5rem]"
-          name={`question${index + 9}`}
-          placeholder="Write here..."
-          onChange={(e) => handleInputChange(e, quiz.question)}
-          required
-        />
-      </div>
-    )
-)}
-
+                  <textarea
+                    id="textarea_field"
+                    className="nes-textarea is-dark min-h-[5rem]"
+                    name={`question${index + 9}`}
+                    value={formData[`question${index + 9}`]?.[1] || ""}
+                    placeholder="Write here..."
+                    onChange={(e) => handleInputChange(e, quiz.question)}
+                    required
+                  />
+                  <p>
+                    {savingFields[`question${index + 9}`]
+                      ? "Saving..."
+                      : "Saved"}
+                  </p>
+                </div>
+              )
+          )}
         </section>
         <p className="text-prime text-xs md:text-sm mt-4 md:mt-0">
           Note: Once submitted, this cannot be undone.

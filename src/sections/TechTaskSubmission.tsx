@@ -4,7 +4,7 @@ import Cookies from "js-cookie";
 import secureLocalStorage from "react-secure-storage";
 import { ToastContent } from "../components/CustomToast";
 import { jwtDecode, JwtPayload } from "jwt-decode";
-
+import { useTabStore } from "../store";
 interface Props {
   setOpenToast: React.Dispatch<React.SetStateAction<boolean>>;
   setToastContent: React.Dispatch<React.SetStateAction<ToastContent>>;
@@ -14,48 +14,42 @@ interface CustomJwtPayload extends JwtPayload {
   isTechDone?: boolean;
 }
 
-interface FormDataType {
-  question1: string | [string, string];
-  question2: string | [string, string];
-  question3: string | [string, string];
-  question4: string | [string, string];
-  question5: string | [string, string];
-}
+// interface FormDataType {
+//   question1: string | [string, string];
+//   question2: string | [string, string];
+//   question3: string | [string, string];
+//   question4: string | [string, string];
+//   question5: string | [string, string];
+// }
 
 const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   const [subdomain, setSubDomain] = useState<string[]>([]);
   const [isTechDone, setIsTechDone] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState<FormDataType>({
-    question1: "",
-    question2: "",
-    question3: "",
-    question4: "",
-    question5: "",
-  });
+  const id = secureLocalStorage.getItem("id");
+  const DRAFT_KEY = id ? `tech_draft_${id}` : null;
 
-  useEffect(() => {
-    const token = Cookies.get("jwtToken");
-    if (token) {
-      try {
-        const decoded = jwtDecode<CustomJwtPayload>(token);
-        if (decoded?.isTechDone) {
-          setIsTechDone(true);
-        }
-      } catch {
-        // ignore decode errors
-      }
-    }
-    // Check if tech task is already submitted on component mount
-    const techSubmitted = secureLocalStorage.getItem("TechSub");
-    if (techSubmitted === "true" || techSubmitted === true) {
-      setIsTechDone(true);
-    } else {
-      fetchUserDetails();
-    }
-  }, []);
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [savingFields, setSavingFields] = useState<Record<string, boolean>>({});
+
+  // const [formData, setFormData] = useState<FormDataType>({
+  //   question1: "",
+  //   question2: "",
+  //   question3: "",
+  //   question4: "",
+  //   question5: "",
+  // });
+  
+    interface FormData {
+      [key: string]: [string, string];
+    }
+  
+    const [isDraftLoaded, setIsDraftLoaded] = useState(false);
+  const [formData, setFormData] = useState<FormData>({});
+    const syncTimerRef = React.useRef<number | null>(null);
+  
+    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
     if (checked) {
       setSubDomain((prevDomains) =>
@@ -66,11 +60,166 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     }
   };
 
+  interface TechDraft {
+    id: string;
+    formData: FormData;
+    subdomain: string[];
+    updatedAt: number;
+  }
+
+const hydrateFromBackend = (task: any) => {
+    if (!task) return;
+
+    setSubDomain(task.subdomain || []);
+
+    const restoredFormData: FormData = {};
+
+    Object.entries(task).forEach(([key, value]) => {
+      if (key.startsWith("question") && Array.isArray(value) && value[0]) {
+        restoredFormData[key] = ["", value[0]];
+      }
+    });
+
+    setFormData(restoredFormData);
+  };
+
+useEffect(() => {
+    if (!DRAFT_KEY || !isDraftLoaded) return;
+
+    const draft = {
+      id,
+      formData,
+      subdomain,
+      updatedAt: Date.now(),
+    };
+
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+  }, [formData, subdomain, isDraftLoaded]);
+
+
+  useEffect(() => {
+      if (!id) return;
+  
+      if (DRAFT_KEY) {
+        const raw = localStorage.getItem(DRAFT_KEY);
+        if (raw) {
+          try {
+            const draft = JSON.parse(raw);
+            if (draft?.id === id) {
+              setFormData(draft.formData || {});
+              setSubDomain(draft.subdomain || []);
+            }
+          } catch (err) {
+            console.error("Failed to load local draft", err);
+          } finally {
+            setIsDraftLoaded(true);
+          }
+          return;
+        }
+      }
+  
+      // 2️⃣ fallback to backend
+      const fetchDraftFromBackend = async () => {
+        try {
+          const token = Cookies.get("jwtToken");
+          if (!token) return;
+  
+          const res = await axios.get(
+            `${import.meta.env.VITE_BASE_URL}/upload/tech/${id}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+  
+          const task = res.data?.data;
+  
+          if (!task || task.isDone) {
+            setIsDraftLoaded(true);
+            return;
+          }
+  
+          hydrateFromBackend(task);
+        } catch (err) {
+          console.error("Failed to fetch draft from backend", err);
+        } finally {
+          setIsDraftLoaded(true);
+        }
+      };
+  
+      fetchDraftFromBackend();
+    }, [id]);
+
+    const syncDraftToServer = async () => {
+        if (!id) return;
+    
+        const token = Cookies.get("jwtToken");
+        if (!token) return;
+    
+        try {
+          await axios.patch(
+            `${import.meta.env.VITE_BASE_URL}/upload/tech/${id}`,
+            buildBackendPayload(),
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setIsSavingDraft(false);
+    setSavingFields({});
+        } catch (err) {
+          console.error("Draft sync failed (will retry later)", err);
+        }
+      };
+
+    const buildBackendPayload = () => {
+    const payload: Record<string, any> = {};
+
+    payload.subdomain = subdomain;
+
+    // flatten formData
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value?.[1]?.trim()) {
+        payload[key] = [value[1]];
+      }
+    });
+
+    return payload;
+  };
+
+  useEffect(() => {
+      if (!isDraftLoaded) return;
+      if (!id) return;
+  
+      if (syncTimerRef.current) {
+        clearTimeout(syncTimerRef.current);
+      }
+  
+      syncTimerRef.current = window.setTimeout(() => {
+        syncDraftToServer();
+      }, 2000);
+  
+      return () => {
+        if (syncTimerRef.current) {
+          clearTimeout(syncTimerRef.current);
+        }
+      };
+    }, [formData, subdomain, isDraftLoaded]);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
     question: string
   ) => {
     const { name, value } = e.target;
+
+    setSavingFields((prev) => ({
+    ...prev,
+    [name]: true,
+  }));
+
+  
+  setIsSavingDraft(true);
+
     setFormData((prevData) => ({
       ...prevData,
       [name]: [
@@ -84,7 +233,7 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
 
   const fetchUserDetails = async () => {
     try {
-      const id = secureLocalStorage.getItem("id");
+      // const id = secureLocalStorage.getItem("id");
       if (!id) throw new Error("User id not found in secureLocalStorage");
       const token = Cookies.get("jwtToken");
       if (!token) throw new Error("JWT token not found");
@@ -120,7 +269,7 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
       return;
     }
 
-    const id = secureLocalStorage.getItem("id");
+    // const id = secureLocalStorage.getItem("id");
     if (!id) {
       setOpenToast(true);
       setToastContent({
@@ -140,16 +289,19 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
       return;
     }
 
-    const updatedFormData = {
-      ...formData,
-      subdomain: subdomain.join(", "),
-    } as Record<string, unknown>;
+    // const updatedFormData = {
+    //   ...formData,
+    //   subdomain: subdomain.join(", "),
+    // } as Record<string, unknown>;
+
+        const payload = buildBackendPayload();
+
 
     try {
       setLoading(true);
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/upload/tech/${id}`,
-        updatedFormData,
+        payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -166,7 +318,13 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
           message: "Task Submitted Successfully!",
           type: "success",
         });
-        fetchUserDetails();
+        if (DRAFT_KEY) {
+          localStorage.removeItem(DRAFT_KEY);
+        }
+        if (syncTimerRef.current) {
+          clearTimeout(syncTimerRef.current);
+        }
+        await fetchUserDetails();
       }
     } catch (error) {
       console.error("Error submitting tech task:", error);
@@ -277,10 +435,14 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
           id="textarea_field"
           className="nes-textarea is-dark min-h-[15rem]"
           name="question1"
+          value={formData.question1?.[1] || ""}
           onChange={(e) => handleInputChange(e, "question1")}
           required
           placeholder="Write here..."
         ></textarea>
+        <p className="text-xs text-gray-400">
+  {savingFields["question1"] ? "Saving..." : "Saved"}
+</p>
 
         <section className="my-2 text-xs md:text-sm">
           <span className="text-prime">Answer some general questions:</span>
@@ -334,10 +496,17 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
                     id={`textarea_field_${index + 2}`}
                     className="nes-textarea is-dark min-h-[5rem]"
                     name={`question${index + 2}`}
+                    value={formData[`question${index + 2}`]?.[1] || ""}
                     placeholder="Write here..."
                     onChange={(e) => handleInputChange(e, quiz.question)}
                     required
                   />
+                  <div className="flex justify-end">
+  <span className="text-xs text-gray-400">
+    {savingFields[`question${index + 2}`] ? "Saving..." : "Saved"}
+  </span>
+</div>
+
                 </div>
               )
           )}

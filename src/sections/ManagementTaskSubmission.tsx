@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
 import { ToastContent } from "../components/CustomToast";
 import { jwtDecode, JwtPayload } from "jwt-decode";
-// import { useTabStore } from "../store";
+import { useTabStore } from "../store";
 interface Props {
   setOpenToast: React.Dispatch<React.SetStateAction<boolean>>;
   setToastContent: React.Dispatch<React.SetStateAction<ToastContent>>;
@@ -20,45 +20,21 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   // const { tabIndex, setTabIndex } = useTabStore();
   const [subdomain, setSubDomain] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const id = secureLocalStorage.getItem("id");
+  const DRAFT_KEY = id ? `management_draft_${id}` : null;
 
-  const [formData, setFormData] = useState({
-    question1: "",
-    question2: "",
-    question3: "",
-    question4: "",
-    question5: "",
-    question6: "",
-    question7: "",
-    question8: "",
-    question9: "",
-    question10: "",
-    question11: "",
-    question12: "",
-    question13: "",
-    question14: "",
-    question15: "",
-    question16: "",
-    question17: "",
-  });
+  const [isSavingDraft, setIsSavingDraft] = useState(false);
 
-  useEffect(() => {
-    const token = Cookies.get("jwtToken");
-    if (token) {
-      const decoded = jwtDecode<CustomJwtPayload>(token);
-      if (decoded?.isManagementDone) {
-        setIsManagementDone(true);
-      }
-    }
-    const localData = secureLocalStorage.getItem("userDetails") as
-      | string
-      | null;
-    const data: { isSC?: boolean } = localData && JSON.parse(localData);
-    if (data && data.isSC) {
-      setCoreType("senior");
-    } else {
-      setCoreType("junior");
-    }
-  }, []);
+
+  const [savingFields, setSavingFields] = useState<Record<string, boolean>>({});
+
+  interface FormData {
+    [key: string]: [string, string];
+  }
+
+  const [isDraftLoaded, setIsDraftLoaded] = useState(false);
+  const [formData, setFormData] = useState<FormData>({});
+  const syncTimerRef = React.useRef<number | null>(null);
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
@@ -71,11 +47,170 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     }
   };
 
+  interface ManagementDraft {
+    id: string;
+    formData: FormData;
+    subdomain: string[];
+    updatedAt: number;
+  }
+
+  const hydrateFromBackend = (task: any) => {
+    if (!task) return;
+
+    setSubDomain(task.subdomain || []);
+
+    const restoredFormData: FormData = {};
+
+    Object.entries(task).forEach(([key, value]) => {
+      if (key.startsWith("question") && Array.isArray(value) && value[0]) {
+        restoredFormData[key] = ["", value[0]];
+      }
+    });
+
+    setFormData(restoredFormData);
+  };
+
+  useEffect(() => {
+      if (!DRAFT_KEY || !isDraftLoaded) return;
+  
+      const draft = {
+        id,
+        formData,
+        subdomain,
+        updatedAt: Date.now(),
+      };
+  
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    }, [formData, subdomain, isDraftLoaded]);
+
+
+  useEffect(() => {
+      if (!id) return;
+  
+      if (DRAFT_KEY) {
+        const raw = localStorage.getItem(DRAFT_KEY);
+        if (raw) {
+          try {
+            const draft = JSON.parse(raw);
+            if (draft?.id === id) {
+              setFormData(draft.formData || {});
+              setSubDomain(draft.subdomain || []);
+            }
+          } catch (err) {
+            console.error("Failed to load local draft", err);
+          } finally {
+            setIsDraftLoaded(true);
+          }
+          return;
+        }
+      }
+  
+      // 2️⃣ fallback to backend
+      const fetchDraftFromBackend = async () => {
+        try {
+          const token = Cookies.get("jwtToken");
+          if (!token) return;
+  
+          const res = await axios.get(
+            `${import.meta.env.VITE_BASE_URL}/upload/management/${id}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+  
+          const task = res.data?.data;
+  
+          if (!task || task.isDone) {
+            setIsDraftLoaded(true);
+            return;
+          }
+  
+          hydrateFromBackend(task);
+        } catch (err) {
+          console.error("Failed to fetch draft from backend", err);
+        } finally {
+          setIsDraftLoaded(true);
+        }
+      };
+  
+      fetchDraftFromBackend();
+    }, [id]);
+
+
+  const syncDraftToServer = async () => {
+      if (!id) return;
+  
+      const token = Cookies.get("jwtToken");
+      if (!token) return;
+  
+      try {
+        await axios.patch(
+          `${import.meta.env.VITE_BASE_URL}/upload/management/${id}`,
+          buildBackendPayload(),
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        setIsSavingDraft(false);
+    setSavingFields({});
+      } catch (err) {
+        console.error("Draft sync failed (will retry later)", err);
+      }
+    };
+
+
+  const buildBackendPayload = () => {
+    const payload: Record<string, any> = {};
+
+    payload.subdomain = subdomain;
+
+    // flatten formData
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value?.[1]?.trim()) {
+        payload[key] = [value[1]];
+      }
+    });
+
+    return payload;
+  };
+
+  useEffect(() => {
+      if (!isDraftLoaded) return;
+      if (!id) return;
+  
+      if (syncTimerRef.current) {
+        clearTimeout(syncTimerRef.current);
+      }
+  
+      syncTimerRef.current = window.setTimeout(() => {
+        syncDraftToServer();
+      }, 2000);
+  
+      return () => {
+        if (syncTimerRef.current) {
+          clearTimeout(syncTimerRef.current);
+        }
+      };
+    }, [formData, subdomain, isDraftLoaded]);
+
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
     question: string
   ) => {
     const { name, value } = e.target;
+
+     setSavingFields((prev) => ({
+        ...prev,
+        [name]: true,
+      }));
+
+  
+  setIsSavingDraft(true);
+
+
     setFormData((prevData) => ({
       ...prevData,
       [name]: [
@@ -101,7 +236,7 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
       return;
     }
 
-    const id = secureLocalStorage.getItem("id");
+    // const id = secureLocalStorage.getItem("id");
     if (!id) {
       console.error("User id not found in secureLocalStorage");
       setOpenToast(true);
@@ -120,16 +255,16 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
       return;
     }
 
-    const updatedFormData = {
-      ...formData,
-      subdomain: subdomain.join(", "),
-    };
-
+    // const updatedFormData = {
+    //   ...formData,
+    //   subdomain: subdomain.join(", "),
+    // };
+    const payload = buildBackendPayload();
     try {
       setLoading(true);
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/upload/management/${id}`,
-        updatedFormData,
+        payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -145,6 +280,13 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
           message: "Task Submitted Successfully!",
           type: "success",
         });
+        if (DRAFT_KEY) {
+          localStorage.removeItem(DRAFT_KEY);
+        }
+        if (syncTimerRef.current) {
+          clearTimeout(syncTimerRef.current);
+        }
+
         await fetchUserDetails();
       }
       // console.log(response.data);
@@ -161,7 +303,7 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   };
   const fetchUserDetails = async () => {
     try {
-      const id = secureLocalStorage.getItem("id");
+      // const id = secureLocalStorage.getItem("id");
 
       if (!id) {
         throw new Error("User id not found in secureLocalStorage");
@@ -213,7 +355,7 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     // })
     // fetchUserDetails();
   }
-  if (secureLocalStorage.getItem("MangSub")) {
+  if (secureLocalStorage.getItem("MangSub") || mang) {
     return (
       <div className="p-4">
         You've successfully submitted the Management Task. You can now track the
@@ -288,9 +430,14 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
           className="nes-textarea is-dark min-h-[15rem]"
           required
           name="question1"
+          value={formData.question1?.[1] || ""}
           onChange={(e) => handleInputChange(e, "question1")}
           placeholder="Write here..."
         ></textarea>
+        <p className="text-xs">
+  {savingFields["question1"] ? "Saving..." : "Saved"}
+</p>
+
 
         <section className="my-8  text-xs md:text-sm">
           <span className="text-prime">
@@ -324,9 +471,15 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
                     className="nes-textarea is-dark min-h-[5rem]"
                     required
                     name={`question${quiz.label + 1}`}
+                    value={formData[`question${quiz.label + 1}`]?.[1] || ""}
                     placeholder="Write here..."
                     onChange={(e) => handleInputChange(e, quiz.question)}
                   ></textarea>
+                  <p className="text-xs">
+  {savingFields[`question${quiz.label + 1}`] ? "Saving..." : "Saved"}
+</p>
+
+                  
                 </div>
               )
           )}
