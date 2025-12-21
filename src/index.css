@@ -26,31 +26,653 @@ body {
   height: calc(100% - 5rem);
 }
 .task-box {
-  height: auto;
-  transform: none;
+  height: calc(100% + 7px);  
+  transform: translateY(-7px);
 }
-.tasksubmission-box{
-    height: calc(100% + 14px);  
+
+/* ========================================
+   TASK LIST CONTAINER & GRID (NES Theme)
+   ======================================== */
+
+.task-list-container {
+  width: 100%;
+  height: 100%;
+  padding: 0.5rem;
+}
+
+.task-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 4px solid #fc7a00;
+  image-rendering: pixelated;
+}
+
+.task-list-count {
+  color: #fc7a00;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.task-list-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .task-list-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
+/* ========================================
+   TASK ITEM CARDS (NES Theme)
+   ======================================== */
+
+.task-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 1rem;
+  background: #0e0e0e;
+  border: 4px solid #333;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  animation: taskFadeIn 0.3s ease forwards;
+  opacity: 0;
+  image-rendering: pixelated;
+}
+
+.task-item::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border: 4px solid transparent;
+  pointer-events: none;
+  transition: border-color 0.15s ease;
+}
+
+@keyframes taskFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.task-item:hover {
+  border-color: #fc7a00;
+  background: #1a1a1a;
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0 #fc7a00;
+}
+
+.task-item:active {
+  transform: translateY(0);
+  box-shadow: 2px 2px 0 #fc7a00;
+}
+
+.task-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.task-item-number {
+  color: #fc7a00;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.5rem;
+  text-transform: uppercase;
+}
+
+.task-item-badge {
+  padding: 0.2rem 0.4rem;
+  background: #fc7a00;
+  border: 2px solid #000;
+  color: #000;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.4rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.task-item-title {
+  color: #fff;
+  font-size: 0.7rem;
+  line-height: 1.5;
+  margin: 0 0 0.5rem 0;
+  transition: color 0.15s ease;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.task-item:hover .task-item-title {
+  color: #fc7a00;
+}
+
+.task-item-resources {
+  color: #888;
+  font-size: 0.55rem;
+  margin-bottom: 0.5rem;
+}
+
+.task-item-footer {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  border-top: 2px dashed #333;
+}
+
+.task-item-cta {
+  color: #666;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.45rem;
+  transition: all 0.15s ease;
+}
+
+.task-item:hover .task-item-cta {
+  color: #fc7a00;
+}
+
+/* ========================================
+   MANAGEMENT QUESTIONS LIST (NES Theme)
+   ======================================== */
+
+.task-questions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.task-question-item {
+  position: relative;
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: #0e0e0e;
+  border: 4px solid #333;
+  animation: taskFadeIn 0.3s ease forwards;
+  opacity: 0;
+  image-rendering: pixelated;
+}
+
+.task-question-badge {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fc7a00;
+  border: 2px solid #000;
+  color: #000;
+  font-family: 'Press Start 2P', cursive;
+  font-weight: 700;
+  font-size: 0.5rem;
+}
+
+.task-question-content {
+  color: #ccc;
+  font-size: 0.7rem;
+  line-height: 1.7;
+  margin: 0;
+  text-align: left;
+}
+
+/* ========================================
+   LEGACY - Keep for compatibility
+   ======================================== */
+
+.task-subdomain-btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem 0.75rem;
+  background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+  border: 2px solid #333;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.task-subdomain-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(252, 122, 0, 0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.task-subdomain-btn:hover {
+  border-color: #fc7a00;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(252, 122, 0, 0.25);
+}
+
+.task-subdomain-btn:hover::before {
+  opacity: 1;
+}
+
+.task-subdomain-btn:active {
+  transform: translateY(-2px);
+}
+
+.task-subdomain-icon {
+  font-size: 1.75rem;
+  transition: transform 0.3s ease;
+}
+
+.task-subdomain-btn:hover .task-subdomain-icon {
+  transform: scale(1.15);
+}
+
+.task-subdomain-label {
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-align: center;
+  transition: color 0.3s ease;
+}
+
+.task-subdomain-btn:hover .task-subdomain-label {
+  color: #fc7a00;
+}
+
+.task-subdomain-arrow {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  color: #555;
+  font-size: 0.75rem;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateX(-5px);
+}
+
+.task-subdomain-btn:hover .task-subdomain-arrow {
+  opacity: 1;
+  transform: translateX(0);
+  color: #fc7a00;
+}
+
+/* ========================================
+   TASK CARDS - Individual Task Items
+   ======================================== */
+
+.task-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(145deg, #151515, #0a0a0a);
+  border: 1px solid #2a2a2a;
+  border-left: 3px solid #fc7a00;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: slideInUp 0.4s ease forwards;
+  opacity: 0;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.task-card:hover {
+  border-color: #fc7a00;
+  background: linear-gradient(145deg, #1a1a1a, #0f0f0f);
+  transform: translateX(8px);
+  box-shadow: 0 4px 20px rgba(252, 122, 0, 0.15);
+}
+
+.task-card-number {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #fc7a00, #ff9a3c);
+  color: #000;
+  font-weight: 700;
+  font-size: 0.75rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.task-card:hover .task-card-number {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(252, 122, 0, 0.5);
+}
+
+.task-card-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.task-card-title {
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem 0;
+  transition: color 0.3s ease;
+  line-height: 1.4;
+}
+
+.task-card:hover .task-card-title {
+  color: #fc7a00;
+}
+
+.task-card-hint {
+  color: #666;
+  font-size: 0.65rem;
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+.task-card:hover .task-card-hint {
+  color: #888;
+}
+
+.task-card-resources {
+  color: #ff9a3c;
+  font-size: 0.65rem;
+  margin: 0;
+}
+
+.task-card-arrow {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #444;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+.task-card:hover .task-card-arrow {
+  opacity: 1;
+  transform: translateX(0);
+  color: #fc7a00;
+}
+
+/* ========================================
+   TASK BACK BUTTON & BADGES
+   ======================================== */
+
+.task-back-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  background: linear-gradient(135deg, #fc7a00, #ff6b00);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(252, 122, 0, 0.3);
+}
+
+.task-back-btn:hover {
+  transform: translateX(-3px);
+  box-shadow: 0 4px 12px rgba(252, 122, 0, 0.4);
+}
+
+.task-back-icon {
+  color: #000;
+  font-size: 0.85rem;
+  font-weight: 700;
+  transition: transform 0.3s ease;
+}
+
+.task-back-btn:hover .task-back-icon {
+  transform: translateX(-2px);
+}
+
+.task-back-text {
+  color: #000;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.task-subdomain-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  background: rgba(252, 122, 0, 0.15);
+  border: 1px solid rgba(252, 122, 0, 0.3);
+  border-radius: 20px;
+  color: #fc7a00;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* ========================================
+   MANAGEMENT TASK QUESTIONS
+   ======================================== */
+
+.task-card-question {
+  position: relative;
+  display: flex;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: linear-gradient(145deg, #151515, #0a0a0a);
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  animation: slideInUp 0.4s ease forwards;
+  opacity: 0;
+}
+
+.task-card-question::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #fc7a00, #ff6b00);
+  border-radius: 4px 0 0 4px;
+}
+
+.task-question-number {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #fc7a00, #ff9a3c);
+  color: #000;
+  font-weight: 700;
+  font-size: 0.7rem;
+  border-radius: 50%;
+}
+
+.task-question-text {
+  color: #d0d0d0;
+  font-size: 0.75rem;
+  line-height: 1.7;
+  margin: 0;
+  text-align: left;
+}
+
+/* ========================================
+   TASK UI - RESPONSIVE ADJUSTMENTS
+   ======================================== */
+
+@media (max-width: 768px) {
+  .task-subdomain-btn {
+    padding: 0.75rem 0.5rem;
+  }
+  
+  .task-subdomain-icon {
+    font-size: 1.5rem;
+  }
+  
+  .task-subdomain-label {
+    font-size: 0.6rem;
+  }
+  
+  .task-card {
+    padding: 0.85rem 1rem;
+    gap: 0.75rem;
+  }
+  
+  .task-card-number {
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.65rem;
+  }
+  
+  .task-card-title {
+    font-size: 0.75rem;
+  }
+  
+  .task-card-question {
+    padding: 1rem;
+  }
+  
+  .task-question-number {
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.6rem;
+  }
+  
+  .task-question-text {
+    font-size: 0.7rem;
+  }
+  
+  .task-back-btn {
+    padding: 0.3rem 0.5rem;
+  }
+  
+  .task-back-text {
+    display: none;
+  }
+}
+
+/* Task container - show scrollbar only when content overflows */
+.task-container,
+.-task-container {
+  scrollbar-width: thin;
+  scrollbar-color: #fc7a00 transparent;
+}
+
+.task-container::-webkit-scrollbar,
+.-task-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.task-container::-webkit-scrollbar-track,
+.-task-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.task-container::-webkit-scrollbar-thumb,
+.-task-container::-webkit-scrollbar-thumb {
+  background-color: #fc7a00;
+  border-radius: 4px;
+}
+.tasksubmission-box {
+  height: calc(100% + 14px);  
   transform: translateY(-7px); 
 }
-.status-box{
+.status-box {
   height: calc(100% + 6px);  
   transform: translateY(-6px); 
 }
-::-webkit-scrollbar {
-  width: 0em;
+
+/* ========================================
+   GLOBAL SCROLLBAR RESET - Hide all by default
+   ======================================== */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 }
 
-::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 6px black;
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
 }
 
-::-webkit-scrollbar-thumb {
+/* ========================================
+   CUSTOM SCROLLBAR - Only where needed
+   ======================================== */
+.custom-scroll,
+.task-container,
+.-task-container,
+.faq,
+.faq-page-container {
+  scrollbar-width: thin;
+  scrollbar-color: #fc7a00 transparent;
+}
+
+.custom-scroll::-webkit-scrollbar,
+.task-container::-webkit-scrollbar,
+.-task-container::-webkit-scrollbar,
+.faq::-webkit-scrollbar,
+.faq-page-container::-webkit-scrollbar {
+  width: 4px;
+  display: block;
+}
+
+.custom-scroll::-webkit-scrollbar-track,
+.task-container::-webkit-scrollbar-track,
+.-task-container::-webkit-scrollbar-track,
+.faq::-webkit-scrollbar-track,
+.faq-page-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb,
+.task-container::-webkit-scrollbar-thumb,
+.-task-container::-webkit-scrollbar-thumb,
+.faq::-webkit-scrollbar-thumb,
+.faq-page-container::-webkit-scrollbar-thumb {
   background-color: #fc7a00;
-  outline: 3px solid white;
-}
-.faq::-webkit-scrollbar {
-  width: 0.5em;
+  border-radius: 2px;
 }
 .btn-back {
   position: absolute !important;
@@ -87,6 +709,29 @@ body {
     display: none !important;
   }
 }
+/* Consistent Input Field Styling */
+.input-container {
+  width: 100%;
+}
+
+.input-container .nes-input {
+  width: 100% !important;
+  min-width: 280px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .input-container .nes-input {
+    min-width: 320px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .input-container .nes-input {
+    min-width: 360px;
+  }
+}
+
 @media (max-width: 600px) {
   .dark-container-nes {
     padding: 10px !important;
@@ -94,6 +739,7 @@ body {
   .nes-input {
     padding: 5px !important;
     font-size: 0.8rem !important;
+    min-width: 100% !important;
   }
   .nes-btn {
     padding: 5px !important;
@@ -110,7 +756,7 @@ body {
   max-width: 400px;
   margin: 0 auto;
   padding: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid #333;
   border-radius: 5px;
   background-color: black;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -121,7 +767,7 @@ body {
 }
 
 .textforSignup {
-  color: rgb(255, 165, 0);
+  color: #fc7a00;
   margin-bottom: 15px;
 }
 
@@ -137,13 +783,14 @@ input[type="password"] {
   width: 100%;
   padding: 10px;
   font-size: 16px;
-  border: 1px solid #ccc;
+  border: 1px solid #333;
   border-radius: 5px;
-  color: black;
+  color: #fff;
+  background-color: #1a1a1a;
 }
 
 .error {
-  color: #ff0000;
+  color: #e74c3c;
   font-size: 14px;
   margin-top: 5px;
 }
@@ -154,13 +801,13 @@ input[type="password"] {
   font-size: 16px;
   border: none;
   border-radius: 5px;
-  background-color: rgb(226, 149, 7);
-  color: #fff;
+  background-color: #fc7a00;
+  color: #000;
   cursor: pointer;
 }
 
 .textforSignupbutton:hover {
-  background-color: #fb7e02;
+  background-color: #ff8c1a;
 }
 .verify-otp-container {
   max-width: 400px;
@@ -176,15 +823,31 @@ input[type="password"] {
 }
 
 .otp-input {
-  width: 40px;
-  height: 40px;
+  width: 50px;
+  height: 50px;
   font-size: 24px;
   text-align: center;
   margin: 0 5px;
-  border: 2px solid #ccc;
+  border: 2px solid #333;
   border-radius: 5px;
-  background-color: #333;
+  background-color: #1a1a1a;
   color: #fff;
+}
+
+/* OTP Input Consistency */
+.otp.nes-input {
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  padding: 0 !important;
+}
+
+@media (min-width: 768px) {
+  .otp.nes-input {
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
+  }
 }
 
 .error-message {
@@ -195,7 +858,7 @@ input[type="password"] {
 .verify-btn {
   padding: 10px 20px;
   font-size: 16px;
-  background-color: rgb(226, 149, 7);
+  background-color: #fc7a00;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -203,14 +866,14 @@ input[type="password"] {
 }
 
 .verify-btn:hover {
-  background-color: #fb7e02;
+  background-color: #fc7a00;
 }
 
 .mainverifytag {
   max-width: 400px;
   margin: 0 auto;
   padding: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid #333;
   border-radius: 5px;
   background-color: black;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -221,12 +884,12 @@ input[type="password"] {
 }
 
 .VerifyOTPtext {
-  color: orange;
+  color: #fc7a00;
   font-size: 40px;
 }
 
 .sixdigitOTPtext {
-  color: orange;
+  color: #fc7a00;
   font-size: 15px;
 }
 
@@ -247,7 +910,7 @@ input[type="password"] {
   h1 {
     font-size: 40px;
     margin-bottom: 20px;
-    color: orange;
+    color: #fc7a00;
   }
 
 
@@ -265,7 +928,7 @@ input[type="password"] {
   label {
     font-weight: bold;
     margin-bottom: 8px;
-    color: orange;
+    color: #fc7a00;
   }
   
   .otp-input
@@ -328,7 +991,7 @@ input[type="password"] {
 .is-warning,
 .nes-badge {
   background-color: #fc7a00 !important;
-  border-color: #fb7e02 !important;
+  border-color: #fc7a00 !important;
 }
 .text-label {
   text-align: left !important;

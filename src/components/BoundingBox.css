@@ -4,29 +4,29 @@
   }
   
   .custom-scrollbar::-webkit-scrollbar-track {
-    background: #ff6200;
+    background: #fc7a00;
   }
   
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #ff6200;
+    background: #fc7a00;
   }
   
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #ff6200;
+    background: #fc7a00;
   }
   
 
   .custom-scrollbar {
     scrollbar-width: thin;
-    scrollbar-color: #ff6200;
+    scrollbar-color: #fc7a00;
   }
   
 
   .ms-scrollbar {
     width: 12px;
-    background: #ff6200;
-    scrollbar-face-color: #ff6200;
-    scrollbar-track-color: #ff6200;
-    scrollbar-arrow-color: #ff6200;
+    background: #fc7a00;
+    scrollbar-face-color: #fc7a00;
+    scrollbar-track-color: #fc7a00;
+    scrollbar-arrow-color: #fc7a00;
   }
   

@@ -63,77 +63,70 @@ const DesignTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
       }`}
     >
       {selectedSubDomain === "" && (
-        <div className="flex justify-center flex-wrap w-full">
+        <div className="flex justify-center flex-wrap w-full gap-2 md:gap-3">
           <button
             type="button"
             onClick={() => setSelectedSubDomain("poster")}
-            className="nes-btn is-error nes-btn-task w-[47%] md:w-[22%] aspect-[2] custom-nes-error text-xs"
+            className="nes-btn is-error w-[47%] md:w-[22%] py-3 md:py-4 custom-nes-error text-xs hover:scale-105 transition-transform duration-200"
           >
             Graphic Design
           </button>
           <button
             type="button"
             onClick={() => setSelectedSubDomain("ui")}
-            className="nes-btn is-error nes-btn-task w-[47%] md:w-[22%] aspect-[2] custom-nes-error text-xs"
+            className="nes-btn is-error w-[47%] md:w-[22%] py-3 md:py-4 custom-nes-error text-xs hover:scale-105 transition-transform duration-200"
           >
             UI/UX
           </button>
           <button
             type="button"
             onClick={() => setSelectedSubDomain("3d")}
-            className="nes-btn is-error w-[47%] md:w-[22%] aspect-[2] custom-nes-error text-xs"
+            className="nes-btn is-error w-[47%] md:w-[22%] py-3 md:py-4 custom-nes-error text-xs hover:scale-105 transition-transform duration-200"
           >
             3D Modelling
           </button>
           <button
             type="button"
             onClick={() => setSelectedSubDomain("video")}
-            className="nes-btn is-error w-[100%] min-w-fit h-fit lg:w-[22%] md:aspect-[2] custom-nes-error text-xs"
+            className="nes-btn is-error w-[47%] md:w-[22%] py-3 md:py-4 custom-nes-error text-xs hover:scale-105 transition-transform duration-200"
           >
-            Video Editing / <br /> Photography
+            Video / Photo
           </button>
         </div>
       )}
 
       {selectedSubDomain !== "" && (
-        <div className="w-full mt-8 h-full flex flex-col gap-8 md:gap-4">
-          {filteredTasks.map((task, index) => (
-            <div
-              className="nes-container is-dark with-title dark-container-nes cursor-pointer"
-              key={index}
-              onClick={() => {
-                setActiveTask(task);
-                setShowModal(true);
-              }}
-            >
-              <p
-                className={`title ${
-                  task.label === "3d" || task.label === "video"
-                    ? "text-center w-full"
-                    : ""
-                }`}
+        <div className="task-list-container">
+          <div className="task-list-header">
+            <span className="task-list-count">{filteredTasks.length} Tasks Available</span>
+          </div>
+          <div className="task-list-grid">
+            {filteredTasks.map((task, index) => (
+              <div
+                className="task-item"
+                key={index}
+                onClick={() => {
+                  setActiveTask(task);
+                  setShowModal(true);
+                }}
+                style={{ animationDelay: `${index * 0.08}s` }}
               >
-                {task.title}
-              </p>
-              {task.resources && task.resources.length > 0 && (
-                <div className="flex justify-between flex-col md:flex-row">
-                  <span className="md:text-sm text-xs">Resources:</span>
-                  <span className="flex flex-col md:text-sm text-xs md:flex-row">
-                    {task.resources.map((resource, index) => (
-                      <a
-                        href={resource}
-                        target="_blank"
-                        key={index}
-                        rel="noopener noreferrer"
-                      >
-                        Resource {index + 1} &nbsp;
-                      </a>
-                    ))}
-                  </span>
+                <div className="task-item-header">
+                  <span className="task-item-number">Task {index + 1}</span>
+                  <span className="task-item-badge">{task.for === "senior" ? "SC" : "Jr"}</span>
                 </div>
-              )}
-            </div>
-          ))}
+                <h3 className="task-item-title">{task.title}</h3>
+                {task.resources && task.resources.length > 0 && (
+                  <div className="task-item-resources">
+                    📎 {task.resources.length} resource{task.resources.length > 1 ? 's' : ''}
+                  </div>
+                )}
+                <div className="task-item-footer">
+                  <span className="task-item-cta">View Details →</span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
       {showModal && activeTask && (

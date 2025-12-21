@@ -28,12 +28,40 @@ useEffect(() => {
     }
     try {
       const decoded = jwtDecode<CustomJwtPayload>(jwtToken);
+      
+      // Check if token is expired
+      if (decoded.exp && decoded.exp * 1000 < Date.now()) {
+        Cookies.remove("jwtToken");
+        Cookies.remove("refreshToken");
+        navigate("/");
+        return;
+      }
+      
+      // Check JWT claim first
       if (decoded?.isProfileDone) {
         setTabIndex(1);
-        // console.log("yes");
+        return;
       }
-    }catch(error) {
-      console.log(error);
+      
+      // Fallback: check localStorage flags (set before page reload after profile submission)
+      const localProfileComplete = secureLocalStorage.getItem("profileComplete");
+      if (localProfileComplete === true || localProfileComplete === "true") {
+        setTabIndex(1);
+        return;
+      }
+      
+      // Also check userDetails in localStorage
+      const userDetailsStr = secureLocalStorage.getItem("userDetails");
+      if (userDetailsStr && typeof userDetailsStr === "string") {
+        const userDetails = JSON.parse(userDetailsStr);
+        if (userDetails?.isProfileDone || userDetails?.data?.isProfileDone) {
+          setTabIndex(1);
+        }
+      }
+    } catch(error) {
+      console.error("Error decoding token:", error);
+      Cookies.remove("jwtToken");
+      navigate("/");
     }
   }, [navigate, setTabIndex]); 
 
@@ -87,9 +115,6 @@ useEffect(() => {
         return <div>Invalid Tab</div>;
     }
   };
-  useEffect(() => {
-    // console.log(tabIndex, "yoooo");
-  },[tabIndex])
   return (
     <div className="w-full h-full flex flex-col md:flex-row justify-center items-center sm:flex px-4 ">
       <Navbar />

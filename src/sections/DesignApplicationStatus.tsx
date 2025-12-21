@@ -18,6 +18,10 @@ const DesignApplicationStatus = () => {
 
       // console.log("id12", id);
       const token = Cookies.get("jwtToken");
+      if (!token) {
+        console.error("JWT token not found");
+        return;
+      }
       try {
         const response = await axios.get(
           `${
@@ -45,10 +49,8 @@ const DesignApplicationStatus = () => {
   }, []);
 
   return(
-
     <>
     <p className="text-prime text-sm ">{status}</p>
-    {/* { redirect!=="" &&   <p className="text-prime text-sm" onClick={() => {navigate(redirect)}}>Schedule a Meeting</p> } */}
     {redirect !== "" && <button type="button" className="nes-btn is-error nes-btn-task  w-[47%] md:w-[40%] aspect-[6] custom-nes-error text-s" onClick={() => { navigate(redirect) }}>Schedule a Meeting</button> }
   </> 
   )

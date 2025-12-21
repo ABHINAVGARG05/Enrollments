@@ -5,7 +5,7 @@ interface Props {
 
 const BaseWrapper = ({ children }: Props) => {
   return (
-    <div className="w-full min-w-screen min-h-screen h-fit md:h-screen md:max-h-screen flex flex-col overflow-x-hidden font-arcade">
+    <div className="w-full min-w-screen min-h-screen h-fit md:h-screen md:max-h-screen flex flex-col overflow-hidden font-arcade">
       {children}
     </div>
   );

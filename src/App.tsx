@@ -18,10 +18,6 @@ import Meeting from "./sections/Meeting"
 function App() {
   return (
     <BaseWrapper>
-      <link
-        href="https://unpkg.com/nes.css@2.2.1/css/nes.min.css"
-        rel="stylesheet"
-      />
       <MainWrapper>
         <Router>
           <Routes>

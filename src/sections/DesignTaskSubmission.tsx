@@ -3,7 +3,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import secureLocalStorage from "react-secure-storage";
 import { ToastContent } from "../components/CustomToast";
-import { useTabStore } from "../store";
+// import { useTabStore } from "../store";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 interface Props {
   setOpenToast: React.Dispatch<React.SetStateAction<boolean>>;
@@ -14,7 +14,7 @@ interface CustomJwtPayload extends JwtPayload {
   isDesignDone?: boolean;
 }
 const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
-  const { tabIndex, setTabIndex } = useTabStore();
+  // const { tabIndex, setTabIndex } = useTabStore();
   const [subdomain, setSubDomain] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const id = secureLocalStorage.getItem("id");
@@ -321,19 +321,29 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   };
   const [isDesignDone, setIsDesignDone] = useState(false);
   //const [isTechDone, setIsTechDone] = useState(false);
-  const userDetailsString = secureLocalStorage.getItem("userDetails");
-  let desg = false;
 
-  const token = Cookies.get("refreshToken");
-  if (token) {
-    const decoded = jwtDecode<CustomJwtPayload>(token);
-    if (decoded?.isDesignDone) {
-      desg = decoded?.isDesignDone;
-    }
-    // console.log("refresh--->", decoded);
-    // console.log(desg);
-  }
-  if (secureLocalStorage.getItem("DesgSub") || desg) {
+  // Check submission status on mount (moved from render to useEffect)
+  useEffect(() => {
+    const checkSubmissionStatus = () => {
+      const token = Cookies.get("refreshToken");
+      if (token) {
+        try {
+          const decoded = jwtDecode<CustomJwtPayload>(token);
+          if (decoded?.isDesignDone) {
+            setIsDesignDone(true);
+          }
+        } catch (err) {
+          console.error("Error decoding refresh token:", err);
+        }
+      }
+      if (secureLocalStorage.getItem("DesgSub")) {
+        setIsDesignDone(true);
+      }
+    };
+    checkSubmissionStatus();
+  }, []);
+
+  if (isDesignDone) {
     return (
       <div className="p-4">
         You've successfully submitted the Design Task. You can now track the

@@ -36,6 +36,38 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   const [formData, setFormData] = useState<FormData>({});
   const syncTimerRef = React.useRef<number | null>(null);
 
+  useEffect(() => {
+    const token = Cookies.get("jwtToken");
+    if (token) {
+      try {
+        const decoded = jwtDecode<CustomJwtPayload>(token);
+        if (decoded?.isManagementDone) {
+          setIsManagementDone(true);
+        }
+      } catch (err) {
+        console.error("Error decoding JWT:", err);
+      }
+    }
+    const localData = secureLocalStorage.getItem("userDetails") as
+      | string
+      | null;
+    if (localData) {
+      try {
+        const parsed = JSON.parse(localData);
+        // Access nested data.isSC to match the actual data structure
+        const isSC = parsed?.data?.isSC ?? parsed?.isSC ?? false;
+        if (isSC) {
+          setCoreType("senior");
+        } else {
+          setCoreType("junior");
+        }
+      } catch (err) {
+        console.error("Error parsing userDetails:", err);
+        setCoreType("junior");
+      }
+    }
+  }, []);
+
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
     if (checked) {
@@ -328,34 +360,39 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
         setIsManagementDone(true);
         // toast already shown on submit
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: unknown }; message?: string };
       console.error(
         "Fetch User Details Error:",
-        error.response?.data || error.message
+        err.response?.data || err.message
       );
     }
   };
   const [isManagementDone, setIsManagementDone] = useState(false);
   //const [isTechDone, setIsTechDone] = useState(false);
-  const userDetailsString = secureLocalStorage.getItem("userDetails");
-  let mang = false;
 
-  const token = Cookies.get("refreshToken");
-  if (token) {
-    const decoded = jwtDecode<CustomJwtPayload>(token);
-    if (decoded?.isManagementDone) {
-      mang = decoded?.isManagementDone;
-    }
-    //console.log("refresh--->", decoded)
-  }
-  if (secureLocalStorage.getItem("MangSub") || mang) {
-    //setOpenToast(true);
-    // setToastContent({
-    //   message:"Task Submitted Successfully",
-    // })
-    // fetchUserDetails();
-  }
-  if (secureLocalStorage.getItem("MangSub") || mang) {
+  // Check submission status on mount (moved from render to useEffect)
+  useEffect(() => {
+    const checkSubmissionStatus = () => {
+      const token = Cookies.get("refreshToken");
+      if (token) {
+        try {
+          const decoded = jwtDecode<CustomJwtPayload>(token);
+          if (decoded?.isManagementDone) {
+            setIsManagementDone(true);
+          }
+        } catch (err) {
+          console.error("Error decoding refresh token:", err);
+        }
+      }
+      if (secureLocalStorage.getItem("MangSub")) {
+        setIsManagementDone(true);
+      }
+    };
+    checkSubmissionStatus();
+  }, []);
+
+  if (isManagementDone) {
     return (
       <div className="p-4">
         You've successfully submitted the Management Task. You can now track the
@@ -422,6 +459,16 @@ const ManagementTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
                 onChange={handleCheckboxChange}
               />
               <span className="text-xs md:text-xs">Editorial</span>
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                className="nes-checkbox is-dark"
+                value="finance"
+                checked={subdomain.includes("finance")}
+                onChange={handleCheckboxChange}
+              />
+              <span className="text-xs md:text-xs">Finance</span>
             </label>
           </div>
         </div>

@@ -4,7 +4,7 @@
   max-width: 400px;
   margin: 0 auto;
   padding: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid #333;
   border-radius: 8px;
   background-color: black;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -18,7 +18,7 @@
 .maindivtag h2 {
   text-align: center;
   margin-bottom: 20px;
-  color: orange;
+  color: #fc7a00;
   font-size: 20px;
 }
 
@@ -39,7 +39,7 @@ input[type="email"],
 input[type="text"] {
   width: 100%;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #333;
   border-radius: 4px;
   font-size: 16px;
 }
@@ -50,18 +50,17 @@ input[type="text"] {
   padding: 12px;
   border: none;
   border-radius: 4px;
-  background-color: rgb(255, 165, 0);
-  color: #fff;
+  background-color: #fc7a00;
+  color: #000;
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  color: black;
 }
 
 .Nextbutton:hover {
-  background-color: #fb7e02;
+  background-color: #ff8c1a;
 }
 
 .labelcolor {
-  color: orange;
+  color: #fc7a00;
 }

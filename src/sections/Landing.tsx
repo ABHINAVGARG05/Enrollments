@@ -1,5 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import React, { useEffect, useState, useCallback } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import secureLocalStorage from "react-secure-storage";
@@ -11,35 +12,32 @@ import Input from "../components/Input";
 import PlayBtn from "../components/PlayBtn";
 import Scene3d from "../components/Scene3d";
 import { useCharacterAnimations } from "../context/CharAnimation";
-import { useTabStore } from "../store";
-import { jwtDecode, JwtPayload } from "jwt-decode";
+// import { useTabStore } from "../store";
+import type { JwtPayload } from "jwt-decode";
 
 
 const Landing = () => {
   const [openToast, setOpenToast] = useState(false);
   const [toastContent, setToastContent] = useState<ToastContent>({});
-  const [showComponents, setShowComponents] = useState(false);
+  // const [showComponents, setShowComponents] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState(false);
-  const [isSceneVisible, setIsSceneVisible] = useState(false);
+  // const [error, setError] = useState(false);
+  // const [isSceneVisible, setIsSceneVisible] = useState(false);
 
   const { isPlayButton } = useCharacterAnimations();
-  const { tabIndex, setTabIndex } = useTabStore();
+  // const { tabIndex, setTabIndex } = useTabStore();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (isPlayButton) {
-      const timeout = setTimeout(() => setShowComponents(true), 3500);
-      return () => clearTimeout(timeout);
-    }
-  }, [isPlayButton]);
+  // useEffect(() => {
+  //   if (isPlayButton) {
+  //     const timeout = setTimeout(() => setShowComponents(true), 3500);
+  //     return () => clearTimeout(timeout);
+  //   }
+  // }, [isPlayButton]);
 
-  const handlePlayBtnClick = () => {
-    setIsSceneVisible(true);
-  };
-
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface CustomJwtPayload extends JwtPayload {
     isProfileDone?: boolean; 
   }
@@ -115,7 +113,7 @@ const Landing = () => {
 
       secureLocalStorage.setItem("userDetails", JSON.stringify(response.data));
 
-      const isProfileDone = response.data?.isProfileDone;
+      // isProfileDone available in response.data if needed
       navigate("/dashboard");
       
     } catch (err) {
@@ -175,7 +173,7 @@ const Landing = () => {
 
           <div className=" p-4 lg:p-8 mt-4 mb-4 md:mt-0 max-w-full max-h-full z-[100]">
             <form
-              className="form-container flex flex-col mt-4 lg:mt-0 gap-3 md:gap-6 w-full lg:w-[60%] mx-auto shadow-lg rounded-lg"
+              className="form-container flex flex-col mt-4 lg:mt-0 gap-3 md:gap-6 w-full lg:w-[80%] xl:w-[400px] mx-auto shadow-lg rounded-lg"
               onSubmit={handleLogin}
             >
               <Input
@@ -186,7 +184,7 @@ const Landing = () => {
                 onChange={(e) =>
                   setEmail(e.target.value.trim().toLowerCase())
                 }
-                className="rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:focus:ring-blue-400"
+                className="rounded-md border-gray-300 focus:ring-2 focus:ring-prime dark:border-gray-700 dark:focus:ring-prime/80"
               />
 
               <div className="relative">
@@ -196,7 +194,7 @@ const Landing = () => {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value.trim())}
-                  className="rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:focus:ring-blue-400"
+                  className="rounded-md border-gray-300 focus:ring-2 focus:ring-prime dark:border-gray-700 dark:focus:ring-prime/80"
                 />
                 {password && (
                   <button
@@ -205,32 +203,37 @@ const Landing = () => {
                     onClick={() => setShowPassword((prev) => !prev)}
                     aria-label={showPassword ? "Hide Password" : "Show Password"}
                   >
+                    {showPassword ? (
+                      <img src="/invisible.png" alt="Hide password" className="w-5 h-5 invert" />
+                    ) : (
+                      <img src="/eye.png" alt="Show password" className="w-5 h-5 invert" />
+                    )}
                   </button>
                 )}
               </div>
 
               <Button
                 submit={true}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-all duration-300"
+                className="bg-prime hover:bg-prime/90 text-black font-medium py-2 px-4 rounded-md transition-all duration-300"
               >
                 Sign In
               </Button>
 
               <NavLink
                 to="/forgotpassword"
-                className="text-center text-sm md:text-base text-blue-600 hover:underline"
+                className="text-center text-sm md:text-base text-prime hover:underline"
               >
                 Forgot Password?
               </NavLink>
             </form>
 
-            <section className="text-center mt-3 md:mt-4 w-full lg:w-[60%] mx-auto flex flex-col gap-3  rounded-lg shadow-md">
+            <section className="text-center mt-3 md:mt-4 w-full lg:w-[80%] xl:w-[400px] mx-auto flex flex-col gap-3  rounded-lg shadow-md">
               <p className="text-sm md:text-base text-gray-300">
                 Don't have an account?
               </p>
               <NavLink
                 to="/signup"
-                className="text-white bg-blue-600 py-2 px-4 rounded-md w-auto mx-auto hover:bg-orange-500 hover:text-white transition-all duration-300"
+                className="text-black bg-prime py-2 px-4 rounded-md w-auto mx-auto hover:bg-prime/90 transition-all duration-300"
               >
                 Sign Up
               </NavLink>

@@ -209,15 +209,15 @@ const Task = () => {
 
   return (
     <div className="w-full h-full profile py-6 flex gap-4 flex-col lg:flex-row">
-      <div className="w-full nes-container is-rounded is-centered lg:w-[30%] invert">
+      <div className="nes-container is-rounded h-full max-h-fit text-sm is-centered w-full lg:w-[30%] invert">
         <div className="h-auto mb-4 text-lg">Domains</div>
-        <div className="flex flex-col justify-between gap-4 lg:gap-8">
+        <div className="flex flex-col h-full justify-start gap-4 lg:gap-8">
           {domains.includes("tech") && (
             <button
               type="button"
               onClick={() => setSelectedDomain(0)}
               className={`
-                nes-btn w-full w-[47%] md:w-[100%] md:aspect-[3] text-sm md:text-base domain-btn
+                nes-btn w-[47%] md:w-full md:aspect-[3] text-sm md:text-base domain-btn
                 ${selectedDomain === 0 ? "is-primary" : ""}
               `}
               aria-label="Technical Domain"
@@ -230,7 +230,7 @@ const Task = () => {
               type="button"
               onClick={() => setSelectedDomain(1)}
               className={`
-                nes-btn w-full w-[47%] md:w-[100%] md:aspect-[3] text-sm md:text-base domain-btn
+                nes-btn w-[47%] md:w-full md:aspect-[3] text-sm md:text-base domain-btn
                 ${selectedDomain === 1 ? "is-primary" : ""}
               `}
               aria-label="Design Domain"
@@ -243,7 +243,7 @@ const Task = () => {
               type="button"
               onClick={() => setSelectedDomain(2)}
               className={`
-                nes-btn w-full w-[47%] md:w-[100%] md:aspect-[3] text-sm md:text-base domain-btn
+                nes-btn w-[47%] md:w-full md:aspect-[3] text-sm md:text-base domain-btn
                 ${selectedDomain === 2 ? "is-primary" : ""}
               `}
               aria-label="Management Domain"
@@ -254,24 +254,25 @@ const Task = () => {
         </div>
       </div>
 
-  <div className="nes-container is-rounded is-dark with-title is-centered dark-nes-container w-full lg:w-[90%] relative dark-container-nes max-h-[75vh] overflow-y-auto task-box">
+  <div className="nes-container is-rounded is-dark with-title is-centered dark-nes-container w-full lg:w-[90%] relative dark-container-nes max-h-[75vh] overflow-hidden task-box">
 
         {selectedSubDomain !== "" && (
           <button
             type="button"
             onClick={() => setSelectedSubDomain("")}
-            className="nes-btn is-error absolute -top-2 -right-2 z-[50] h-fit btn-back"
+            className="task-back-btn"
             aria-label="Back to domain selection"
           >
-            <i className="nes-icon close is-small"></i>
+            <span className="task-back-icon">←</span>
+            <span className="task-back-text">Back</span>
           </button>
         )}
         <div className="h-auto mb-10 mt-4 text-lg">Tasks</div>
         {selectedSubDomain !== "" && selectedDomain !== DOMAIN_MAP.management && (
-          <div className="mb-4">
-            <p className="text-xs">
-              <span className="text-red-500 font-semibold">NOTE:</span>
-              <span className="text-white"> Click to View Description</span>
+          <div className="mb-2">
+            <p className="text-xs text-gray-500 flex items-center gap-2">
+              <span className="inline-block w-1.5 h-1.5 bg-[#fc7a00] rounded-full animate-pulse"></span>
+              Click on a task to view its description
             </p>
           </div>
         )}

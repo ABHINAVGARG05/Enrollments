@@ -13,9 +13,10 @@ const ResetPassword = () => {
   const [password, setPassword] = useState("");
   const [confirmpassword, setConfirmPassword] = useState("");
   const [emailToken, setEmailToken] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
-  console.log(error);
 
   useEffect(() => {
     const urlSearchParams = new URLSearchParams(window.location.search);
@@ -26,6 +27,18 @@ const ResetPassword = () => {
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setPasswordError("");
+
+    // Validate password match
+    if (!password || password.length < 6) {
+      setPasswordError("Password must be at least 6 characters");
+      return;
+    }
+    if (password !== confirmpassword) {
+      setPasswordError("Passwords do not match");
+      return;
+    }
+
     const formData = {
       username: email,
       password,
@@ -37,18 +50,16 @@ const ResetPassword = () => {
         `${import.meta.env.VITE_BASE_URL}/auth/updatepassword`,
         formData
       );
-      if (response) {
+      if (response.status === 200 || response.data) {
         setOpenToast(true);
         setToastContent({
           message: "Password updated successfully",
           type: "success",
         });
-        // toast.error("OK", {
-        //   className: "custom-bg",
-        //   autoClose: 3000,
-        //   theme: "dark",
-        // });
-        navigate("/");
+        // Delay navigation so user can see the success toast
+        setTimeout(() => {
+          navigate("/");
+        }, 1500);
 
         // console.log("response", response);
       }
@@ -114,6 +125,9 @@ const ResetPassword = () => {
                 onChange={(e) => setConfirmPassword(e.target.value.trim())}
                 className="lg:w-96 lg:mr-44"
               />
+              {passwordError && (
+                <p className="text-red-500 text-sm">{passwordError}</p>
+              )}
               <div className="mt-6 flex justify-center">
             <Button submit={true} >Reset Password</Button>
             </div>

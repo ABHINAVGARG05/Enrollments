@@ -554,6 +554,20 @@ const quizQuestions = [
     question:
       "Suppose you want to hide some data in a multimedia file. What would be your approach?",
   },
+  {
+    domain: "tech",
+    subdomain: "cyber-sec",
+    label: "tech_que5",
+    question:
+      "Explain the difference between symmetric and asymmetric encryption. When would you use each?",
+  },
+  {
+    domain: "tech",
+    subdomain: "ml",
+    label: "tech_que6",
+    question:
+      "What is the difference between supervised and unsupervised learning? Provide an example use case for each.",
+  },
 ];
 
 export default TechTaskSubmission;

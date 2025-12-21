@@ -171,43 +171,52 @@ const Fox = (props: JSX.IntrinsicElements["group"]) => {
   }, [animationIndex, actions, names, setAnimationIndex]);
 
   useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+    
     if (animationIndex === 2) {
       actions[names[animationIndex]]?.reset().fadeIn(0.5).play();
-      setTimeout(() => {
+      timeout = setTimeout(() => {
         setAnimationIndex(4);
       }, 3000);
     } else {
       actions[names[animationIndex]]?.reset().fadeIn(0.5).play();
     }
     return () => {
+      if (timeout) clearTimeout(timeout);
       actions[names[animationIndex]]?.fadeOut(0.5);
     };
   }, [animationIndex, actions, names, setAnimationIndex]);
 
   useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+    
     if (animationIndex === 1) {
       actions[names[animationIndex]]?.reset().fadeIn(0.5).play();
-      setTimeout(() => {
+      timeout = setTimeout(() => {
         setAnimationIndex(4);
       }, 3000);
     } else {
       actions[names[animationIndex]]?.reset().fadeIn(0.5).play();
     }
     return () => {
+      if (timeout) clearTimeout(timeout);
       actions[names[animationIndex]]?.fadeOut(0.5);
     };
   }, [animationIndex, actions, names, setAnimationIndex]);
 
   useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+    
     if (animationIndex === 0) {
       actions[names[animationIndex]]?.reset().fadeIn(0.5).play();
-      setTimeout(() => {
+      timeout = setTimeout(() => {
         setAnimationIndex(4);
       }, 10000);
     } else {
       actions[names[animationIndex]]?.reset().fadeIn(0.5).play();
     }
     return () => {
+      if (timeout) clearTimeout(timeout);
       actions[names[animationIndex]]?.fadeOut(0.5);
     };
   }, [animationIndex, actions, names, setAnimationIndex]);

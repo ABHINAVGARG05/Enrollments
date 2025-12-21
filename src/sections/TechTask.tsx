@@ -79,48 +79,47 @@ const TechTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
       }`}
     >
       {selectedSubDomain === "" && (
-        <div className="flex justify-center flex-wrap w-full">
+        <div className="flex justify-center flex-wrap w-full gap-2 md:gap-3">
           <button
             type="button"
             onClick={() => setSelectedSubDomain("frontend")}
-            className="nes-btn nes-btn-task is-error w-[47%] md:w-[22%] aspect-[2] custom-nes-error text-xs"
+            className="nes-btn is-error w-[47%] md:w-[30%] py-3 md:py-4 custom-nes-error text-xs hover:scale-105 transition-transform duration-200"
           >
             Frontend
           </button>
           <button
             type="button"
             onClick={() => setSelectedSubDomain("backend")}
-            className="nes-btn is-error nes-btn-task  w-[47%] md:w-[22%] aspect-[2] custom-nes-error text-xs"
+            className="nes-btn is-error w-[47%] md:w-[30%] py-3 md:py-4 custom-nes-error text-xs hover:scale-105 transition-transform duration-200"
           >
             Backend
           </button>
           <button
             type="button"
-            onClick={() => setSelectedSubDomain("cybersec")}
-            className="nes-btn is-error nes-btn-task  w-[47%] md:w-[22%] aspect-[2] custom-nes-error text-xs"
+            onClick={() => setSelectedSubDomain("cyber-sec")}
+            className="nes-btn is-error w-[47%] md:w-[30%] py-3 md:py-4 custom-nes-error text-xs hover:scale-105 transition-transform duration-200"
           >
             Cyber Security
           </button>
           <button
             type="button"
             onClick={() => setSelectedSubDomain("app")}
-            className="nes-btn is-error  nes-btn-task w-[47%] md:w-[22%] aspect-[2] custom-nes-error text-xs"
+            className="nes-btn is-error w-[47%] md:w-[30%] py-3 md:py-4 custom-nes-error text-xs hover:scale-105 transition-transform duration-200"
           >
             App Dev
           </button>
           <button
             type="button"
-            onClick={() => setSelectedSubDomain("ai/ml")}
-            className="nes-btn is-error nes-btn-task w-[47%] md:w-[22%] aspect-[2] custom-nes-error text-xs"
+            onClick={() => setSelectedSubDomain("ml")}
+            className="nes-btn is-error w-[47%] md:w-[30%] py-3 md:py-4 custom-nes-error text-xs hover:scale-105 transition-transform duration-200"
           >
             AI/ML
           </button>
-
           {!isSC && (
             <button
               type="button"
               onClick={() => setSelectedSubDomain("cp")}
-              className="nes-btn is-error nes-btn-task w-[47%] md:w-[22%] aspect-[2] custom-nes-error text-xs"
+              className="nes-btn is-error w-[47%] md:w-[30%] py-3 md:py-4 custom-nes-error text-xs hover:scale-105 transition-transform duration-200"
             >
               CP
             </button>
@@ -129,21 +128,34 @@ const TechTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
       )}
 
       {selectedSubDomain !== "" && (
-        <div className="w-full mt-8 h-full flex flex-col gap-3 md:gap-4">
-          {filteredTasks.map((task, index) => (
-            <div
-              key={index}
-              role="button"
-              tabIndex={0}
-              onClick={() => openTask(task)}
-              onKeyDown={(e) =>
-                (e.key === "Enter" || e.key === " ") && openTask(task)
-              }
-              className="nes-container is-dark with-title dark-container-nes px-4 py-3 cursor-pointer flex flex-col items-center justify-center text-center"
-            >
-              <p className="title text-sm m-0 w-full">{task.title}</p>
-            </div>
-          ))}
+        <div className="task-list-container">
+          <div className="task-list-header">
+            <span className="task-list-count">{filteredTasks.length} Tasks Available</span>
+          </div>
+          <div className="task-list-grid">
+            {filteredTasks.map((task, index) => (
+              <div
+                key={`${task.label}-${task.title}-${index}`}
+                role="button"
+                tabIndex={0}
+                onClick={() => openTask(task)}
+                onKeyDown={(e) =>
+                  (e.key === "Enter" || e.key === " ") && openTask(task)
+                }
+                className="task-item"
+                style={{ animationDelay: `${index * 0.08}s` }}
+              >
+                <div className="task-item-header">
+                  <span className="task-item-number">Task {index + 1}</span>
+                  <span className="task-item-badge">{task.for === "senior" ? "SC" : "Jr"}</span>
+                </div>
+                <h3 className="task-item-title">{task.title}</h3>
+                <div className="task-item-footer">
+                  <span className="task-item-cta">View Details →</span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
       {showModal && activeTask && (
@@ -230,7 +242,7 @@ const techTaskData = [
     for: "senior",
   },
   {
-    label: "ai/ml",
+    label: "ml",
     title: "Rental Price Prediction Model",
     description:
       "Perform data visualization and generate key insights from the given dataset. Then, build a machine learning model to predict rental prices based on various features such as location, property size, number of bedrooms, and amenities. Requirements: Conduct Exploratory Data Analysis (EDA) to identify trends, correlations, and anomalies. Visualize rental price distribution, correlations between price and key features, and geographic rent variations. Preprocess the dataset (handle missing values, normalize data, encode categorical variables). Train and evaluate a machine learning model for rent prediction. Interpret model results and provide actionable insights based on the findings.",
@@ -241,21 +253,21 @@ const techTaskData = [
     for: "junior",
   },
   {
-    label: "ai/ml",
+    label: "ml",
     title: "Sequential Image Classification Model",
     description:
       "Develop a Sequential Machine Learning Model that can identify and categorize images into predefined classes.",
     for: "junior",
   },
   {
-    label: "ai/ml",
+    label: "ml",
     title: "CIFAR-10 Neural Network from Scratch",
     description:
       "Build a machine learning model from scratch to train on the CIFAR-10 dataset using only NumPy, Pandas, and other basic libraries (without TensorFlow or PyTorch). The model should be a fully connected neural network that can classify images into 10 categories.",
     for: "senior",
   },
   {
-    label: "ai/ml",
+    label: "ml",
     title: "Advanced Spam Detection Model",
     description:
       "Build an advanced Spam Detection Model for Messages, using Natural Language Processing (NLP) techniques and an Advanced Deep Learning-based approach.",
@@ -290,28 +302,28 @@ const techTaskData = [
     for: "senior",
   },
   {
-    label: "cybersec",
+    label: "cyber-sec",
     title: "Capture the Flag (CTF) Challenge",
     description:
       "Solve cybersecurity challenges in cryptography, web vulnerabilities, and reverse engineering to find hidden flags. Using platforms like PicoCTF or local setups, they should know about SQL injection, XSS, and encryption basics.",
     for: "senior",
   },
   {
-    label: "cybersec",
+    label: "cyber-sec",
     title: "Capture the Flag (CTF) Challenge",
     description:
       "Solve cybersecurity challenges in cryptography, web vulnerabilities, and reverse engineering to find hidden flags. Using platforms like PicoCTF or local setups, they should know about SQL injection, XSS, and encryption basics.",
     for: "junior",
   },
   {
-    label: "cybersec",
+    label: "cyber-sec",
     title: "Simulated Cyber Attack & Defense",
     description:
       "Your system is under attack! Identify vulnerabilities in your own machine using Nmap, Wireshark, and OWASP ZAP. Simulate an attack like a MITM (Man-in-the-Middle), SQL injection, or XSS, document your findings, and secure your system against exploitation. Submit a detailed report with attack steps, detection, and mitigation strategies.",
     for: "senior",
   },
   {
-    label: "cybersec",
+    label: "cyber-sec",
     title: "Simulated Cyber Attack & Defense",
     description:
       "Your system is under attack! Identify vulnerabilities in your own machine using Nmap, Wireshark, and OWASP ZAP. Simulate an attack like a MITM (Man-in-the-Middle), SQL injection, or XSS, document your findings, and secure your system against exploitation. Submit a detailed report with attack steps, detection, and mitigation strategies.",

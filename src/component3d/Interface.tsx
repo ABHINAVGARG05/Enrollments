@@ -46,7 +46,7 @@ const Interface = () => {
           <Button
             key={animations[index]}
             onClick={() => setAnimationIndex(index)}
-            className={`px-4 py-2 bg-blue-500 text-white rounded-lg shadow-md hover:bg-blue-600 transition ${
+            className={`px-4 py-2 bg-prime text-black rounded-lg shadow-md hover:bg-prime/90 transition ${
               idx === 2 ? "col-span-2 text-center mb-4" : ""
             }`}
           >

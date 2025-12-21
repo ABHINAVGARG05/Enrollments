@@ -25,9 +25,9 @@ const Input: React.FC<Props> = ({
   const isFilled = Boolean(value && value.length > 0);
 
   return (
-    <div className={`relative input-container flex flex-grow ${className}`}>
+    <div className={`relative input-container flex flex-grow w-full ${className}`}>
       <input
-        className="nes-input is-dark text-white outline-none w-full"
+        className="nes-input is-dark text-white outline-none w-full min-w-[280px] md:min-w-[320px] lg:min-w-[360px]"
         type={inputType}
         placeholder={placeholder}
         name={label}

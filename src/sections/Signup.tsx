@@ -1,7 +1,7 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-// import { toast } from "react-toastify";
 import secureLocalStorage from "react-secure-storage";
 import BoundingBox from "../components/BoundingBox";
 import Button from "../components/Button";
@@ -24,58 +24,70 @@ const Signup: React.FC = () => {
   const [confirmpassword, setConfirmPassword] = useState("");
   const [email, setEmail] = useState("");
   const [regno, setRegno] = useState("");
-  const [error, setError] = useState(false);
   const [formErrors, setFormErrors] = useState<Partial<SignupFormValues>>({});
   const [mutex, setMutex] = useState(false);
   const navigate = useNavigate();
   function validateData() {
     const errors: Partial<SignupFormValues> = {};
-    let isError = false;
+    let hasError = false;
+
+    // Validate username
     if (username.length < 3) {
       errors.name = "Name is required";
-      isError = true;
+      hasError = true;
     } else {
       errors.name = "";
-      isError = false;
     }
 
+    // Validate registration number
     const registerNumberRegex = /^(23|24|25)[BM][A-Z]{2}\d{4}$/;
     if (!regno) {
       errors.registerNumber = "Register number is required";
-      isError = true;
+      hasError = true;
     } else if (!registerNumberRegex.test(regno)) {
       errors.registerNumber = "Invalid register number format";
-      isError = true;
+      hasError = true;
     } else {
       errors.registerNumber = "";
-      isError = false;
     }
+
+    // Validate email
     const emailRegex = /^[a-zA-Z0-9._%+-]+@vitstudent\.ac\.in$/;
-    // const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
     if (!email) {
       errors.email = "Email is required";
-      isError = true;
+      hasError = true;
     } else if (!emailRegex.test(email)) {
       errors.email = "Invalid email address. Must end with @vitstudent.ac.in";
-      isError = true;
+      hasError = true;
+    } else {
+      errors.email = "";
     }
+
+    // Validate password
     if (!password) {
       errors.password = "Password is required";
-      isError = true;
+      hasError = true;
     } else if (password.length < 6) {
       errors.password = "Password must be at least 6 characters";
-      isError = true;
+      hasError = true;
+    } else {
+      errors.password = "";
     }
+
+    // Validate confirm password
     if (!confirmpassword) {
       errors.confirmPassword = "Confirm Password is required";
-      isError = true;
+      hasError = true;
     } else if (password !== confirmpassword) {
       errors.confirmPassword = "Passwords must match";
-      isError = true;
+      hasError = true;
+    } else {
+      errors.confirmPassword = "";
     }
+
     // Update the formErrors state with the new errors
     setFormErrors(errors);
-    return isError;
+    return hasError;
   }
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -98,9 +110,9 @@ const Signup: React.FC = () => {
         );
         // console.log(response)
         if (response.data.token) {
-          document.cookie = "jwtToken=" + response.data.token;
+          Cookies.set("jwtToken", response.data.token, { secure: true });
           if (response.data.refreshToken) {
-            document.cookie = "refreshToken=" + response.data.refreshToken;
+            Cookies.set("refreshToken", response.data.refreshToken, { secure: true });
           }
           setOpenToast(true);
           setToastContent({
@@ -116,8 +128,8 @@ const Signup: React.FC = () => {
           secureLocalStorage.setItem("id", response.data.id);
           secureLocalStorage.setItem("name", response.data.username);
           secureLocalStorage.setItem("email", response.data.email);
-          navigate("/verifyotp");
           setMutex(false);
+          navigate("/verifyotp");
         }
         if (response.data.error) {
           setOpenToast(true);
@@ -127,24 +139,14 @@ const Signup: React.FC = () => {
           });
           setMutex(false);
         }
-
-        setError(false);
-        console.error(error);
-        // TODO: Set the appropriate error message here
-      } catch (error) {
-        console.log(error);
+      } catch (err) {
+        console.error("Signup error:", err);
         setMutex(false);
-        // setOpenToast(true);
-        // setToastContent({
-        //   message: "Error while signup",
-        //   type: "error",
-        // });
-        // toast.error("Invalid Username or Password", {
-        //   className: "custom-bg-error",
-        //   autoClose: 3000,
-        //   theme: "dark",
-        // });
-        setError(true);
+        setOpenToast(true);
+        setToastContent({
+          message: "An error occurred during signup. Please try again.",
+          type: "error",
+        });
       }
     }
   };
@@ -174,7 +176,7 @@ const Signup: React.FC = () => {
                 Already have an account?
               </div>
               <NavLink
-                className="nes-btn bg-prime hover:bg-orange-600 text-white px-4 py-2 rounded transition-all duration-300"
+                className="nes-btn bg-prime hover:bg-prime/90 text-black px-4 py-2 rounded transition-all duration-300"
                 to="/"
               >
                 Login Here &rarr;
@@ -186,12 +188,14 @@ const Signup: React.FC = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:scale-110 transition-transform duration-300"
+                aria-label="Follow MFC on Instagram"
               >
                 <i className="nes-icon instagram is-medium"></i>
               </a>
               <a
                 href="mailto:mozillafirefox@vit.ac.in"
                 className="hover:scale-110 transition-transform duration-300"
+                aria-label="Email Mozilla Firefox Club"
               >
                 <i className="nes-icon gmail is-medium"></i>
               </a>
@@ -200,6 +204,7 @@ const Signup: React.FC = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:scale-110 transition-transform duration-300"
+                aria-label="Connect with MFC on LinkedIn"
               >
                 <i className="nes-icon linkedin is-medium"></i>
               </a>
@@ -223,7 +228,7 @@ const Signup: React.FC = () => {
             </div>
 
             <form
-              className="flex flex-col gap-8 md:gap-6 w-full mx-auto mt-4 md:mt-0"
+              className="flex flex-col gap-8 md:gap-6 w-full max-w-[400px] mx-auto mt-4 md:mt-0"
               onSubmit={handleSignup}
             >
               <Input
@@ -298,7 +303,7 @@ const Signup: React.FC = () => {
               <Button
                 submit={true}
                 disabled={mutex}
-                className="bg-prime hover:bg-orange-600 text-white font-bold py-3 rounded transition-all duration-300"
+                className="bg-prime hover:bg-prime/90 text-black font-bold py-3 rounded transition-all duration-300"
               >
                 {mutex === true ? (
                   <div className="flex items-center justify-center gap-4">
@@ -306,7 +311,7 @@ const Signup: React.FC = () => {
                     <img
                       src="/loader.png"
                       alt="loading..."
-                      className="w-6 invert animation-spin"
+                      className="w-6 invert animate-spin"
                     />
                   </div>
                 ) : (
@@ -318,7 +323,7 @@ const Signup: React.FC = () => {
             <div className="mt-8 block md:hidden text-center">
               <div className="text-white mb-4">Already have an account?</div>
               <NavLink
-                className="nes-btn bg-prime hover:bg-orange-600 text-white px-4 py-2 rounded block mx-auto w-2/3 text-center"
+                className="nes-btn bg-prime hover:bg-prime/90 text-black px-4 py-2 rounded block mx-auto w-2/3 text-center"
                 to="/"
               >
                 Login Here &rarr;
@@ -329,12 +334,14 @@ const Signup: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:scale-110 transition-transform duration-300"
+                  aria-label="Follow MFC on Instagram"
                 >
                   <i className="nes-icon instagram is-medium"></i>
                 </a>
                 <a
                   href="mailto:mozillafirefox@vit.ac.in"
                   className="hover:scale-110 transition-transform duration-300"
+                  aria-label="Email Mozilla Firefox Club"
                 >
                   <i className="nes-icon gmail is-medium"></i>
                 </a>
@@ -343,6 +350,7 @@ const Signup: React.FC = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:scale-110 transition-transform duration-300"
+                  aria-label="Connect with MFC on LinkedIn"
                 >
                   <i className="nes-icon linkedin is-medium"></i>
                 </a>

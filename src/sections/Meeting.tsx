@@ -48,6 +48,8 @@ const Meeting = () => {
     console.log("Selected time:", data);
   };
 
+  const selectedSlot = timeSlots.find(slot => slot.value === time);
+
   const formatDateTime = (isoString: string) => {
     const date = new Date(isoString);
 
@@ -226,7 +228,19 @@ const Meeting = () => {
     }
   }, [gmeet, justBooked]);
 
-  const handleMeeting = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const isValidUrl = (url: string): boolean => {
+  try {
+    const parsed = new URL(url);
+    // Only allow Google Meet URLs or standard https URLs
+    return parsed.protocol === 'https:' && 
+           (parsed.hostname.includes('meet.google.com') || 
+            parsed.hostname.includes('google.com'));
+  } catch {
+    return false;
+  }
+};
+
+const handleMeeting = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     console.log("Handle Meeting called - Date:", date, "Time:", time);
@@ -281,10 +295,11 @@ const Meeting = () => {
 
   };
 
+  const [cancelError, setCancelError] = useState<string | null>(null);
+
   const handleCancel = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-
-    console.log(id);
+    setCancelError(null);
 
     try {
       const response = await axios.post(
@@ -292,7 +307,6 @@ const Meeting = () => {
         { candidateId: id }
       );
 
-      console.log(response);
       Cookies.remove("jwtToken");
       secureLocalStorage.clear();
 
@@ -301,17 +315,18 @@ const Meeting = () => {
       setShowBooked(false);
 
       navigate("/");
-    } catch (error) {
-      console.error(error);
+      
+    } catch(error) {
+      console.error("Error cancelling meeting:", error);
+      setCancelError("Failed to cancel meeting. Please try again.");
+      alert("Failed to cancel meeting. Please try again or contact support.");
     }
-  };
-
-  const selectedSlot = timeSlots.find(slot => slot.value === time);
+  }
 
   return (
     <div className="w-full min-h-screen h-full flex flex-col md:flex-row justify-center items-center pt-0 px-4 overflow-auto">
       <Navbar />
-      <BoundingBox className="relative  overflow-auto">
+      <BoundingBox className="relative">
         <div className="w-full h-full text-center relative">
           <h1
             className="text-[1.5rem] md:text-[2.5rem] text-prime"
@@ -451,7 +466,13 @@ const Meeting = () => {
 
                 <Button
                   disabled={!gmeet}
-                  onClick={() => window.open(gmeet, "_blank")}
+                  onClick={() => {
+                    if (gmeet && isValidUrl(gmeet)) {
+                      window.open(gmeet, "_blank", "noopener,noreferrer");
+                    } else {
+                      alert("Invalid meeting link. Please contact support.");
+                    }
+                  }}
                   className={
                     "text-white font-medium py-2 px-4 rounded-md transition-all duration-300"
                   }
@@ -479,13 +500,13 @@ const Meeting = () => {
           </div>
 
           <section className="icon-list flex gap-10 md:gap-8 mt-8 w-full mb-0 justify-center scale-75 md:scale-100">
-            <a href="https://www.instagram.com/mfc_vit">
+            <a href="https://www.instagram.com/mfc_vit" aria-label="Follow MFC on Instagram" target="_blank" rel="noopener noreferrer">
               <i className="nes-icon instagram is-medium"></i>
             </a>
-            <a href="mailto:mozillafirefox@vit.ac.in">
+            <a href="mailto:mozillafirefox@vit.ac.in" aria-label="Email Mozilla Firefox Club">
               <i className="nes-icon gmail is-medium"></i>
             </a>
-            <a href="https://www.linkedin.com/company/mfcvit?originalSubdomain=in">
+            <a href="https://www.linkedin.com/company/mfcvit?originalSubdomain=in" aria-label="Connect with MFC on LinkedIn" target="_blank" rel="noopener noreferrer">
               <i className="nes-icon linkedin is-medium"></i>
             </a>
           </section>

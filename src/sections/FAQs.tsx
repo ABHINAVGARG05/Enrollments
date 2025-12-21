@@ -78,8 +78,8 @@ const FAQs = () => {
   return (
     <div className="w-full min-h-screen h-full flex flex-col md:flex-row justify-center items-center pt-0 px-4 overflow-auto">
       <Navbar />
-      <BoundingBox className="relative">
-        <div className="faq-page-container h-full overflow-y-auto" ref={faqRef}>
+      <BoundingBox className="relative overflow-hidden">
+        <div className="faq-page-container h-full custom-scroll overflow-y-auto" ref={faqRef}>
           {/* Scroll Progress Indicator (now reflects faqRef scroll) */}
           <div className="scroll-indicator" aria-hidden>
             <div
