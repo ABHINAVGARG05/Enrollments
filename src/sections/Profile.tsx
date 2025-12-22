@@ -1,12 +1,11 @@
 import Input from "../components/Input";
 import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback } from "react";
 import CustomToast, { ToastContent } from "../components/CustomToast";
 import { useTabStore } from "../store";
 import secureLocalStorage from "react-secure-storage";
 import { z } from "zod";
-import BoundingBox from "../components/BoundingBox";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 interface CustomJwtPayload extends JwtPayload {
   isProfileDone?: boolean;

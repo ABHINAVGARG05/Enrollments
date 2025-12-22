@@ -144,49 +144,6 @@ const DesignTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
 
 export default DesignTask;
 
-function Modal({
-  task,
-  setShowModal,
-}: {
-  task: string;
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
-  return (
-    <div className="max-w-5xl w-[98%] md:w-[90%] lg:w-[75%] z-50 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 nes-container is-dark is-rounded p-1 text-[11px]">
-      <form method="">
-        <p className="title text-sm">Submit Task</p>
-        <input
-          type="text"
-          id="dark_field"
-          className="nes-input is-dark text-xs"
-          placeholder="Github Repository Link"
-          name={`${task}-github`}
-          required
-        />
-        <input
-          type="text"
-          id="dark_field"
-          className="nes-input is-dark text-xs"
-          placeholder="Demo Link"
-          name={`${task}-demo`}
-        />
-        <menu className="dialog-menu mt-3">
-          <button
-            className="nes-btn text-xs"
-            type="button"
-            onClick={() => setShowModal(false)}
-          >
-            Cancel
-          </button>
-          <button className="nes-btn is-error text-xs" type="submit">
-            Submit
-          </button>
-        </menu>
-      </form>
-    </div>
-  );
-}
-
 const designTaskData: Task[] = [
   {
     label: "ui",

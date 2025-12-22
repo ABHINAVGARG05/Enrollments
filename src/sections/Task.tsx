@@ -32,8 +32,8 @@ const DOMAIN_MAP = {
 };
 
 const Task = () => {
-  const { tabIndex, setTabIndex } = useTabStore();
-  const [selectedDomain, setSelectedDomain] = useState(0);
+  const { setTabIndex } = useTabStore();
+  const [selectedDomain, setSelectedDomain] = useState(-1);
   const [selectedSubDomain, setSelectedSubDomain] = useState("");
   const [domains, setDomains] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -43,6 +43,55 @@ const Task = () => {
   useEffect(() => {
     setSelectedSubDomain("");
   }, [selectedDomain]);
+
+  // Function to fetch user details from API
+  const fetchUserDetails = useCallback(async () => {
+    try {
+      const id = secureLocalStorage.getItem("id");
+      
+      if (!id) {
+        throw new Error("User ID not found");
+      }
+      
+      const token = Cookies.get("jwtToken");
+      
+      if (!token) {
+        throw new Error("Authentication token not found");
+      }
+      
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/user/user/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      
+      if (response.data) {
+        // Store user details in secure local storage
+        secureLocalStorage.setItem("userDetails", JSON.stringify(response.data));
+        
+        // Update domains state
+        const userDomains = response.data.domain || response.data.data?.domain || [];
+        setDomains(userDomains);
+        
+        // Set initial selected domain based on available domains
+        if (userDomains.includes("tech")) {
+          setSelectedDomain(DOMAIN_MAP.tech);
+        } else if (userDomains.includes("design")) {
+          setSelectedDomain(DOMAIN_MAP.design);
+        } else if (userDomains.includes("management")) {
+          setSelectedDomain(DOMAIN_MAP.management);
+        }
+        
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+      // Don't set error state here to avoid UI flicker if local storage has data
+    }
+  }, []);
 
   // Memoize the loadUserData function to prevent unnecessary re-renders
   const loadUserData = useCallback(() => {
@@ -113,57 +162,7 @@ const Task = () => {
       setError("Failed to load user data");
       setIsLoading(false);
     }
-  }, [setTabIndex]);
-
-  // Function to fetch user details from API
-  const fetchUserDetails = useCallback(async () => {
-    try {
-      const id = secureLocalStorage.getItem("id");
-      
-      if (!id) {
-        throw new Error("User ID not found");
-      }
-      
-      const token = Cookies.get("jwtToken");
-      
-      if (!token) {
-        throw new Error("Authentication token not found");
-      }
-      
-      const response = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/user/user/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      
-      if (response.data) {
-        // Store user details in secure local storage
-        secureLocalStorage.setItem("userDetails", JSON.stringify(response.data));
-        
-        // Update domains state
-        const userDomains = response.data.domain || response.data.data?.domain || [];
-        setDomains(userDomains);
-        
-        // Set initial selected domain based on available domains
-        if (userDomains.includes("tech")) {
-          setSelectedDomain(DOMAIN_MAP.tech);
-        } else if (userDomains.includes("design")) {
-          setSelectedDomain(DOMAIN_MAP.design);
-        } else if (userDomains.includes("management")) {
-          setSelectedDomain(DOMAIN_MAP.management);
-        }
-        
-        setIsLoading(false);
-      }
-    } catch (error) {
-      console.error("Error fetching user details:", error);
-      setError("Failed to fetch user details");
-      setIsLoading(false);
-    }
-  }, []);
+  }, [setTabIndex, fetchUserDetails]);
 
   // Load user data on component mount
   useEffect(() => {

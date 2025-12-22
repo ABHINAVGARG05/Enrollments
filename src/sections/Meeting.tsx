@@ -7,8 +7,11 @@ import Cookies from "js-cookie";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import CustomToast, { ToastContent } from "../components/CustomToast";
 
 const Meeting = () => {
+  const [openToast, setOpenToast] = useState(false);
+  const [toastContent, setToastContent] = useState<ToastContent>({});
   const [statusTech, setStatusTech] = useState(false);
   const [statusDesign, setStatusDesign] = useState(false);
   const [statusManagement, setStatusManagement] = useState(false);
@@ -39,13 +42,11 @@ const Meeting = () => {
 
   const handleDate: (data: number) => void = (data) => {
     setDate(data);
-    console.log("Selected date:", data);
   };
 
   const handleTime = (data: string) => {
     setTime(data);
     setDropdownOpen(false);
-    console.log("Selected time:", data);
   };
 
   const selectedSlot = timeSlots.find(slot => slot.value === time);
@@ -180,7 +181,6 @@ const Meeting = () => {
 
       if (typeof id === "string") {
         setId(id);
-        console.log(id);
       } else {
         console.error("User id not found in local storage");
       }
@@ -202,9 +202,6 @@ const Meeting = () => {
   // Ensure date is properly padded (e.g., "05" instead of "5")
   const formattedDate = date ? String(date).padStart(2, '0') : null;
   const scheduleTime = formattedDate ? `2025-12-${formattedDate}T${time}:00.000+05:30` : "";
-
-  console.log("Schedule Time:", scheduleTime);
-  console.log("Date:", date, "Time:", time);
 
   useEffect(() => {
     if (gmeet && justBooked) {
@@ -229,24 +226,26 @@ const Meeting = () => {
   }, [gmeet, justBooked]);
 
   const isValidUrl = (url: string): boolean => {
-  try {
-    const parsed = new URL(url);
-    // Only allow Google Meet URLs or standard https URLs
-    return parsed.protocol === 'https:' && 
-           (parsed.hostname.includes('meet.google.com') || 
-            parsed.hostname.includes('google.com'));
-  } catch {
-    return false;
-  }
-};
+    try {
+      const parsed = new URL(url);
+      // Only allow Google Meet URLs or standard https URLs
+      return parsed.protocol === 'https:' && 
+             (parsed.hostname.includes('meet.google.com') || 
+              parsed.hostname.includes('google.com'));
+    } catch {
+      return false;
+    }
+  };
 
 const handleMeeting = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    console.log("Handle Meeting called - Date:", date, "Time:", time);
-
     if (!date || !time) {
-      alert("Please select date and time");
+      setOpenToast(true);
+      setToastContent({
+        message: "Please select date and time",
+        type: "error",
+      });
       setIsLoading(false);
       return;
     }
@@ -258,16 +257,11 @@ const handleMeeting = async (e: React.MouseEvent<HTMLButtonElement>) => {
       scheduletime: scheduleTime,
     };
 
-    console.log("Sending meeting details:", meetingDetails);
-
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/meet/schedule`,
         meetingDetails
       );
-
-      console.log("Response:", response);
-      console.log("GMeet Link:", response.data.data.gmeetLink);
 
       const link = response.data.data.gmeetLink;
       const time = response.data.data.scheduledTime;
@@ -278,16 +272,23 @@ const handleMeeting = async (e: React.MouseEvent<HTMLButtonElement>) => {
       setScheduledTime(time);
       setJustBooked(true);
       setIsLoading(false);
+      setOpenToast(true);
+      setToastContent({
+        message: "Meeting scheduled successfully!",
+        type: "success",
+      });
     } catch (error) {
-      console.log("Error booking meeting:", error);
-
       if (axios.isAxiosError(error)) {
         const backendMessage =
           error.response?.data?.error ||
           error.response?.data?.message ||
           "Failed to book meeting";
 
-        alert(backendMessage);
+        setOpenToast(true);
+        setToastContent({
+          message: backendMessage,
+          type: "error",
+        });
       }
 
       setIsLoading(false);
@@ -295,14 +296,11 @@ const handleMeeting = async (e: React.MouseEvent<HTMLButtonElement>) => {
 
   };
 
-  const [cancelError, setCancelError] = useState<string | null>(null);
-
   const handleCancel = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setCancelError(null);
 
     try {
-      const response = await axios.post(
+      await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/meet/cancel`,
         { candidateId: id }
       );
@@ -318,8 +316,11 @@ const handleMeeting = async (e: React.MouseEvent<HTMLButtonElement>) => {
       
     } catch(error) {
       console.error("Error cancelling meeting:", error);
-      setCancelError("Failed to cancel meeting. Please try again.");
-      alert("Failed to cancel meeting. Please try again or contact support.");
+      setOpenToast(true);
+      setToastContent({
+        message: "Failed to cancel meeting. Please try again or contact support.",
+        type: "error",
+      });
     }
   }
 
@@ -470,7 +471,11 @@ const handleMeeting = async (e: React.MouseEvent<HTMLButtonElement>) => {
                     if (gmeet && isValidUrl(gmeet)) {
                       window.open(gmeet, "_blank", "noopener,noreferrer");
                     } else {
-                      alert("Invalid meeting link. Please contact support.");
+                      setOpenToast(true);
+                      setToastContent({
+                        message: "Invalid meeting link. Please contact support.",
+                        type: "error",
+                      });
                     }
                   }}
                   className={
@@ -512,6 +517,16 @@ const handleMeeting = async (e: React.MouseEvent<HTMLButtonElement>) => {
           </section>
         </div>
       </BoundingBox>
+      {openToast && (
+        <CustomToast
+          setToast={setOpenToast}
+          setToastContent={setToastContent}
+          message={toastContent.message}
+          type={toastContent.type}
+          customStyle={toastContent.customStyle}
+          duration={toastContent.duration}
+        />
+      )}
     </div>
   );
 };

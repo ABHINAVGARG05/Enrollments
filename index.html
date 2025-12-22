@@ -4,8 +4,37 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/jpeg" href="/fox.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Mozilla Firefox Club VIT - Join the community of tech enthusiasts" />
+    
+    <!-- DNS Prefetch for external resources -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://unpkg.com" />
+    
+    <!-- Preconnect for faster font loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Preload critical font -->
+    <link rel="preload" href="/arcade.ttf" as="font" type="font/ttf" crossorigin />
+    
+    <!-- NES.css with display swap for better performance -->
     <link href="https://unpkg.com/nes.css@2.2.1/css/nes.min.css" rel="stylesheet" />
+    
     <title>Mozilla Firefox Club VIT</title>
+    
+    <!-- Critical inline styles for faster first paint -->
+    <style>
+      body { 
+        margin: 0; 
+        background: #000; 
+        min-height: 100vh;
+      }
+      #root {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>

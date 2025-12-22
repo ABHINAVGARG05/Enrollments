@@ -1,26 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import secureLocalStorage from "react-secure-storage";
 import { ToastContent } from "../components/CustomToast";
-import { jwtDecode, JwtPayload } from "jwt-decode";
-import { useTabStore } from "../store";
+import { DraftResumeModal, DraftStatusIndicator } from "../hooks/useDraftSystem";
+
 interface Props {
   setOpenToast: React.Dispatch<React.SetStateAction<boolean>>;
   setToastContent: React.Dispatch<React.SetStateAction<ToastContent>>;
 }
 
-interface CustomJwtPayload extends JwtPayload {
-  isTechDone?: boolean;
-}
-
-// interface FormDataType {
-//   question1: string | [string, string];
-//   question2: string | [string, string];
-//   question3: string | [string, string];
-//   question4: string | [string, string];
-//   question5: string | [string, string];
-// }
+const BROADCAST_CHANNEL_NAME = "mfc_tech_draft_sync";
 
 const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   const [subdomain, setSubDomain] = useState<string[]>([]);
@@ -29,27 +19,25 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   const id = secureLocalStorage.getItem("id");
   const DRAFT_KEY = id ? `tech_draft_${id}` : null;
 
-  const [isSavingDraft, setIsSavingDraft] = useState(false);
-
   const [savingFields, setSavingFields] = useState<Record<string, boolean>>({});
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [lastSaved, setLastSaved] = useState<number | null>(null);
+  const [showResumePrompt, setShowResumePrompt] = useState(false);
+  const [pendingDraft, setPendingDraft] = useState<{formData: FormData; subdomain: string[]; updatedAt: number} | null>(null);
 
-  // const [formData, setFormData] = useState<FormDataType>({
-  //   question1: "",
-  //   question2: "",
-  //   question3: "",
-  //   question4: "",
-  //   question5: "",
-  // });
-  
-    interface FormData {
+  interface FormData {
       [key: string]: [string, string];
     }
   
-    const [isDraftLoaded, setIsDraftLoaded] = useState(false);
+  const [isDraftLoaded, setIsDraftLoaded] = useState(false);
   const [formData, setFormData] = useState<FormData>({});
-    const syncTimerRef = React.useRef<number | null>(null);
+  const syncTimerRef = useRef<number | null>(null);
+  const syncQueueRef = useRef<{formData: FormData; subdomain: string[]}[]>([]);
+  const broadcastChannelRef = useRef<BroadcastChannel | null>(null);
+  const versionRef = useRef(0);
   
-    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
     if (checked) {
       setSubDomain((prevDomains) =>
@@ -60,14 +48,12 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     }
   };
 
-  interface TechDraft {
-    id: string;
-    formData: FormData;
-    subdomain: string[];
-    updatedAt: number;
+  interface BackendTaskResponse {
+    subdomain?: string[];
+    [key: string]: unknown;
   }
 
-const hydrateFromBackend = (task: any) => {
+  const hydrateFromBackend = useCallback((task: BackendTaskResponse) => {
     if (!task) return;
 
     setSubDomain(task.subdomain || []);
@@ -75,13 +61,16 @@ const hydrateFromBackend = (task: any) => {
     const restoredFormData: FormData = {};
 
     Object.entries(task).forEach(([key, value]) => {
-      if (key.startsWith("question") && Array.isArray(value) && value[0]) {
-        restoredFormData[key] = ["", value[0]];
+      if (key.startsWith("question") && Array.isArray(value) && value.length > 0) {
+        const val = value[0];
+        if (typeof val === 'string') {
+            restoredFormData[key] = ["", val];
+        }
       }
     });
 
     setFormData(restoredFormData);
-  };
+  }, []);
 
 useEffect(() => {
     if (!DRAFT_KEY || !isDraftLoaded) return;
@@ -91,93 +80,30 @@ useEffect(() => {
       formData,
       subdomain,
       updatedAt: Date.now(),
+      version: ++versionRef.current,
     };
 
-    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
-  }, [formData, subdomain, isDraftLoaded]);
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      setLastSaved(Date.now());
+    } catch (err) {
+      console.error("Failed to save draft:", err);
+    }
 
+    if (broadcastChannelRef.current) {
+      broadcastChannelRef.current.postMessage({
+        type: "DRAFT_UPDATE",
+        draft,
+        tabId: sessionStorage.getItem("tabId"),
+      });
+    }
+  }, [formData, subdomain, isDraftLoaded, DRAFT_KEY, id]);
 
-  useEffect(() => {
-      if (!id) return;
-  
-      if (DRAFT_KEY) {
-        const raw = localStorage.getItem(DRAFT_KEY);
-        if (raw) {
-          try {
-            const draft = JSON.parse(raw);
-            if (draft?.id === id) {
-              setFormData(draft.formData || {});
-              setSubDomain(draft.subdomain || []);
-            }
-          } catch (err) {
-            console.error("Failed to load local draft", err);
-          } finally {
-            setIsDraftLoaded(true);
-          }
-          return;
-        }
-      }
-  
-      // 2️⃣ fallback to backend
-      const fetchDraftFromBackend = async () => {
-        try {
-          const token = Cookies.get("jwtToken");
-          if (!token) return;
-  
-          const res = await axios.get(
-            `${import.meta.env.VITE_BASE_URL}/upload/tech/${id}`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
-  
-          const task = res.data?.data;
-  
-          if (!task || task.isDone) {
-            setIsDraftLoaded(true);
-            return;
-          }
-  
-          hydrateFromBackend(task);
-        } catch (err) {
-          console.error("Failed to fetch draft from backend", err);
-        } finally {
-          setIsDraftLoaded(true);
-        }
-      };
-  
-      fetchDraftFromBackend();
-    }, [id]);
-
-    const syncDraftToServer = async () => {
-        if (!id) return;
-    
-        const token = Cookies.get("jwtToken");
-        if (!token) return;
-    
-        try {
-          await axios.patch(
-            `${import.meta.env.VITE_BASE_URL}/upload/tech/${id}`,
-            buildBackendPayload(),
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-          setIsSavingDraft(false);
-    setSavingFields({});
-        } catch (err) {
-          console.error("Draft sync failed (will retry later)", err);
-        }
-      };
-
-    const buildBackendPayload = () => {
-    const payload: Record<string, any> = {};
+  const buildBackendPayload = useCallback(() => {
+    const payload: Record<string, unknown> = {};
 
     payload.subdomain = subdomain;
 
-    // flatten formData
     Object.entries(formData).forEach(([key, value]) => {
       if (value?.[1]?.trim()) {
         payload[key] = [value[1]];
@@ -185,26 +111,251 @@ useEffect(() => {
     });
 
     return payload;
-  };
+  }, [formData, subdomain]);
 
   useEffect(() => {
-      if (!isDraftLoaded) return;
-      if (!id) return;
-  
+    if (!id) return;
+
+    const initDraft = async () => {
+      if (DRAFT_KEY) {
+        const raw = localStorage.getItem(DRAFT_KEY);
+        if (raw) {
+          try {
+            const draft = JSON.parse(raw);
+            if (draft?.id === id) {
+              const hasContent = Object.keys(draft.formData || {}).length > 0 || 
+                                (draft.subdomain || []).length > 0;
+              
+              if (hasContent) {
+                setPendingDraft(draft);
+                setShowResumePrompt(true);
+                return;
+              }
+            }
+          } catch (err) {
+            console.error("Failed to load local draft", err);
+          }
+        }
+      }
+
+      try {
+        const token = Cookies.get("jwtToken");
+        if (!token) {
+          setIsDraftLoaded(true);
+          return;
+        }
+
+        const res = await axios.get(
+          `${import.meta.env.VITE_BASE_URL}/upload/tech/${id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        const task = res.data?.data;
+
+        if (!task || task.isDone) {
+          setIsDraftLoaded(true);
+          return;
+        }
+
+        hydrateFromBackend(task);
+      } catch (err) {
+        console.error("Failed to fetch draft from backend", err);
+      } finally {
+        setIsDraftLoaded(true);
+      }
+    };
+
+    initDraft();
+  }, [id, hydrateFromBackend, DRAFT_KEY]);
+
+  const syncDraftToServer = useCallback(async () => {
+    if (!id) return;
+
+    const token = Cookies.get("jwtToken");
+    if (!token) return;
+
+    try {
+      setIsSyncing(true);
+      await axios.patch(
+        `${import.meta.env.VITE_BASE_URL}/upload/tech/${id}`,
+        buildBackendPayload(),
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setSavingFields({});
+    } catch (err) {
+      console.error("Draft sync failed (will retry later)", err);
+      syncQueueRef.current.push({ formData, subdomain });
+    } finally {
+      setIsSyncing(false);
+    }
+  }, [id, buildBackendPayload, formData, subdomain]);
+
+  const processOfflineQueue = useCallback(async () => {
+    if (syncQueueRef.current.length === 0) return;
+    
+    const queue = [...syncQueueRef.current];
+    syncQueueRef.current = [];
+    
+    for (const item of queue) {
+      try {
+        const token = Cookies.get("jwtToken");
+        if (!token || !id) continue;
+
+        const payload: Record<string, unknown> = { subdomain: item.subdomain };
+        Object.entries(item.formData).forEach(([key, value]) => {
+          if (value?.[1]?.trim()) {
+            payload[key] = [value[1]];
+          }
+        });
+
+        await axios.patch(
+          `${import.meta.env.VITE_BASE_URL}/upload/tech/${id}`,
+          payload,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } catch (err) {
+        console.error("Queue sync failed:", err);
+        syncQueueRef.current.push(item);
+      }
+    }
+  }, [id]);
+
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOffline(false);
+      processOfflineQueue();
+    };
+
+    const handleOffline = () => {
+      setIsOffline(true);
+    };
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, [processOfflineQueue]);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (!DRAFT_KEY) return;
+      
+      const draft = {
+        id,
+        formData,
+        subdomain,
+        updatedAt: Date.now(),
+        version: versionRef.current,
+      };
+      
+      try {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      } catch (err) {
+        console.error("Emergency save failed:", err);
+      }
+
+      if (navigator.onLine && id) {
+        const token = Cookies.get("jwtToken");
+        if (token) {
+          const payload: Record<string, unknown> = { subdomain };
+          Object.entries(formData).forEach(([key, value]) => {
+            if (value?.[1]?.trim()) {
+              payload[key] = [value[1]];
+            }
+          });
+
+          const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
+          navigator.sendBeacon(
+            `${import.meta.env.VITE_BASE_URL}/upload/tech/${id}?token=${token}`,
+            blob
+          );
+        }
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [formData, subdomain, DRAFT_KEY, id]);
+
+  useEffect(() => {
+    if (!sessionStorage.getItem("tabId")) {
+      sessionStorage.setItem("tabId", Math.random().toString(36).substring(7));
+    }
+
+    try {
+      broadcastChannelRef.current = new BroadcastChannel(BROADCAST_CHANNEL_NAME);
+      
+      broadcastChannelRef.current.onmessage = (event) => {
+        const { type, draft, tabId } = event.data;
+        const myTabId = sessionStorage.getItem("tabId");
+
+        if (type === "DRAFT_UPDATE" && tabId !== myTabId) {
+          if (draft.version > versionRef.current) {
+            setFormData(draft.formData);
+            setSubDomain(draft.subdomain);
+            versionRef.current = draft.version;
+          }
+        }
+      };
+    } catch (err) {
+      console.warn("BroadcastChannel not supported:", err);
+    }
+
+    return () => {
+      broadcastChannelRef.current?.close();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isDraftLoaded) return;
+    if (!id) return;
+
+    if (syncTimerRef.current) {
+      clearTimeout(syncTimerRef.current);
+    }
+
+    syncTimerRef.current = window.setTimeout(() => {
+      if (navigator.onLine) {
+        syncDraftToServer();
+      } else {
+        syncQueueRef.current.push({ formData, subdomain });
+      }
+    }, 2000);
+
+    return () => {
       if (syncTimerRef.current) {
         clearTimeout(syncTimerRef.current);
       }
-  
-      syncTimerRef.current = window.setTimeout(() => {
-        syncDraftToServer();
-      }, 2000);
-  
-      return () => {
-        if (syncTimerRef.current) {
-          clearTimeout(syncTimerRef.current);
-        }
-      };
-    }, [formData, subdomain, isDraftLoaded]);
+    };
+  }, [formData, subdomain, isDraftLoaded, id, syncDraftToServer]);
+
+  const resumeDraft = useCallback(() => {
+    if (pendingDraft) {
+      setFormData(pendingDraft.formData);
+      setSubDomain(pendingDraft.subdomain);
+    }
+    setShowResumePrompt(false);
+    setPendingDraft(null);
+    setIsDraftLoaded(true);
+  }, [pendingDraft]);
+
+  const discardDraft = useCallback(() => {
+    if (DRAFT_KEY) {
+      localStorage.removeItem(DRAFT_KEY);
+    }
+    setShowResumePrompt(false);
+    setPendingDraft(null);
+    setIsDraftLoaded(true);
+  }, [DRAFT_KEY]);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLTextAreaElement>,
@@ -216,9 +367,6 @@ useEffect(() => {
     ...prev,
     [name]: true,
   }));
-
-  
-  setIsSavingDraft(true);
 
     setFormData((prevData) => ({
       ...prevData,
@@ -294,8 +442,17 @@ useEffect(() => {
     //   subdomain: subdomain.join(", "),
     // } as Record<string, unknown>;
 
-        const payload = buildBackendPayload();
+    const payload = buildBackendPayload();
 
+    // Check if any questions were answered (payload will always contain 'subdomain')
+    if (Object.keys(payload).length <= 1) {
+      setOpenToast(true);
+      setToastContent({
+        message: "Please answer at least one question before submitting.",
+        type: "warning",
+      });
+      return;
+    }
 
     try {
       setLoading(true);
@@ -354,6 +511,19 @@ useEffect(() => {
 
   return (
     <>
+      <DraftResumeModal
+        show={showResumePrompt}
+        onResume={resumeDraft}
+        onDiscard={discardDraft}
+        lastSaved={pendingDraft?.updatedAt}
+      />
+      <div className="flex justify-end mb-2">
+        <DraftStatusIndicator
+          isSyncing={isSyncing}
+          isOffline={isOffline}
+          lastSaved={lastSaved}
+        />
+      </div>
       <section className="mb-4 text-xs md:text-sm">
         Append all your tech tasks in following manner:
         <br />

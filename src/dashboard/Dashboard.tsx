@@ -80,7 +80,7 @@ useEffect(() => {
     }
     // Fallback to local flags
     try {
-      const localDone = (secureLocalStorage.getItem && (secureLocalStorage.getItem("profileComplete") as any)) ?? false;
+      const localDone = (secureLocalStorage.getItem && (secureLocalStorage.getItem("profileComplete") as boolean | string | null)) ?? false;
       if (localDone === true || localDone === "true") return true;
       const ud = secureLocalStorage.getItem("userDetails") as string | null;
       if (ud) {

@@ -7,6 +7,8 @@ import BoundingBox from "../components/BoundingBox";
 import secureLocalStorage from "react-secure-storage";
 import { useNavigate } from "react-router-dom";
 import Toast from "../components/CustomToast"; // Import Toast component
+import { useConfetti } from "../hooks/useConfetti";
+import { triggerScreenShake } from "../hooks/useScreenShake";
 
 interface UserDetails {
   domain?: string[];
@@ -24,8 +26,9 @@ const ChangeProfile = () => {
   const [isDomainChanged, setIsDomainChanged] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const { triggerConfetti } = useConfetti();
 
-  // Handle checkbox changes for domain selection
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
 
@@ -110,6 +113,7 @@ const ChangeProfile = () => {
         type: "warning",
       });
       setOpenToast(true);
+      triggerScreenShake();
       return;
     }
 
@@ -150,8 +154,9 @@ const ChangeProfile = () => {
           JSON.stringify(updatedUserDetails)
         );
 
-        // Force refresh the token to update domain information
         await refreshToken();
+
+        triggerConfetti();
 
         setToastContent({
           message: "Profile updated successfully.",
@@ -184,6 +189,7 @@ const ChangeProfile = () => {
       });
       setOpenToast(true);
       setError(true);
+      triggerScreenShake();
     } finally {
       setIsSubmitting(false);
     }

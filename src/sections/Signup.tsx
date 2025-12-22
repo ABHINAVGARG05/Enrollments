@@ -129,7 +129,7 @@ const Signup: React.FC = () => {
           secureLocalStorage.setItem("name", response.data.username);
           secureLocalStorage.setItem("email", response.data.email);
           setMutex(false);
-          navigate("/verifyotp");
+          navigate(`/verifyotp/${response.data.id}`);
         }
         if (response.data.error) {
           setOpenToast(true);

@@ -11,31 +11,21 @@ import CustomToast, { ToastContent } from "../components/CustomToast";
 import Input from "../components/Input";
 import PlayBtn from "../components/PlayBtn";
 import Scene3d from "../components/Scene3d";
+import GlitchText from "../components/GlitchText";
 import { useCharacterAnimations } from "../context/CharAnimation";
-// import { useTabStore } from "../store";
+import { triggerScreenShake } from "../hooks/useScreenShake";
 import type { JwtPayload } from "jwt-decode";
 
 
 const Landing = () => {
   const [openToast, setOpenToast] = useState(false);
   const [toastContent, setToastContent] = useState<ToastContent>({});
-  // const [showComponents, setShowComponents] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  // const [error, setError] = useState(false);
-  // const [isSceneVisible, setIsSceneVisible] = useState(false);
 
   const { isPlayButton } = useCharacterAnimations();
-  // const { tabIndex, setTabIndex } = useTabStore();
   const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   if (isPlayButton) {
-  //     const timeout = setTimeout(() => setShowComponents(true), 3500);
-  //     return () => clearTimeout(timeout);
-  //   }
-  // }, [isPlayButton]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface CustomJwtPayload extends JwtPayload {
@@ -52,6 +42,7 @@ const Landing = () => {
         type: "error",
       });
       setOpenToast(true);
+      triggerScreenShake();
       return false;
     }
     return { email: trimmedEmail, password: trimmedPassword };
@@ -88,6 +79,7 @@ const Landing = () => {
       } else if (response.data.error) {
         setToastContent({ message: response.data.error, type: "error" });
         setOpenToast(true);
+        triggerScreenShake();
       }
     } catch (err) {
       console.error("Login error:", err);
@@ -96,6 +88,7 @@ const Landing = () => {
         type: "error",
       });
       setOpenToast(true);
+      triggerScreenShake();
     }
   };
 
@@ -142,11 +135,11 @@ const Landing = () => {
             ${isPlayButton ? 'text-3xl sm:text-4xl md:text-3xl lg:text-3xl lg:mt-[0.4375rem] ' : 'text-3xl sm:text-3xl md:text-3xl lg:text-[2.6rem] lg:mt-40'}`}>
                 {!isPlayButton ? (
                   <>
-                    <span className="lg:block mb-8">MOZILLA</span>
-                    <span className="lg:block"> FIREFOX</span>
+                    <GlitchText className="lg:block mb-8">MOZILLA</GlitchText>
+                    <GlitchText className="lg:block">FIREFOX</GlitchText>
                   </>
                 ) : (
-                  "MOZILLA FIREFOX"
+                  <GlitchText>MOZILLA FIREFOX</GlitchText>
                 )}
               </h1>
 

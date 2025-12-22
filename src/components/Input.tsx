@@ -2,6 +2,7 @@ import { useState } from "react";
 
 interface Props {
   label: string;
+  name?: string;
   placeholder: string;
   type: string;
   value?: string;
@@ -12,6 +13,7 @@ interface Props {
 
 const Input: React.FC<Props> = ({
   label,
+  name,
   placeholder,
   type,
   value,
@@ -20,20 +22,23 @@ const Input: React.FC<Props> = ({
   className = "",
 }: Props) => {
   const [inputType, setInputType] = useState(type);
+  const inputName = name || label.replace(/\s+/g, "_").toLowerCase();
 
-  // 🔥 Key logic: decide icon color
   const isFilled = Boolean(value && value.length > 0);
 
   return (
     <div className={`relative input-container flex flex-grow w-full ${className}`}>
+      <label htmlFor={inputName} className="sr-only">{label}</label>
       <input
+        id={inputName}
         className="nes-input is-dark text-white outline-none w-full min-w-[280px] md:min-w-[320px] lg:min-w-[360px]"
         type={inputType}
         placeholder={placeholder}
-        name={label}
+        name={inputName}
         value={value}
         onChange={onChange}
         required={required}
+        aria-label={label}
       />
 
       {type === "password" && (

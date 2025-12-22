@@ -643,17 +643,26 @@ body {
 .custom-scroll,
 .task-container,
 .-task-container,
-.faq,
-.faq-page-container {
+.faq {
   scrollbar-width: thin;
   scrollbar-color: #fc7a00 transparent;
+}
+
+/* Hide default scrollbar for pages with custom scroll indicator */
+.faq-page-container {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.faq-page-container::-webkit-scrollbar {
+  display: none;
+  width: 0;
 }
 
 .custom-scroll::-webkit-scrollbar,
 .task-container::-webkit-scrollbar,
 .-task-container::-webkit-scrollbar,
-.faq::-webkit-scrollbar,
-.faq-page-container::-webkit-scrollbar {
+.faq::-webkit-scrollbar {
   width: 4px;
   display: block;
 }
@@ -661,16 +670,14 @@ body {
 .custom-scroll::-webkit-scrollbar-track,
 .task-container::-webkit-scrollbar-track,
 .-task-container::-webkit-scrollbar-track,
-.faq::-webkit-scrollbar-track,
-.faq-page-container::-webkit-scrollbar-track {
+.faq::-webkit-scrollbar-track {
   background: transparent;
 }
 
 .custom-scroll::-webkit-scrollbar-thumb,
 .task-container::-webkit-scrollbar-thumb,
 .-task-container::-webkit-scrollbar-thumb,
-.faq::-webkit-scrollbar-thumb,
-.faq-page-container::-webkit-scrollbar-thumb {
+.faq::-webkit-scrollbar-thumb {
   background-color: #fc7a00;
   border-radius: 2px;
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 interface Task {
   label: string;
@@ -17,6 +17,11 @@ export default function TaskModal({
 }) {
   const [isVisible, setIsVisible] = useState(false);
 
+  const handleClose = useCallback(() => {
+    setIsVisible(false);
+    setTimeout(onClose, 200);
+  }, [onClose]);
+
   useEffect(() => {
     requestAnimationFrame(() => setIsVisible(true));
     
@@ -30,12 +35,7 @@ export default function TaskModal({
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
-  }, [onClose]);
-
-  const handleClose = () => {
-    setIsVisible(false);
-    setTimeout(onClose, 200);
-  };
+  }, [handleClose]);
 
   return (
     <div 

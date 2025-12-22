@@ -1,21 +1,34 @@
-import React, { useState } from "react";
+import React, { lazy, Suspense, memo } from "react";
 import { Canvas } from "@react-three/fiber";
-import Experience from "../component3d/Experience";
-import Interface from "../component3d/Interface";
 
-const Scene3d: React.FC = () => {
+const Experience = lazy(() => import("../component3d/Experience"));
+const Interface = lazy(() => import("../component3d/Interface"));
+
+const Scene3d: React.FC = memo(() => {
   return (
     <div className="flex flex-col items-center w-full h-full">
       <div className="w-full h-[80%]">
-        <Canvas camera={{ position: [1, 0.5, 17.5], fov: 30 }} shadows>
-          <Experience />
-        </Canvas>
+        <Suspense fallback={null}>
+          <Canvas
+            camera={{ position: [1, 0.5, 17.5], fov: 30 }}
+            shadows
+            dpr={[1, 1.5]}
+            performance={{ min: 0.5 }}
+            gl={{ antialias: true, powerPreference: "high-performance" }}
+          >
+            <Experience />
+          </Canvas>
+        </Suspense>
       </div>
       <div className="w-full h-[20%] flex justify-center">
-        <Interface />
+        <Suspense fallback={null}>
+          <Interface />
+        </Suspense>
       </div>
     </div>
   );
-};
+});
+
+Scene3d.displayName = "Scene3d";
 
 export default Scene3d;
