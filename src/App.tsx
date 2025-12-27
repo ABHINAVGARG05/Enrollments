@@ -1,52 +1,76 @@
+import { Suspense, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
-import Dashboard from "./dashboard/Dashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
-import ForgotPassword from "./sections/ForgotPasswordStep1";
-import Landing from "./sections/Landing";
-import ResetPassword from "./sections/ResetPassword";
-import Signup from "./sections/Signup";
-import VerifyOTP from "./sections/VerifyOTP";
 import BaseWrapper from "./wrappers/BaseWrapper";
 import MainWrapper from "./wrappers/MainWrapper";
-import About from "./sections/About";
-import FAQs from "./sections/FAQs";
-import ChangeProfile from "./sections/ChangeProfile";
-import Meeting from "./sections/Meeting"
+
+import {
+  LazyDashboard,
+  LazySignup,
+  LazyLanding,
+  LazyAbout,
+  LazyFAQs,
+  LazyChangeProfile,
+  LazyMeeting,
+  LazyForgotPassword,
+  LazyResetPassword,
+  LazyVerifyOTP,
+  LoadingFallback,
+} from "./components/LazyComponents";
+
+import { KonamiEffect, KonamiProgressIndicator, useKonamiCode } from "./hooks/useKonamiCode";
+import { useCursorTrail, useClickEffect } from "./hooks/useCursorTrail";
+import { ScreenShakeProvider } from "./hooks/useScreenShake";
+import { initConsoleEasterEgg } from "./utils/consoleEasterEgg";
 
 function App() {
+  const { isActivated: konamiActivated, setIsActivated: setKonamiActivated, progress: konamiProgress } = useKonamiCode();
+  
+  // Subtle cursor trail and click effects
+  useCursorTrail(true);
+  useClickEffect(true);
+
+  useEffect(() => {
+    initConsoleEasterEgg();
+  }, []);
+
   return (
-    <BaseWrapper>
-      <link
-        href="https://unpkg.com/nes.css@2.2.1/css/nes.min.css"
-        rel="stylesheet"
-      />
-      <MainWrapper>
-        <Router>
-          <Routes>
-            {/* Public pages: Landing, Signup, Auth flows */}
-            <Route path="/signup" element={<PublicRoute><Signup /></PublicRoute>} />
-            <Route path="/resetpassword" element={<PublicRoute><ResetPassword /></PublicRoute>} />
-            <Route path="/forgotpassword" element={<PublicRoute><ForgotPassword /></PublicRoute>} />
+    <ScreenShakeProvider>
+      <BaseWrapper>
+        <MainWrapper>
+          {/* Progress indicator shows when typing Konami code */}
+          <KonamiProgressIndicator progress={konamiProgress} />
+          
+          <KonamiEffect 
+            isActive={konamiActivated} 
+            onClose={() => setKonamiActivated(false)} 
+          />
 
-            {/* Protected pages - require auth */}
-            <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-            <Route path="/profile" element={<ProtectedRoute><ChangeProfile /></ProtectedRoute>} />
-            <Route path="/meeting" element={<ProtectedRoute><Meeting /></ProtectedRoute>} />
+          <Router>
+            <Suspense fallback={<LoadingFallback />}>
+              <Routes>
+                <Route path="/signup" element={<PublicRoute><LazySignup /></PublicRoute>} />
+                <Route path="/resetpassword" element={<PublicRoute><LazyResetPassword /></PublicRoute>} />
+                <Route path="/forgotpassword" element={<PublicRoute><LazyForgotPassword /></PublicRoute>} />
 
-            {/* Misc */}
-            <Route path="/" element={<Landing />} />
-            <Route path="/verifyotp" element={<VerifyOTP />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/faq" element={<FAQs />} />
+                <Route path="/dashboard" element={<ProtectedRoute><LazyDashboard /></ProtectedRoute>} />
+                <Route path="/profile" element={<ProtectedRoute><LazyChangeProfile /></ProtectedRoute>} />
+                <Route path="/meeting" element={<ProtectedRoute><LazyMeeting /></ProtectedRoute>} />
 
-            {/* Catch-all: show landing for unauthenticated, redirect logged-in users to dashboard via PublicRoute */}
-            <Route path="*" element={<PublicRoute><Landing /></PublicRoute>} />
-          </Routes>
-        </Router>
-      </MainWrapper>
-    </BaseWrapper>
+                <Route path="/" element={<LazyLanding />} />
+                <Route path="/verifyotp/:id" element={<LazyVerifyOTP />} />
+                <Route path="/about" element={<LazyAbout />} />
+                <Route path="/faq" element={<LazyFAQs />} />
+
+                <Route path="*" element={<PublicRoute><LazyLanding /></PublicRoute>} />
+              </Routes>
+            </Suspense>
+          </Router>
+        </MainWrapper>
+      </BaseWrapper>
+    </ScreenShakeProvider>
   );
 }
 

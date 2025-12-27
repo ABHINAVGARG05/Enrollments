@@ -1,10 +1,10 @@
 import secureLocalStorage from "react-secure-storage";
 import { create } from "zustand";
 import Cookies from "js-cookie";
-import { jwtDecode, JwtPayload  } from "jwt-decode";
+import { jwtDecode, JwtPayload } from "jwt-decode";
 
 interface CustomJwtPayload extends JwtPayload {
-  isProfileDone?: boolean; 
+  isProfileDone?: boolean;
 }
 
 interface TabStore {
@@ -12,44 +12,35 @@ interface TabStore {
   setTabIndex: (index: number) => void;
 }
 
-export const useTabStore = create<TabStore>((set) => {
-  const userDetailsString = secureLocalStorage.getItem("userDetails");
-  let initialTabIndex = 0;
-  const token = Cookies.get("jwtToken")
-  // console.log(token)
-  // if (token) {
-  //   try {
-  //     const decoded = jwtDecode<CustomJwtPayload>(token);
-  //     console.log(decoded)
-  //     if (decoded?.isProfileDone !== undefined) {
-  //       console.log("hii")
-  //       if(decoded?.isProfileDone === true) {
-  //         console.log("abhi")
-  //         initialTabIndex = 1;
-  //       }
-  //       console.log({initialTabIndex})
-  //     }else {
-  //       set({ tabIndex: 0 });
-  //     }
-  //   }catch (error) {
-  //     console.error("Error decoding JWT:", error);
-  //     initialTabIndex = 0;
-  //   }
-  // }
-  // console.log(userDetailsString)
-  // if (userDetailsString) {
-  //   // const userDetails = JSON.parse(userDetailsString);
-  //   const userProfile = userDetails.isProfileDone;
-  //   console.log(userDetails?.isProfileDone)
-  //   if (userDetails?.isProfileDone) {
-  //     initialTabIndex = 1;
-  //   }
-  // }
+const getInitialTabIndex = (): number => {
+  try {
+    // 1. Check JWT Token first (most reliable)
+    const token = Cookies.get("jwtToken");
+    if (token) {
+      const decoded = jwtDecode<CustomJwtPayload>(token);
+      if (decoded?.isProfileDone) {
+        return 1;
+      }
+    }
 
-  set({ tabIndex: initialTabIndex });
+    // 2. Check Local Storage (fallback)
+    const userDetailsString = secureLocalStorage.getItem("userDetails");
+    if (userDetailsString && typeof userDetailsString === "string") {
+      const userDetails = JSON.parse(userDetailsString);
+      // Handle inconsistent API response structure
+      const isProfileDone = userDetails?.isProfileDone || userDetails?.data?.isProfileDone;
+      if (isProfileDone) {
+        return 1;
+      }
+    }
+  } catch (error) {
+    console.error("Error determining initial tab index:", error);
+  }
+  
+  return 0;
+};
 
-  return {
-    tabIndex: initialTabIndex,
-    setTabIndex: (index) => set({ tabIndex: index }),
-  };
-});
+export const useTabStore = create<TabStore>((set) => ({
+  tabIndex: getInitialTabIndex(),
+  setTabIndex: (index) => set({ tabIndex: index }),
+}));

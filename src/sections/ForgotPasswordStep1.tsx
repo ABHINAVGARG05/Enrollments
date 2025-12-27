@@ -44,7 +44,7 @@ const ForgotPassword = () => {
         { email, regno }
       );
 
-      if (response) {
+      if (response.status === 200 || response.data) {
         setOpenToast(true);
         setToastContent({
           message: "Password reset link sent successfully",
@@ -100,7 +100,7 @@ const ForgotPassword = () => {
           </div>
           <div className="h-full p-8 md:p-8 mt-4 md:mt-0 ">
             <form
-              className="flex flex-col gap-3 md:gap-6 w-full lg:w-[60%] mx-auto "
+              className="flex flex-col gap-3 md:gap-6 w-full lg:w-[80%] xl:w-[400px] mx-auto "
               onSubmit={handleLogin}
             >
               <Input

@@ -1,26 +1,33 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import secureLocalStorage from "react-secure-storage";
 import { ToastContent } from "../components/CustomToast";
-import { useTabStore } from "../store";
 import { jwtDecode, JwtPayload } from "jwt-decode";
+import { DraftResumeModal, DraftStatusIndicator } from "../hooks/useDraftSystem";
+
+interface CustomJwtPayload extends JwtPayload {
+  isDesignDone?: boolean;
+}
+
 interface Props {
   setOpenToast: React.Dispatch<React.SetStateAction<boolean>>;
   setToastContent: React.Dispatch<React.SetStateAction<ToastContent>>;
 }
 
-interface CustomJwtPayload extends JwtPayload {
-  isDesignDone?: boolean;
-}
+const BROADCAST_CHANNEL_NAME = "mfc_design_draft_sync";
+
 const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
-  const { tabIndex, setTabIndex } = useTabStore();
   const [subdomain, setSubDomain] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const id = secureLocalStorage.getItem("id");
   const DRAFT_KEY = id ? `design_draft_${id}` : null;
-  const [isSavingDraft, setIsSavingDraft] = useState(false);
   const [savingFields, setSavingFields] = useState<Record<string, boolean>>({});
+  const [isSyncing, setIsSyncing] = useState(false);
+  const [isOffline, setIsOffline] = useState(!navigator.onLine);
+  const [lastSaved, setLastSaved] = useState<number | null>(null);
+  const [showResumePrompt, setShowResumePrompt] = useState(false);
+  const [pendingDraft, setPendingDraft] = useState<{formData: FormData; subdomain: string[]; updatedAt: number} | null>(null);
 
   interface FormData {
     [key: string]: [string, string];
@@ -28,7 +35,10 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
 
   const [isDraftLoaded, setIsDraftLoaded] = useState(false);
   const [formData, setFormData] = useState<FormData>({});
-  const syncTimerRef = React.useRef<number | null>(null);
+  const syncTimerRef = useRef<number | null>(null);
+  const syncQueueRef = useRef<{formData: FormData; subdomain: string[]}[]>([]);
+  const broadcastChannelRef = useRef<BroadcastChannel | null>(null);
+  const versionRef = useRef(0);
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
@@ -41,14 +51,12 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     }
   };
 
-  interface DesignDraft {
-    id: string;
-    formData: FormData;
-    subdomain: string[];
-    updatedAt: number;
+  interface BackendTaskResponse {
+    subdomain?: string[];
+    [key: string]: unknown;
   }
 
-  const hydrateFromBackend = (task: any) => {
+  const hydrateFromBackend = useCallback((task: BackendTaskResponse) => {
     if (!task) return;
 
     setSubDomain(task.subdomain || []);
@@ -56,13 +64,16 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     const restoredFormData: FormData = {};
 
     Object.entries(task).forEach(([key, value]) => {
-      if (key.startsWith("question") && Array.isArray(value) && value[0]) {
-        restoredFormData[key] = ["", value[0]];
+      if (key.startsWith("question") && Array.isArray(value) && value.length > 0) {
+        const val = value[0];
+        if (typeof val === 'string') {
+            restoredFormData[key] = ["", val];
+        }
       }
     });
 
     setFormData(restoredFormData);
-  };
+  }, []);
 
   useEffect(() => {
     if (!DRAFT_KEY || !isDraftLoaded) return;
@@ -72,38 +83,56 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
       formData,
       subdomain,
       updatedAt: Date.now(),
+      version: ++versionRef.current,
     };
 
-    localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
-  }, [formData, subdomain, isDraftLoaded]);
+    try {
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      setLastSaved(Date.now());
+    } catch (err) {
+      console.error("Failed to save draft:", err);
+    }
 
-  // first fetch from local, if not found then go for BE
+    if (broadcastChannelRef.current) {
+      broadcastChannelRef.current.postMessage({
+        type: "DRAFT_UPDATE",
+        draft,
+        tabId: sessionStorage.getItem("tabId"),
+      });
+    }
+  }, [formData, subdomain, isDraftLoaded, DRAFT_KEY, id]);
+
   useEffect(() => {
     if (!id) return;
 
-    if (DRAFT_KEY) {
-      const raw = localStorage.getItem(DRAFT_KEY);
-      if (raw) {
-        try {
-          const draft = JSON.parse(raw);
-          if (draft?.id === id) {
-            setFormData(draft.formData || {});
-            setSubDomain(draft.subdomain || []);
+    const initDraft = async () => {
+      if (DRAFT_KEY) {
+        const raw = localStorage.getItem(DRAFT_KEY);
+        if (raw) {
+          try {
+            const draft = JSON.parse(raw);
+            if (draft?.id === id) {
+              const hasContent = Object.keys(draft.formData || {}).length > 0 || 
+                                (draft.subdomain || []).length > 0;
+              
+              if (hasContent) {
+                setPendingDraft(draft);
+                setShowResumePrompt(true);
+                return;
+              }
+            }
+          } catch (err) {
+            console.error("Failed to load local draft", err);
           }
-        } catch (err) {
-          console.error("Failed to load local draft", err);
-        } finally {
-          setIsDraftLoaded(true);
         }
-        return;
       }
-    }
 
-    // not found in local storage, so we fetch from BE
-    const fetchDraftFromBackend = async () => {
       try {
         const token = Cookies.get("jwtToken");
-        if (!token) return;
+        if (!token) {
+          setIsDraftLoaded(true);
+          return;
+        }
 
         const res = await axios.get(
           `${import.meta.env.VITE_BASE_URL}/upload/design/${id}`,
@@ -127,34 +156,11 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
       }
     };
 
-    fetchDraftFromBackend();
-  }, [id]);
+    initDraft();
+  }, [id, DRAFT_KEY, hydrateFromBackend]);
 
-  const syncDraftToServer = async () => {
-    if (!id) return;
-
-    const token = Cookies.get("jwtToken");
-    if (!token) return;
-
-    try {
-      await axios.patch(
-        `${import.meta.env.VITE_BASE_URL}/upload/design/${id}`,
-        buildBackendPayload(),
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setIsSavingDraft(false);
-      setSavingFields({});
-    } catch (err) {
-      console.error("Draft sync failed (will retry later)", err);
-    }
-  };
-
-  const buildBackendPayload = () => {
-    const payload: Record<string, any> = {};
+  const buildBackendPayload = useCallback(() => {
+    const payload: Record<string, string[]> = {};
 
     payload.subdomain = subdomain;
 
@@ -166,7 +172,153 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     });
 
     return payload;
-  };
+  }, [formData, subdomain]);
+
+  const syncDraftToServer = useCallback(async () => {
+    if (!id) return;
+
+    const token = Cookies.get("jwtToken");
+    if (!token) return;
+
+    try {
+      setIsSyncing(true);
+      await axios.patch(
+        `${import.meta.env.VITE_BASE_URL}/upload/design/${id}`,
+        buildBackendPayload(),
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      setSavingFields({});
+    } catch (err) {
+      console.error("Draft sync failed (will retry later)", err);
+      syncQueueRef.current.push({ formData, subdomain });
+    } finally {
+      setIsSyncing(false);
+    }
+  }, [id, buildBackendPayload, formData, subdomain]);
+
+  const processOfflineQueue = useCallback(async () => {
+    if (syncQueueRef.current.length === 0) return;
+    
+    const queue = [...syncQueueRef.current];
+    syncQueueRef.current = [];
+    
+    for (const item of queue) {
+      try {
+        const token = Cookies.get("jwtToken");
+        if (!token || !id) continue;
+
+        const payload: Record<string, string[]> = { subdomain: item.subdomain };
+        Object.entries(item.formData).forEach(([key, value]) => {
+          if (value?.[1]?.trim()) {
+            payload[key] = [value[1]];
+          }
+        });
+
+        await axios.patch(
+          `${import.meta.env.VITE_BASE_URL}/upload/design/${id}`,
+          payload,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } catch (err) {
+        console.error("Queue sync failed:", err);
+        syncQueueRef.current.push(item);
+      }
+    }
+  }, [id]);
+
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOffline(false);
+      processOfflineQueue();
+    };
+
+    const handleOffline = () => {
+      setIsOffline(true);
+    };
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, [processOfflineQueue]);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      if (!DRAFT_KEY) return;
+      
+      const draft = {
+        id,
+        formData,
+        subdomain,
+        updatedAt: Date.now(),
+        version: versionRef.current,
+      };
+      
+      try {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      } catch (err) {
+        console.error("Emergency save failed:", err);
+      }
+
+      if (navigator.onLine && id) {
+        const token = Cookies.get("jwtToken");
+        if (token) {
+          const payload: Record<string, string[]> = { subdomain };
+          Object.entries(formData).forEach(([key, value]) => {
+            if (value?.[1]?.trim()) {
+              payload[key] = [value[1]];
+            }
+          });
+
+          const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
+          navigator.sendBeacon(
+            `${import.meta.env.VITE_BASE_URL}/upload/design/${id}?token=${token}`,
+            blob
+          );
+        }
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [formData, subdomain, DRAFT_KEY, id]);
+
+  useEffect(() => {
+    if (!sessionStorage.getItem("tabId")) {
+      sessionStorage.setItem("tabId", Math.random().toString(36).substring(7));
+    }
+
+    try {
+      broadcastChannelRef.current = new BroadcastChannel(BROADCAST_CHANNEL_NAME);
+      
+      broadcastChannelRef.current.onmessage = (event) => {
+        const { type, draft, tabId } = event.data;
+        const myTabId = sessionStorage.getItem("tabId");
+
+        if (type === "DRAFT_UPDATE" && tabId !== myTabId) {
+          if (draft.version > versionRef.current) {
+            setFormData(draft.formData);
+            setSubDomain(draft.subdomain);
+            versionRef.current = draft.version;
+          }
+        }
+      };
+    } catch (err) {
+      console.warn("BroadcastChannel not supported:", err);
+    }
+
+    return () => {
+      broadcastChannelRef.current?.close();
+    };
+  }, []);
 
   useEffect(() => {
     if (!isDraftLoaded) return;
@@ -177,7 +329,11 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     }
 
     syncTimerRef.current = window.setTimeout(() => {
-      syncDraftToServer();
+      if (navigator.onLine) {
+        syncDraftToServer();
+      } else {
+        syncQueueRef.current.push({ formData, subdomain });
+      }
     }, 2000);
 
     return () => {
@@ -185,7 +341,26 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
         clearTimeout(syncTimerRef.current);
       }
     };
-  }, [formData, subdomain, isDraftLoaded]);
+  }, [formData, subdomain, isDraftLoaded, id, syncDraftToServer]);
+
+  const resumeDraft = useCallback(() => {
+    if (pendingDraft) {
+      setFormData(pendingDraft.formData);
+      setSubDomain(pendingDraft.subdomain);
+    }
+    setShowResumePrompt(false);
+    setPendingDraft(null);
+    setIsDraftLoaded(true);
+  }, [pendingDraft]);
+
+  const discardDraft = useCallback(() => {
+    if (DRAFT_KEY) {
+      localStorage.removeItem(DRAFT_KEY);
+    }
+    setShowResumePrompt(false);
+    setPendingDraft(null);
+    setIsDraftLoaded(true);
+  }, [DRAFT_KEY]);
 
   const handleInputChange = (
     e:
@@ -201,14 +376,12 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
       ...prev,
       [name]: true,
     }));
-    setIsSavingDraft(true);
     if (type === "radio" && e.target instanceof HTMLInputElement) {
       if (e.target.checked) {
         setFormData((prevData) => ({
           ...prevData,
           [name]: [prevData[name] ? prevData[name][0] : question, value],
         }));
-        // console.log(name, value, type, e.target.checked);
       }
     } else {
       setFormData((prevData) => ({
@@ -217,7 +390,7 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
       }));
     }
   };
-  const handleSubmitTechTask = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitDesignTask = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (subdomain.length === 0) {
@@ -248,6 +421,16 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     //   subdomain: subdomain.join(", "),
     // };
     const payload = buildBackendPayload();
+
+    // Check if any questions were answered (payload will always contain 'subdomain')
+    if (Object.keys(payload).length <= 1) {
+      setOpenToast(true);
+      setToastContent({
+        message: "Please answer at least one question before submitting.",
+        type: "warning",
+      });
+      return;
+    }
 
     try {
       setLoading(true);
@@ -321,19 +504,29 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   };
   const [isDesignDone, setIsDesignDone] = useState(false);
   //const [isTechDone, setIsTechDone] = useState(false);
-  const userDetailsString = secureLocalStorage.getItem("userDetails");
-  let desg = false;
 
-  const token = Cookies.get("refreshToken");
-  if (token) {
-    const decoded = jwtDecode<CustomJwtPayload>(token);
-    if (decoded?.isDesignDone) {
-      desg = decoded?.isDesignDone;
-    }
-    // console.log("refresh--->", decoded);
-    // console.log(desg);
-  }
-  if (secureLocalStorage.getItem("DesgSub") || desg) {
+  // Check submission status on mount (moved from render to useEffect)
+  useEffect(() => {
+    const checkSubmissionStatus = () => {
+      const token = Cookies.get("refreshToken");
+      if (token) {
+        try {
+          const decoded = jwtDecode<CustomJwtPayload>(token);
+          if (decoded?.isDesignDone) {
+            setIsDesignDone(true);
+          }
+        } catch (err) {
+          console.error("Error decoding refresh token:", err);
+        }
+      }
+      if (secureLocalStorage.getItem("DesgSub")) {
+        setIsDesignDone(true);
+      }
+    };
+    checkSubmissionStatus();
+  }, []);
+
+  if (isDesignDone) {
     return (
       <div className="p-4">
         You've successfully submitted the Design Task. You can now track the
@@ -343,11 +536,19 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   }
   return (
     <>
-      {/* <div className="p-4">
-        The time limit for task submissions has ended. Kindly await the results,
-        which will be available in the application status tab, if you have
-        submitted the tasks.
-      </div> */}
+      <DraftResumeModal
+        show={showResumePrompt}
+        onResume={resumeDraft}
+        onDiscard={discardDraft}
+        lastSaved={pendingDraft?.updatedAt}
+      />
+      <div className="flex justify-end mb-2">
+        <DraftStatusIndicator
+          isSyncing={isSyncing}
+          isOffline={isOffline}
+          lastSaved={lastSaved}
+        />
+      </div>
       <section className="mb-2  text-xs md:text-sm">
         Add all your design tasks in the following format:
         <br />
@@ -359,7 +560,7 @@ const DesignTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
           [Project Title 2] - [Figma / Gdrive / Other Link]
         </span>
       </section>
-      <form onSubmit={handleSubmitTechTask}>
+      <form onSubmit={handleSubmitDesignTask}>
         <h2>Choose a subdomain</h2>
         <div className="flex">
           <div className="flex md:flex-row flex-col md:gap-4 flex-wrap justify-center">

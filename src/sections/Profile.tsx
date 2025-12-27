@@ -1,12 +1,11 @@
 import Input from "../components/Input";
 import axios, { AxiosError } from "axios";
 import Cookies from "js-cookie";
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback } from "react";
 import CustomToast, { ToastContent } from "../components/CustomToast";
 import { useTabStore } from "../store";
 import secureLocalStorage from "react-secure-storage";
 import { z } from "zod";
-import BoundingBox from "../components/BoundingBox";
 import { jwtDecode, JwtPayload } from "jwt-decode";
 interface CustomJwtPayload extends JwtPayload {
   isProfileDone?: boolean;
@@ -256,9 +255,13 @@ const Profile = () => {
     const token = Cookies.get("refreshToken");
     // console.log(token)
     if (token) {
-      const decoded = jwtDecode<CustomJwtPayload>(token);
-      if (decoded.isProfileDone) {
-        setIsProfileComplete(decoded?.isProfileDone);
+      try {
+        const decoded = jwtDecode<CustomJwtPayload>(token);
+        if (decoded.isProfileDone) {
+          setIsProfileComplete(decoded?.isProfileDone);
+        }
+      } catch (err) {
+        console.error("Error decoding token:", err);
       }
     }
     if (userDetailsStr) {
@@ -414,18 +417,18 @@ const Profile = () => {
         </div>
       ) : (
         <>
-          <div className="nes-container is-rounded is-dark dark-nes-container w-full lg:w-[30%] flex flex-col p-4 h-[70vh] overflow-y-auto">
+          <div className="nes-container is-rounded is-dark dark-nes-container w-full lg:w-[30%] flex flex-col p-4 h-[70vh]">
             {/* ✅ Centered Title */}
             <div className="h-auto mb-4 text-lg">Hello World</div>
 
-            {/* ✅ Auto-Adjusting, Scrollable Text Content */}
-            <div className="flex-1 overflow-y-auto break-words text-light p-2 text-xs md:text-sm lg:text-base leading-tight md:leading-normal">
+            {/* ✅ Auto-Adjusting Text Content */}
+            <div className="flex-1 break-words text-light p-2 text-xs md:text-sm lg:text-base leading-tight md:leading-normal">
               Please complete your profile with your contact details, domains,
               and any relevant information. This helps us match tasks and
               communications to you.
             </div>
           </div>
-          <div className="nes-container is-rounded w-full lg:w-[70%] is-dark dark-nes-container h-[70vh] overflow-y-auto z-[1000]">
+          <div className="nes-container is-rounded w-full lg:w-[70%] is-dark dark-nes-container h-[70vh] custom-scroll overflow-y-auto z-[1000]">
             <form
               className="flex flex-col gap-8 md:gap-4 w-full"
               onSubmit={handleSubmit}

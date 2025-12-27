@@ -104,7 +104,7 @@ body {
 
 /* Hover effect */
 .days li .date:hover {
-  background: #ff9f43;
+  background: #fc7a00;
   color: white;
 }
 
@@ -153,7 +153,7 @@ body {
 
 
 .clickable:hover {
-  background: #ff9f43;
+  background: #fc7a00;
   color: white;
 }
 

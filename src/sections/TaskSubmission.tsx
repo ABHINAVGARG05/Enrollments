@@ -5,19 +5,19 @@ import ManagementTaskSubmission from "./ManagementTaskSubmission";
 import secureLocalStorage from "react-secure-storage";
 import CustomToast from "../components/CustomToast";
 import { ToastContent } from "../components/CustomToast";
-import { jwtDecode, JwtPayload } from "jwt-decode";
-import Cookies from "js-cookie"
+// import { jwtDecode, JwtPayload } from "jwt-decode";
+// import Cookies from "js-cookie"
 
-interface CustomJwtPayload extends JwtPayload {
-  isProfileDone?: boolean; 
-  domain ?: [];
-}
+// interface CustomJwtPayload extends JwtPayload {
+//   isProfileDone?: boolean; 
+//   domain ?: [];
+// }
 
-const DOMAIN_MAP = {
-  tech: 0,
-  design: 1,
-  management: 2
-};
+// const DOMAIN_MAP = {
+//   tech: 0,
+//   design: 1,
+//   management: 2
+// };
 
 interface UserDetails {
   mobile?: string;
@@ -37,19 +37,19 @@ const TaskSubmission = () => {
   const [toastContent, setToastContent] = useState<ToastContent>({});
   const [selectedDomain, setSelectedDomain] = useState(-1);
   const [domains, setDomains] = useState<string[]>([]);
-  const domainArr = ["tech", "design", "management"];
-  const [domain, setDomain] = useState<string[]>([]);
+  // const domainArr = ["tech", "design", "management"];
+  // const [domain, setDomain] = useState<string[]>([]);
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value, checked } = e.target;
-    if (checked) {
-      setDomain((prevDomains) => [...prevDomains, value]);
-    } else {
-      setDomain((prevDomains) =>
-        prevDomains.filter((domain) => domain !== value)
-      );
-    }
-  };
+  // const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const { value, checked } = e.target;
+  //   if (checked) {
+  //     setDomain((prevDomains) => [...prevDomains, value]);
+  //   } else {
+  //     setDomain((prevDomains) =>
+  //       prevDomains.filter((domain) => domain !== value)
+  //     );
+  //   }
+  // };
 
   useEffect(() => {
     const userDetailsStr = secureLocalStorage.getItem("userDetails");
@@ -79,7 +79,7 @@ const TaskSubmission = () => {
           duration={toastContent.duration}
         />
       )}
-      <div className="nes-container is-rounded h-full max-h-fit text-sm with-title is-centered w-full lg:w-[30%] invert">
+      <div className="nes-container is-rounded h-full max-h-fit text-sm is-centered w-full lg:w-[30%] invert">
         <div className="h-auto mb-4 text-lg">Domains</div>
         <div className="flex flex-col h-full justify-start gap-4 lg:gap-8">
           {domains?.includes("tech") && (
@@ -120,10 +120,10 @@ const TaskSubmission = () => {
           )}
         </div>
       </div>
-      <div className="text-white w-full lg:w-[68%] xl:w-[72%] h-full">
+      <div className="text-white w-full lg:w-[90%] h-full">
   <div className="w-full h-full nes-container is-rounded is-dark dark-nes-container text-sm overflow-hidden relative tasksubmission-box">
     <div className="h-auto mb-4 text-lg">Task Submission</div>
-    <div className="faq h-[calc(100%-3rem)] overflow-y-auto overflow-x-hidden pr-4">
+    <div className="faq h-[calc(100%-3rem)] custom-scroll overflow-y-auto overflow-x-hidden">
           {selectedDomain === -1 && (
         <div className="min-h-40 flex items-center justify-center text-center">
           Select a domain to submit a task.

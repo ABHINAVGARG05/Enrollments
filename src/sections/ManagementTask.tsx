@@ -44,31 +44,28 @@ const ManagementTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
           <button
             type="button"
             onClick={() => setSelectedSubDomain("outreach")}
-            className="nes-btn is-error nes-btn-task w-[47%] md:w-[22%] aspect-[2] custom-nes-error text-xs"
+            className="nes-btn is-error w-[47%] md:w-[22%] py-3 md:py-4 custom-nes-error text-xs hover:scale-105 transition-transform duration-200"
           >
             Outreach
           </button>
-
           <button
             type="button"
             onClick={() => setSelectedSubDomain("generaloperations")}
-            className="nes-btn is-error nes-btn-task w-[47%] md:w-[22%] aspect-[2] custom-nes-error text-xs"
+            className="nes-btn is-error w-[47%] md:w-[22%] py-3 md:py-4 custom-nes-error text-xs hover:scale-105 transition-transform duration-200"
           >
             General Ops.
           </button>
-
           <button
             type="button"
             onClick={() => setSelectedSubDomain("publicity")}
-            className="nes-btn is-error nes-btn-task w-[47%] md:w-[22%] aspect-[2] custom-nes-error text-xs"
+            className="nes-btn is-error w-[47%] md:w-[22%] py-3 md:py-4 custom-nes-error text-xs hover:scale-105 transition-transform duration-200"
           >
             Publicity
           </button>
-
           <button
             type="button"
             onClick={() => setSelectedSubDomain("editorial")}
-            className="nes-btn is-error nes-btn-task w-[47%] md:w-[22%] aspect-[2] custom-nes-error text-xs"
+            className="nes-btn is-error w-[47%] md:w-[22%] py-3 md:py-4 custom-nes-error text-xs hover:scale-105 transition-transform duration-200"
           >
             Editorial
           </button>

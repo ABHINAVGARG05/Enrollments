@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate, NavLink } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate, NavLink, useParams } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import secureLocalStorage from "react-secure-storage";
@@ -11,6 +11,7 @@ import CustomToast, { ToastContent } from "../components/CustomToast";
 
 const VerifyOTP: React.FC = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
 
   // State Management
   const [otp, setOTP] = useState("");
@@ -31,9 +32,6 @@ const VerifyOTP: React.FC = () => {
     });
   };
 
-  /**
-   * Handles OTP verification submission
-   */
   const handleVerifyOTP = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -43,7 +41,6 @@ const VerifyOTP: React.FC = () => {
     }
 
     try {
-      const id = secureLocalStorage.getItem("id");
       if (!id) throw new Error("User ID not found.");
 
       const token = Cookies.get("jwtToken");
@@ -78,13 +75,9 @@ const VerifyOTP: React.FC = () => {
     }
   };
 
-  /**
-   * Handles OTP resend request
-   */
   const handleResendClick = async () => {
     try {
       const token = Cookies.get("jwtToken");
-      const id = secureLocalStorage.getItem("id");
       const email = secureLocalStorage.getItem("email");
 
       if (!id || !email) {

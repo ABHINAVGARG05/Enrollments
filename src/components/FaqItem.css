@@ -24,7 +24,7 @@
 
 .scroll-progress {
   width: 100%;
-  background: #ffa500;
+  background: #fc7a00;
   border-radius: 2px;
   transition: height 0.1s linear;
   will-change: height;
@@ -43,8 +43,8 @@
 
 .faq-title {
   font-size: clamp(2rem, 5vw, 4rem);
-  color: #ff8c00; /* darker orange */
-  text-shadow: 4px 4px 0px rgba(255, 140, 0, 0.35);
+  color: #fc7a00;
+  text-shadow: 4px 4px 0px rgba(252, 122, 0, 0.35);
   margin-bottom: 20px;
   letter-spacing: 3px;
 }
@@ -89,7 +89,7 @@
 
 .faq-item {
   background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
-  border: 2px solid #ffa500;
+  border: 2px solid #fc7a00;
   border-radius: 15px;
   padding: 30px;
   position: relative;
@@ -100,18 +100,18 @@
 
 .faq-item:hover {
   transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(255, 165, 0, 0.3);
-  border-color: #ffb733;
+  box-shadow: 0 12px 30px rgba(252, 122, 0, 0.3);
+  border-color: #fc7a00;
 }
 
 .faq-item.active {
-  border-color: #ffb733;
+  border-color: #fc7a00;
   background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
 }
 
 .category-tag {
   display: inline-block;
-  background: #ffa500;
+  background: #fc7a00;
   color: #000000;
   padding: 5px 15px;
   border-radius: 20px;
@@ -167,7 +167,7 @@
   right: 30px;
   width: 30px;
   height: 30px;
-  color: #ffa500;
+  color: #fc7a00;
   font-size: 24px;
   transition: transform 0.3s ease;
 }

@@ -7,6 +7,8 @@ import BoundingBox from "../components/BoundingBox";
 import secureLocalStorage from "react-secure-storage";
 import { useNavigate } from "react-router-dom";
 import Toast from "../components/CustomToast"; // Import Toast component
+import { useConfetti } from "../hooks/useConfetti";
+import { triggerScreenShake } from "../hooks/useScreenShake";
 
 interface UserDetails {
   domain?: string[];
@@ -24,8 +26,9 @@ const ChangeProfile = () => {
   const [isDomainChanged, setIsDomainChanged] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const { triggerConfetti } = useConfetti();
 
-  // Handle checkbox changes for domain selection
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
 
@@ -110,6 +113,7 @@ const ChangeProfile = () => {
         type: "warning",
       });
       setOpenToast(true);
+      triggerScreenShake();
       return;
     }
 
@@ -150,8 +154,9 @@ const ChangeProfile = () => {
           JSON.stringify(updatedUserDetails)
         );
 
-        // Force refresh the token to update domain information
         await refreshToken();
+
+        triggerConfetti();
 
         setToastContent({
           message: "Profile updated successfully.",
@@ -184,6 +189,7 @@ const ChangeProfile = () => {
       });
       setOpenToast(true);
       setError(true);
+      triggerScreenShake();
     } finally {
       setIsSubmitting(false);
     }
@@ -248,8 +254,6 @@ const ChangeProfile = () => {
     };
 
     loadUserData();
-
-    return () => {};
   }, [fetchUserDetails]);
 
   // Handle toast close
@@ -271,23 +275,47 @@ const ChangeProfile = () => {
     );
   }
 
+  if (error && domain.length === 0) {
+    return (
+      <div className="w-full min-h-screen h-full bg-black p-4 flex flex-grow flex-col md:flex-row">
+        <Navbar />
+        <BoundingBox className="items-center justify-center">
+          <div className="nes-container is-rounded is-dark text-center">
+            <p className="text-red-400 mb-4">Failed to load profile data</p>
+            <button
+              type="button"
+              className="nes-btn is-error"
+              onClick={() => {
+                setError(false);
+                setIsLoading(true);
+                fetchUserDetails();
+              }}
+            >
+              Retry
+            </button>
+          </div>
+        </BoundingBox>
+      </div>
+    );
+  }
+
   return (
     // <div className="w-full min-h-screen h-full bg-black p-4 flex flex-grow flex-col md:flex-row">
     <div className="w-full min-h-screen h-full bg-black flex flex-grow flex-col md:flex-row pt-0 px-4">
       <Navbar />
       <BoundingBox className="text-white">
         <div className="w-full max-w-[1100px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-          <div className="nes-container is-rounded is-dark w-full h-[60vh] overflow-y-auto flex flex-col">
+          <div className="nes-container is-rounded is-dark w-full h-[60vh] custom-scroll overflow-y-auto flex flex-col">
             <h1 className="text-sm text-center md:text-left md:text-xl lg:text-2xl">
               Profile Info
             </h1>
             <hr className="h-1 bg-white" />
             <div className="mt-4 text-xs md:text-sm leading-snug">
-              You can update the domains you’re interested in. This helps us
+              You can update the domains you're interested in. This helps us
               route tasks and communication to the right teams.
             </div>
           </div>
-          <div className="nes-container is-rounded is-dark w-full h-[60vh] overflow-y-auto flex flex-col">
+          <div className="nes-container is-rounded is-dark w-full h-[60vh] custom-scroll overflow-y-auto flex flex-col">
             <h2 className="text-sm text-center md:text-left md:text-xl lg:text-2xl">
               Update Your Profile
             </h2>
@@ -340,7 +368,7 @@ const ChangeProfile = () => {
                   </label>
                 </div>
               </section>
-              <div className="mt-6 flex w-full justify-end mt-auto">
+              <div className="flex w-full justify-end mt-auto">
                 <button
                   type="submit"
                   className="nes-btn is-success"

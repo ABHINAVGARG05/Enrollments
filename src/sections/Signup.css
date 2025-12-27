@@ -2,7 +2,7 @@
   max-width: 400px;
   margin: 0 auto;
   padding: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid #333;
   border-radius: 10px;
   background-color: #111;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
@@ -13,14 +13,14 @@
 }
 
 h1 {
-  color: #ff7f11;
+  color: #fc7a00;
   font-size: 2.5rem;
   text-align: center;
   margin-bottom: 10px;
 }
 
 .text-light {
-  color: #aaa;
+  color: #cecece;
 }
 
 label {
@@ -40,16 +40,16 @@ input[type="password"] {
   border-radius: 5px;
   margin-bottom: 10px;
   outline: none;
-  background-color: #222;
+  background-color: #1a1a1a;
   color: #fff;
 }
 
 input:focus {
-  border: 2px solid #ff7f11;
+  border: 2px solid #fc7a00;
 }
 
 .error {
-  color: #ff0000;
+  color: #e74c3c;
   font-size: 14px;
   margin-top: 5px;
 }
@@ -60,19 +60,19 @@ input:focus {
   font-size: 16px;
   border: none;
   border-radius: 5px;
-  background-color: #ff7f11;
-  color: #fff;
+  background-color: #fc7a00;
+  color: #000;
   cursor: pointer;
   text-transform: uppercase;
 }
 
 .textforSignupbutton:hover {
-  background-color: #fb7e02;
+  background-color: #ff8c1a;
   transition: 0.3s ease;
 }
 
 .nes-btn:hover {
-  background-color: #ff7f11;
+  background-color: #fc7a00;
 }
 
 
@@ -106,7 +106,7 @@ input:focus {
     display: block;
     font-size: 1.8rem;
     margin-bottom: 10px;
-    color: #ff7f11;
+    color: #fc7a00;
     text-align: center;
   }
   .signup-info h1.hidden {

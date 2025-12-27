@@ -32,8 +32,8 @@ const DOMAIN_MAP = {
 };
 
 const Task = () => {
-  const { tabIndex, setTabIndex } = useTabStore();
-  const [selectedDomain, setSelectedDomain] = useState(0);
+  const { setTabIndex } = useTabStore();
+  const [selectedDomain, setSelectedDomain] = useState(-1);
   const [selectedSubDomain, setSelectedSubDomain] = useState("");
   const [domains, setDomains] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -43,6 +43,55 @@ const Task = () => {
   useEffect(() => {
     setSelectedSubDomain("");
   }, [selectedDomain]);
+
+  // Function to fetch user details from API
+  const fetchUserDetails = useCallback(async () => {
+    try {
+      const id = secureLocalStorage.getItem("id");
+      
+      if (!id) {
+        throw new Error("User ID not found");
+      }
+      
+      const token = Cookies.get("jwtToken");
+      
+      if (!token) {
+        throw new Error("Authentication token not found");
+      }
+      
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/user/user/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      
+      if (response.data) {
+        // Store user details in secure local storage
+        secureLocalStorage.setItem("userDetails", JSON.stringify(response.data));
+        
+        // Update domains state
+        const userDomains = response.data.domain || response.data.data?.domain || [];
+        setDomains(userDomains);
+        
+        // Set initial selected domain based on available domains
+        if (userDomains.includes("tech")) {
+          setSelectedDomain(DOMAIN_MAP.tech);
+        } else if (userDomains.includes("design")) {
+          setSelectedDomain(DOMAIN_MAP.design);
+        } else if (userDomains.includes("management")) {
+          setSelectedDomain(DOMAIN_MAP.management);
+        }
+        
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+      // Don't set error state here to avoid UI flicker if local storage has data
+    }
+  }, []);
 
   // Memoize the loadUserData function to prevent unnecessary re-renders
   const loadUserData = useCallback(() => {
@@ -113,57 +162,7 @@ const Task = () => {
       setError("Failed to load user data");
       setIsLoading(false);
     }
-  }, [setTabIndex]);
-
-  // Function to fetch user details from API
-  const fetchUserDetails = useCallback(async () => {
-    try {
-      const id = secureLocalStorage.getItem("id");
-      
-      if (!id) {
-        throw new Error("User ID not found");
-      }
-      
-      const token = Cookies.get("jwtToken");
-      
-      if (!token) {
-        throw new Error("Authentication token not found");
-      }
-      
-      const response = await axios.get(
-        `${import.meta.env.VITE_BASE_URL}/user/user/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      
-      if (response.data) {
-        // Store user details in secure local storage
-        secureLocalStorage.setItem("userDetails", JSON.stringify(response.data));
-        
-        // Update domains state
-        const userDomains = response.data.domain || response.data.data?.domain || [];
-        setDomains(userDomains);
-        
-        // Set initial selected domain based on available domains
-        if (userDomains.includes("tech")) {
-          setSelectedDomain(DOMAIN_MAP.tech);
-        } else if (userDomains.includes("design")) {
-          setSelectedDomain(DOMAIN_MAP.design);
-        } else if (userDomains.includes("management")) {
-          setSelectedDomain(DOMAIN_MAP.management);
-        }
-        
-        setIsLoading(false);
-      }
-    } catch (error) {
-      console.error("Error fetching user details:", error);
-      setError("Failed to fetch user details");
-      setIsLoading(false);
-    }
-  }, []);
+  }, [setTabIndex, fetchUserDetails]);
 
   // Load user data on component mount
   useEffect(() => {
@@ -209,15 +208,15 @@ const Task = () => {
 
   return (
     <div className="w-full h-full profile py-6 flex gap-4 flex-col lg:flex-row">
-      <div className="w-full nes-container is-rounded is-centered lg:w-[30%] invert">
+      <div className="nes-container is-rounded h-full max-h-fit text-sm is-centered w-full lg:w-[30%] invert">
         <div className="h-auto mb-4 text-lg">Domains</div>
-        <div className="flex flex-col justify-between gap-4 lg:gap-8">
+        <div className="flex flex-col h-full justify-start gap-4 lg:gap-8">
           {domains.includes("tech") && (
             <button
               type="button"
               onClick={() => setSelectedDomain(0)}
               className={`
-                nes-btn w-full w-[47%] md:w-[100%] md:aspect-[3] text-sm md:text-base domain-btn
+                nes-btn w-[47%] md:w-full md:aspect-[3] text-sm md:text-base domain-btn
                 ${selectedDomain === 0 ? "is-primary" : ""}
               `}
               aria-label="Technical Domain"
@@ -230,7 +229,7 @@ const Task = () => {
               type="button"
               onClick={() => setSelectedDomain(1)}
               className={`
-                nes-btn w-full w-[47%] md:w-[100%] md:aspect-[3] text-sm md:text-base domain-btn
+                nes-btn w-[47%] md:w-full md:aspect-[3] text-sm md:text-base domain-btn
                 ${selectedDomain === 1 ? "is-primary" : ""}
               `}
               aria-label="Design Domain"
@@ -243,7 +242,7 @@ const Task = () => {
               type="button"
               onClick={() => setSelectedDomain(2)}
               className={`
-                nes-btn w-full w-[47%] md:w-[100%] md:aspect-[3] text-sm md:text-base domain-btn
+                nes-btn w-[47%] md:w-full md:aspect-[3] text-sm md:text-base domain-btn
                 ${selectedDomain === 2 ? "is-primary" : ""}
               `}
               aria-label="Management Domain"
@@ -254,24 +253,25 @@ const Task = () => {
         </div>
       </div>
 
-  <div className="nes-container is-rounded is-dark with-title is-centered dark-nes-container w-full lg:w-[90%] relative dark-container-nes max-h-[75vh] overflow-y-auto task-box">
+  <div className="nes-container is-rounded is-dark with-title is-centered dark-nes-container w-full lg:w-[90%] relative dark-container-nes max-h-[75vh] overflow-hidden task-box">
 
         {selectedSubDomain !== "" && (
           <button
             type="button"
             onClick={() => setSelectedSubDomain("")}
-            className="nes-btn is-error absolute -top-2 -right-2 z-[50] h-fit btn-back"
+            className="task-back-btn"
             aria-label="Back to domain selection"
           >
-            <i className="nes-icon close is-small"></i>
+            <span className="task-back-icon">←</span>
+            <span className="task-back-text">Back</span>
           </button>
         )}
         <div className="h-auto mb-10 mt-4 text-lg">Tasks</div>
         {selectedSubDomain !== "" && selectedDomain !== DOMAIN_MAP.management && (
-          <div className="mb-4">
-            <p className="text-xs">
-              <span className="text-red-500 font-semibold">NOTE:</span>
-              <span className="text-white"> Click to View Description</span>
+          <div className="mb-2">
+            <p className="text-xs text-gray-500 flex items-center gap-2">
+              <span className="inline-block w-1.5 h-1.5 bg-[#fc7a00] rounded-full animate-pulse"></span>
+              Click on a task to view its description
             </p>
           </div>
         )}

@@ -2,7 +2,7 @@
   max-width: 400px;
   margin: 0 auto;
   padding: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid #333;
   border-radius: 8px;
   background-color: black;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -16,7 +16,7 @@
   font-size: 24px;
   text-align: center;
   margin-bottom: 20px;
-  color: orange;
+  color: #fc7a00;
 }
 
 .reset-password-form {
@@ -31,21 +31,21 @@
 .form-label {
   font-size: 16px;
   margin-bottom: 8px;
-  color: orange;
+  color: #fc7a00;
 }
 
 .form-input {
   padding: 10px;
   font-size: 16px;
-  border: 1px solid #ccc;
+  border: 1px solid #333;
   border-radius: 4px;
 }
 
 .reset-password-button {
   padding: 12px;
   font-size: 16px;
-  background-color: rgb(255, 165, 0);
-  color: #fff;
+  background-color: #fc7a00;
+  color: #000;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -53,11 +53,11 @@
 }
 
 .reset-password-button:hover {
-  background-color: #fb7e02;
+  background-color: #ff8c1a;
 }
 
 .error-message {
-  color: #dc3545;
+  color: #e74c3c;
   font-size: 14px;
   margin-top: 5px;
 }

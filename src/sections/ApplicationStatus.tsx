@@ -43,14 +43,14 @@ const ApplicationStatus = () => {
 
   return (
     <div className="w-full profile py-6 flex gap-4 flex-col lg:flex-row">
-      <div className="w-full nes-container is-rounded is-centered lg:w-[30%] invert">
+      <div className="nes-container is-rounded h-full max-h-fit text-sm is-centered w-full lg:w-[30%] invert">
         <div className="h-auto mb-4 text-lg">Domains</div>
-        <div className="flex flex-col justify-between gap-4 lg:gap-8">
+        <div className="flex flex-col h-full justify-start gap-4 lg:gap-8">
           {Array.isArray(domains) && domains.includes("tech") && (
             <button
               type="button"
               onClick={() => setSelectedDomain(0)}
-              className={`nes-btn w-full w-[47%] md:w-[100%] md:aspect-[3] text-sm md:text-base domain-btn ${
+              className={`nes-btn w-[47%] md:w-full md:aspect-[3] text-sm md:text-base domain-btn ${
                 selectedDomain === 0 ? "is-primary" : ""
               }`}
             >
@@ -61,7 +61,7 @@ const ApplicationStatus = () => {
             <button
               onClick={() => setSelectedDomain(1)}
               type="button"
-              className={`nes-btn w-full w-[47%] md:w-[100%] md:aspect-[3] text-sm md:text-base domain-btn ${
+              className={`nes-btn w-[47%] md:w-full md:aspect-[3] text-sm md:text-base domain-btn ${
                 selectedDomain === 1 ? "is-primary" : ""
               }`}
             >
@@ -72,7 +72,7 @@ const ApplicationStatus = () => {
             <button
               onClick={() => setSelectedDomain(2)}
               type="button"
-              className={`nes-btn w-full w-[47%] md:w-[100%] md:aspect-[3] text-sm md:text-base domain-btn ${
+              className={`nes-btn w-[47%] md:w-full md:aspect-[3] text-sm md:text-base domain-btn ${
                 selectedDomain === 2 ? "is-primary" : ""
               }`}
             >

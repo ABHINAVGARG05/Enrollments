@@ -7,8 +7,11 @@ import Cookies from "js-cookie";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import CustomToast, { ToastContent } from "../components/CustomToast";
 
 const Meeting = () => {
+  const [openToast, setOpenToast] = useState(false);
+  const [toastContent, setToastContent] = useState<ToastContent>({});
   const [statusTech, setStatusTech] = useState(false);
   const [statusDesign, setStatusDesign] = useState(false);
   const [statusManagement, setStatusManagement] = useState(false);
@@ -39,14 +42,14 @@ const Meeting = () => {
 
   const handleDate: (data: number) => void = (data) => {
     setDate(data);
-    console.log("Selected date:", data);
   };
 
   const handleTime = (data: string) => {
     setTime(data);
     setDropdownOpen(false);
-    console.log("Selected time:", data);
   };
+
+  const selectedSlot = timeSlots.find(slot => slot.value === time);
 
   const formatDateTime = (isoString: string) => {
     const date = new Date(isoString);
@@ -178,7 +181,6 @@ const Meeting = () => {
 
       if (typeof id === "string") {
         setId(id);
-        console.log(id);
       } else {
         console.error("User id not found in local storage");
       }
@@ -200,9 +202,6 @@ const Meeting = () => {
   // Ensure date is properly padded (e.g., "05" instead of "5")
   const formattedDate = date ? String(date).padStart(2, '0') : null;
   const scheduleTime = formattedDate ? `2025-12-${formattedDate}T${time}:00.000+05:30` : "";
-
-  console.log("Schedule Time:", scheduleTime);
-  console.log("Date:", date, "Time:", time);
 
   useEffect(() => {
     if (gmeet && justBooked) {
@@ -226,13 +225,27 @@ const Meeting = () => {
     }
   }, [gmeet, justBooked]);
 
-  const handleMeeting = async (e: React.MouseEvent<HTMLButtonElement>) => {
+  const isValidUrl = (url: string): boolean => {
+    try {
+      const parsed = new URL(url);
+      // Only allow Google Meet URLs or standard https URLs
+      return parsed.protocol === 'https:' && 
+             (parsed.hostname.includes('meet.google.com') || 
+              parsed.hostname.includes('google.com'));
+    } catch {
+      return false;
+    }
+  };
+
+const handleMeeting = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    console.log("Handle Meeting called - Date:", date, "Time:", time);
-
     if (!date || !time) {
-      alert("Please select date and time");
+      setOpenToast(true);
+      setToastContent({
+        message: "Please select date and time",
+        type: "error",
+      });
       setIsLoading(false);
       return;
     }
@@ -244,16 +257,11 @@ const Meeting = () => {
       scheduletime: scheduleTime,
     };
 
-    console.log("Sending meeting details:", meetingDetails);
-
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/meet/schedule`,
         meetingDetails
       );
-
-      console.log("Response:", response);
-      console.log("GMeet Link:", response.data.data.gmeetLink);
 
       const link = response.data.data.gmeetLink;
       const time = response.data.data.scheduledTime;
@@ -264,16 +272,23 @@ const Meeting = () => {
       setScheduledTime(time);
       setJustBooked(true);
       setIsLoading(false);
+      setOpenToast(true);
+      setToastContent({
+        message: "Meeting scheduled successfully!",
+        type: "success",
+      });
     } catch (error) {
-      console.log("Error booking meeting:", error);
-
       if (axios.isAxiosError(error)) {
         const backendMessage =
           error.response?.data?.error ||
           error.response?.data?.message ||
           "Failed to book meeting";
 
-        alert(backendMessage);
+        setOpenToast(true);
+        setToastContent({
+          message: backendMessage,
+          type: "error",
+        });
       }
 
       setIsLoading(false);
@@ -284,15 +299,12 @@ const Meeting = () => {
   const handleCancel = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    console.log(id);
-
     try {
-      const response = await axios.post(
+      await axios.post(
         `${import.meta.env.VITE_BASE_URL}/api/meet/cancel`,
         { candidateId: id }
       );
 
-      console.log(response);
       Cookies.remove("jwtToken");
       secureLocalStorage.clear();
 
@@ -301,17 +313,21 @@ const Meeting = () => {
       setShowBooked(false);
 
       navigate("/");
-    } catch (error) {
-      console.error(error);
+      
+    } catch(error) {
+      console.error("Error cancelling meeting:", error);
+      setOpenToast(true);
+      setToastContent({
+        message: "Failed to cancel meeting. Please try again or contact support.",
+        type: "error",
+      });
     }
-  };
-
-  const selectedSlot = timeSlots.find(slot => slot.value === time);
+  }
 
   return (
     <div className="w-full min-h-screen h-full flex flex-col md:flex-row justify-center items-center pt-0 px-4 overflow-auto">
       <Navbar />
-      <BoundingBox className="relative  overflow-auto">
+      <BoundingBox className="relative">
         <div className="w-full h-full text-center relative">
           <h1
             className="text-[1.5rem] md:text-[2.5rem] text-prime"
@@ -451,7 +467,17 @@ const Meeting = () => {
 
                 <Button
                   disabled={!gmeet}
-                  onClick={() => window.open(gmeet, "_blank")}
+                  onClick={() => {
+                    if (gmeet && isValidUrl(gmeet)) {
+                      window.open(gmeet, "_blank", "noopener,noreferrer");
+                    } else {
+                      setOpenToast(true);
+                      setToastContent({
+                        message: "Invalid meeting link. Please contact support.",
+                        type: "error",
+                      });
+                    }
+                  }}
                   className={
                     "text-white font-medium py-2 px-4 rounded-md transition-all duration-300"
                   }
@@ -479,18 +505,28 @@ const Meeting = () => {
           </div>
 
           <section className="icon-list flex gap-10 md:gap-8 mt-8 w-full mb-0 justify-center scale-75 md:scale-100">
-            <a href="https://www.instagram.com/mfc_vit">
+            <a href="https://www.instagram.com/mfc_vit" aria-label="Follow MFC on Instagram" target="_blank" rel="noopener noreferrer">
               <i className="nes-icon instagram is-medium"></i>
             </a>
-            <a href="mailto:mozillafirefox@vit.ac.in">
+            <a href="mailto:mozillafirefox@vit.ac.in" aria-label="Email Mozilla Firefox Club">
               <i className="nes-icon gmail is-medium"></i>
             </a>
-            <a href="https://www.linkedin.com/company/mfcvit?originalSubdomain=in">
+            <a href="https://www.linkedin.com/company/mfcvit?originalSubdomain=in" aria-label="Connect with MFC on LinkedIn" target="_blank" rel="noopener noreferrer">
               <i className="nes-icon linkedin is-medium"></i>
             </a>
           </section>
         </div>
       </BoundingBox>
+      {openToast && (
+        <CustomToast
+          setToast={setOpenToast}
+          setToastContent={setToastContent}
+          message={toastContent.message}
+          type={toastContent.type}
+          customStyle={toastContent.customStyle}
+          duration={toastContent.duration}
+        />
+      )}
     </div>
   );
 };

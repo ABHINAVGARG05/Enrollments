@@ -35,17 +35,37 @@ const CustomToast = ({
     return () => clearTimeout(timeout);
   }, [duration, onClose, setToast, setToastContent]);
 
-  const bgClass = useMemo(() => {
+  const toastStyles = useMemo(() => {
     switch (type) {
       case "success":
-        return "bg-green-500";
+        return {
+          bg: "bg-green-600",
+          border: "border-2 border-green-400",
+          text: "text-white",
+          shadow: "shadow-green-500/30",
+        };
       case "error":
-        return "bg-red-500";
+        return {
+          bg: "bg-red-600",
+          border: "border-2 border-red-400",
+          text: "text-white",
+          shadow: "shadow-red-500/30",
+        };
       case "warning":
-        return "bg-yellow-400 text-black";
+        return {
+          bg: "bg-yellow-500",
+          border: "border-2 border-yellow-400",
+          text: "text-black",
+          shadow: "shadow-yellow-500/30",
+        };
       case "info":
       default:
-        return "bg-blue-500";
+        return {
+          bg: "bg-blue-600",
+          border: "border-2 border-blue-400",
+          text: "text-white",
+          shadow: "shadow-blue-500/30",
+        };
     }
   }, [type]);
 
@@ -53,14 +73,23 @@ const CustomToast = ({
     <div
       role="alert"
       aria-live="assertive"
-      className={`absolute top-4 right-4 p-4 z-[1000] min-w-[280px] max-w-[520px] ${bgClass} rounded-md text-xs md:text-sm text-white shadow-lg ${customStyle || ""}`}
+      className={`fixed top-4 right-4 p-4 z-[10000] min-w-[280px] max-w-[520px] ${toastStyles.bg} ${toastStyles.border} ${toastStyles.text} rounded-lg text-xs md:text-sm font-medium shadow-lg ${toastStyles.shadow} cursor-pointer transition-all duration-300 hover:scale-[1.02] ${customStyle || ""}`}
+      style={{ fontFamily: "'Press Start 2P', system-ui, sans-serif" }}
       onClick={() => {
         setToast && setToast(false);
         setToastContent && setToastContent({});
         onClose && onClose();
       }}
     >
-      {message}
+      <div className="flex items-center gap-3">
+        <span className="text-lg">
+          {type === "success" && "✓"}
+          {type === "error" && "✕"}
+          {type === "warning" && "⚠"}
+          {type === "info" && "ℹ"}
+        </span>
+        <span>{message}</span>
+      </div>
     </div>
   );
 };
