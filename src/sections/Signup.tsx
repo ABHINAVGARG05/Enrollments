@@ -164,7 +164,7 @@ const Signup: React.FC = () => {
       )}
       <BoundingBox>
         <div className="w-full h-full relative z-[100] flex flex-col md:flex-row justify-between">
-          <div className="signup-info text-center md:text-left  flex-col justify-center hidden md:inline-flex items-center md:items-start p-6 md:p-8 md:mt-0 ">
+          <div className="signup-info text-center md:text-left  flex-col justify-center hidden md:inline-flex items-center md:items-start p-3 md:p-8 md:mt-0 ">
             <h1 className="text-[2.2rem] md:text-[3rem] font-bold text-prime tracking-wide hidden md:inline-flex">
               MOZILLA FIREFOX
             </h1>
@@ -211,7 +211,7 @@ const Signup: React.FC = () => {
             </section>
           </div>
 
-          <div className="flex-grow  text-white rounded-lg shadow-lg p-10 mt-0 md:mt-0">
+          <div className="flex-grow  text-white rounded-lg shadow-lg p-2 mt-0 md:mt-0">
             <div className="text-center block md:hidden">
               <h1 className="text-2xl sm:text-3xl md:text-[3rem] font-bold text-prime tracking-wide">
                 MOZILLA FIREFOX
@@ -274,7 +274,7 @@ const Signup: React.FC = () => {
 
               <Input
                 label={"Password"}
-                placeholder="Enter a secure password"
+                placeholder="Enter a password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value.trim())}

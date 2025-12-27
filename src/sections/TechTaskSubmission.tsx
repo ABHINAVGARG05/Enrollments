@@ -3,10 +3,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import secureLocalStorage from "react-secure-storage";
 import { ToastContent } from "../components/CustomToast";
-import {
-  DraftResumeModal,
-  DraftStatusIndicator,
-} from "../hooks/useDraftSystem";
+import { DraftResumeModal, DraftStatusIndicator } from "../hooks/useDraftSystem";
 import { jwtDecode } from "jwt-decode";
 
 interface Props {
@@ -28,25 +25,19 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   const [isOffline, setIsOffline] = useState(!navigator.onLine);
   const [lastSaved, setLastSaved] = useState<number | null>(null);
   const [showResumePrompt, setShowResumePrompt] = useState(false);
-  const [pendingDraft, setPendingDraft] = useState<{
-    formData: FormData;
-    subdomain: string[];
-    updatedAt: number;
-  } | null>(null);
+  const [pendingDraft, setPendingDraft] = useState<{formData: FormData; subdomain: string[]; updatedAt: number} | null>(null);
 
   interface FormData {
-    [key: string]: [string, string];
-  }
-
+      [key: string]: [string, string];
+    }
+  
   const [isDraftLoaded, setIsDraftLoaded] = useState(false);
   const [formData, setFormData] = useState<FormData>({});
   const syncTimerRef = useRef<number | null>(null);
-  const syncQueueRef = useRef<{ formData: FormData; subdomain: string[] }[]>(
-    []
-  );
+  const syncQueueRef = useRef<{formData: FormData; subdomain: string[]}[]>([]);
   const broadcastChannelRef = useRef<BroadcastChannel | null>(null);
   const versionRef = useRef(0);
-
+  
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, checked } = e.target;
     if (checked) {
@@ -71,14 +62,10 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     const restoredFormData: FormData = {};
 
     Object.entries(task).forEach(([key, value]) => {
-      if (
-        key.startsWith("question") &&
-        Array.isArray(value) &&
-        value.length > 0
-      ) {
+      if (key.startsWith("question") && Array.isArray(value) && value.length > 0) {
         const val = value[0];
-        if (typeof val === "string") {
-          restoredFormData[key] = ["", val];
+        if (typeof val === 'string') {
+            restoredFormData[key] = ["", val];
         }
       }
     });
@@ -86,7 +73,7 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     setFormData(restoredFormData);
   }, []);
 
-  useEffect(() => {
+useEffect(() => {
     if (!DRAFT_KEY || !isDraftLoaded) return;
 
     const draft = {
@@ -137,10 +124,9 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
           try {
             const draft = JSON.parse(raw);
             if (draft?.id === id) {
-              const hasContent =
-                Object.keys(draft.formData || {}).length > 0 ||
-                (draft.subdomain || []).length > 0;
-
+              const hasContent = Object.keys(draft.formData || {}).length > 0 || 
+                                (draft.subdomain || []).length > 0;
+              
               if (hasContent) {
                 setPendingDraft(draft);
                 setShowResumePrompt(true);
@@ -213,10 +199,10 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
 
   const processOfflineQueue = useCallback(async () => {
     if (syncQueueRef.current.length === 0) return;
-
+    
     const queue = [...syncQueueRef.current];
     syncQueueRef.current = [];
-
+    
     for (const item of queue) {
       try {
         const token = Cookies.get("jwtToken");
@@ -243,28 +229,29 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
 
   // const [isTechDone, setIsTechDone] = useState(false);
 
-  useEffect(() => {
-    const checkSubmissionStatus = () => {
-      const token = Cookies.get("refreshToken");
-      if (token) {
-        try {
-          const decoded = jwtDecode<{ isTechDone?: boolean }>(token);
-          if (decoded?.isTechDone) {
-            setIsTechDone(true);
-          }
-        } catch (err) {
-          console.error("Error decoding refresh token:", err);
+useEffect(() => {
+  const checkSubmissionStatus = () => {
+    const token = Cookies.get("refreshToken");
+    if (token) {
+      try {
+        const decoded = jwtDecode<{ isTechDone?: boolean }>(token);
+        if (decoded?.isTechDone) {
+          setIsTechDone(true);
         }
+      } catch (err) {
+        console.error("Error decoding refresh token:", err);
       }
+    }
 
-      // TechSub from secureLocalStorage
-      if (secureLocalStorage.getItem("TechSub")) {
-        setIsTechDone(true);
-      }
-    };
+    // TechSub from secureLocalStorage
+    if (secureLocalStorage.getItem("TechSub")) {
+      setIsTechDone(true);
+    }
+  };
 
-    checkSubmissionStatus();
-  }, []);
+  checkSubmissionStatus();
+}, []);
+
 
   useEffect(() => {
     const handleOnline = () => {
@@ -288,7 +275,7 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
   useEffect(() => {
     const handleBeforeUnload = () => {
       if (!DRAFT_KEY) return;
-
+      
       const draft = {
         id,
         formData,
@@ -296,7 +283,7 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
         updatedAt: Date.now(),
         version: versionRef.current,
       };
-
+      
       try {
         localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
       } catch (err) {
@@ -313,9 +300,7 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
             }
           });
 
-          const blob = new Blob([JSON.stringify(payload)], {
-            type: "application/json",
-          });
+          const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
           navigator.sendBeacon(
             `${import.meta.env.VITE_BASE_URL}/upload/tech/${id}?token=${token}`,
             blob
@@ -334,10 +319,8 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     }
 
     try {
-      broadcastChannelRef.current = new BroadcastChannel(
-        BROADCAST_CHANNEL_NAME
-      );
-
+      broadcastChannelRef.current = new BroadcastChannel(BROADCAST_CHANNEL_NAME);
+      
       broadcastChannelRef.current.onmessage = (event) => {
         const { type, draft, tabId } = event.data;
         const myTabId = sessionStorage.getItem("tabId");
@@ -408,9 +391,9 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     const { name, value } = e.target;
 
     setSavingFields((prev) => ({
-      ...prev,
-      [name]: true,
-    }));
+    ...prev,
+    [name]: true,
+  }));
 
     setFormData((prevData) => ({
       ...prevData,
@@ -486,6 +469,7 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
     //   subdomain: subdomain.join(", "),
     // } as Record<string, unknown>;
 
+    
     const payload = buildBackendPayload();
 
     // Check if any questions were answered (payload will always contain 'subdomain')
@@ -655,8 +639,8 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
           placeholder="Write here..."
         ></textarea>
         <p className="text-xs text-gray-400">
-          {savingFields["question1"] ? "Saving..." : "Saved"}
-        </p>
+  {savingFields["question1"] ? "Saving..." : "Saved"}
+</p>
 
         <section className="my-2 text-xs md:text-sm">
           <span className="text-prime">Answer some general questions:</span>
@@ -716,12 +700,11 @@ const TechTaskSubmission = ({ setOpenToast, setToastContent }: Props) => {
                     required
                   />
                   <div className="flex justify-end">
-                    <span className="text-xs text-gray-400">
-                      {savingFields[`question${index + 2}`]
-                        ? "Saving..."
-                        : "Saved"}
-                    </span>
-                  </div>
+  <span className="text-xs text-gray-400">
+    {savingFields[`question${index + 2}`] ? "Saving..." : "Saved"}
+  </span>
+</div>
+
                 </div>
               )
           )}
