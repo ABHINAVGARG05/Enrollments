@@ -216,7 +216,7 @@ const Task = () => {
               type="button"
               onClick={() => setSelectedDomain(0)}
               className={`
-                nes-btn w-[47%] md:w-full md:aspect-[3] text-sm md:text-base domain-btn
+              nes-btn w-full lg:h-[20%] text-sm  md:text-base domain-btn
                 ${selectedDomain === 0 ? "is-primary" : ""}
               `}
               aria-label="Technical Domain"
@@ -229,7 +229,7 @@ const Task = () => {
               type="button"
               onClick={() => setSelectedDomain(1)}
               className={`
-                nes-btn w-[47%] md:w-full md:aspect-[3] text-sm md:text-base domain-btn
+              nes-btn w-full lg:h-[20%] text-sm  md:text-base domain-btn
                 ${selectedDomain === 1 ? "is-primary" : ""}
               `}
               aria-label="Design Domain"
@@ -242,7 +242,7 @@ const Task = () => {
               type="button"
               onClick={() => setSelectedDomain(2)}
               className={`
-                nes-btn w-[47%] md:w-full md:aspect-[3] text-sm md:text-base domain-btn
+              nes-btn w-full lg:h-[20%] text-sm  md:text-base domain-btn
                 ${selectedDomain === 2 ? "is-primary" : ""}
               `}
               aria-label="Management Domain"

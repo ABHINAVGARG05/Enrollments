@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import TaskModal from "../components/TaskModal";
 
 interface Task {
   domain: string;
@@ -13,83 +14,114 @@ interface Props {
   setSelectedSubDomain: React.Dispatch<React.SetStateAction<string>>;
 }
 
-
 const ManagementTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
   const [filteredTasks, setFilteredTasks] = useState<Task[]>([]);
-  
-  useEffect(() => {
-    // Map the string subdomain to the correct filter criteria
-    const getFilteredTasks = () => {
-      if (!selectedSubDomain) return [];
-      
-      return managementTaskData.filter(
-        (task) => task.subdomain.toLowerCase() === selectedSubDomain.toLowerCase()
-      );
-    };
-    
-    const filteredTask = getFilteredTasks();
-    setFilteredTasks(filteredTask);
-  }, [selectedSubDomain]);
+  const [showModal, setShowModal] = useState(false);
+  const [activeTask, setActiveTask] = useState<Task | null>(null);
 
-  
+  useEffect(() => {
+    if (!selectedSubDomain) return setFilteredTasks([]);
+
+    const tasks = managementTaskData.filter(
+      (task) =>
+        task.subdomain.toLowerCase() === selectedSubDomain.toLowerCase()
+    );
+
+    setFilteredTasks(tasks);
+  }, [selectedSubDomain]);
 
   return (
     <div
-      className={`w-full h-full overflow-y-auto task-container ${
-        selectedSubDomain === "" ? "flex items-center justify-center" : ""
+      className={`w-full h-full overflow-y-hidden ${
+        selectedSubDomain === "" ? "flex items-center" : ""
       }`}
     >
+      {/* Subdomain buttons */}
       {selectedSubDomain === "" && (
-        <div className="flex justify-center flex-wrap w-full gap-4 pt-4">
-          <button
-            type="button"
-            onClick={() => setSelectedSubDomain("outreach")}
-            className="nes-btn is-error w-[47%] md:w-[22%] py-3 md:py-4 custom-nes-error text-xs hover:scale-105 transition-transform duration-200"
-          >
-            Outreach
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectedSubDomain("generaloperations")}
-            className="nes-btn is-error w-[47%] md:w-[22%] py-3 md:py-4 custom-nes-error text-xs hover:scale-105 transition-transform duration-200"
-          >
-            General Ops.
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectedSubDomain("publicity")}
-            className="nes-btn is-error w-[47%] md:w-[22%] py-3 md:py-4 custom-nes-error text-xs hover:scale-105 transition-transform duration-200"
-          >
-            Publicity
-          </button>
-          <button
-            type="button"
-            onClick={() => setSelectedSubDomain("editorial")}
-            className="nes-btn is-error w-[47%] md:w-[22%] py-3 md:py-4 custom-nes-error text-xs hover:scale-105 transition-transform duration-200"
-          >
-            Editorial
-          </button>
-        </div>
-      )}
-
-      {selectedSubDomain !== "" && (
-        <div className="w-full mt-8 h-full flex flex-col gap-4">
-          {filteredTasks.map((task, index) => (
-            <div
-              className="nes-container is-dark with-title dark-container-nes px-4 py-3 w-full"
-              key={`task-${task.label}-${index}`}
+        <div className="flex justify-center flex-wrap w-full gap-2 md:gap-3">
+          {[
+            { key: "outreach", label: "Outreach" },
+            { key: "generaloperations", label: "General Ops." },
+            { key: "publicity", label: "Publicity" },
+            { key: "editorial", label: "Editorial" },
+          ].map((item) => (
+            <button
+              key={item.key}
+              onClick={() => setSelectedSubDomain(item.key)}
+              className="nes-btn is-error w-[47%] md:w-[22%] py-3 md:py-4 custom-nes-error text-xs hover:scale-105 transition-transform duration-200"
             >
-              <p className="text-xs text-left leading-5 desc-task break-words whitespace-normal">{task.question}</p>
-            </div>
+              {item.label}
+            </button>
           ))}
         </div>
       )}
-      
+
+      {/* Task cards */}
+      {selectedSubDomain !== "" && (
+        <div className="task-list-container">
+          <div className="task-list-header">
+            <span className="task-list-count">
+              {filteredTasks.length} Tasks Available
+            </span>
+          </div>
+
+          <div className="task-list-grid">
+            {filteredTasks.map((task, index) => (
+              <div
+                key={`mgmt-task-${index}`}
+                className="task-item"
+                onClick={() => {
+                  setActiveTask(task);
+                  setShowModal(true);
+                }}
+                style={{ animationDelay: `${index * 0.08}s` }}
+              >
+                <div className="task-item-header">
+                  <span className="task-item-number">
+                    Task {index + 1}
+                  </span>
+                  <span className="task-item-badge">
+                    {task.for === "senior" ? "SC" : "Jr"}
+                  </span>
+                </div>
+
+                <h3 className="task-item-title">
+                  Management Task
+                </h3>
+
+                <div className="task-item-footer">
+                  <span className="task-item-cta">
+                    View Details →
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Modal */}
+      {showModal && activeTask && (
+        <TaskModal
+          task={{
+            title: "Management Task",
+            description: activeTask.question,
+            resources: [],
+            label: "",
+            for: activeTask.for,
+          }}
+          onClose={() => {
+            setShowModal(false);
+            setActiveTask(null);
+          }}
+        />
+      )}
     </div>
   );
 };
 
 export default ManagementTask;
+
 // function Modal({
 //   task,
 //   setShowModal,
