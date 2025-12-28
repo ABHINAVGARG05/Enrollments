@@ -196,11 +196,11 @@ const Landing = () => {
                     onClick={() => setShowPassword((prev) => !prev)}
                     aria-label={showPassword ? "Hide Password" : "Show Password"}
                   >
-                    {showPassword ? (
+                    {/* {showPassword ? (
                       <img src="/invisible.png" alt="Hide password" className="w-5 h-5 invert" />
                     ) : (
                       <img src="/eye.png" alt="Show password" className="w-5 h-5 invert" />
-                    )}
+                    )} */}
                   </button>
                 )}
               </div>
