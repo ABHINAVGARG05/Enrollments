@@ -352,14 +352,17 @@ const handleMeeting = async (e: React.MouseEvent<HTMLButtonElement>) => {
           >
             SCHEDULE A MEETING
           </h1>
-          <div className="w-full h-full nes-container justify-center is-rounded is-dark text-2xl md:text-base text-left md:text-center overflow-auto max-h-[70vh] p-10">
-            <div className="flex flex-col md:flex-row w-full gap-6">
-              <div className="w-full md:w-1/3">
+          <div
+            className="w-full h-full nes-container justify-center is-rounded is-dark text-2xl px-2 md:text-base text-left md:text-center overflow-auto max-h-[65vh] md:max-h-[70vh] p-6 md:p-10 max-w-[360px] sm:max-w-[520px] md:max-w-none mx-auto"
+            style={{ paddingLeft: "0.5rem", paddingRight: "0.5rem" }}
+          >
+            <div className="flex flex-col md:flex-row w-full gap-6 min-w-0">
+              <div className="w-full md:w-1/3 min-w-0">
                 <Calendar selectDate={handleDate} />
               </div>
 
 
-              <div className="flex flex-col gap-4 w-full md:w-2/3">
+              <div className="flex flex-col gap-4 w-full md:w-2/3 min-w-0">
 
                 {/* Dropdown for time slots */}
                 <div className="relative w-full" ref={dropdownRef}>
@@ -377,8 +380,8 @@ const handleMeeting = async (e: React.MouseEvent<HTMLButtonElement>) => {
                       color: time ? "white" : undefined,
                     }}
                   >
-                    <span>{selectedSlot ? selectedSlot.label : "Select Time Slot"}</span>
-                    <span
+                    <span className="">{selectedSlot ? selectedSlot.label : "Select Time Slot"}</span>
+                    {/* <span
                       style={{
                         color: "#fff",
                         fontSize: "1rem",
@@ -389,7 +392,7 @@ const handleMeeting = async (e: React.MouseEvent<HTMLButtonElement>) => {
                       }}
                     >
                       ▼
-                    </span>
+                    </span> */}
                   </div>
 
                   {dropdownOpen && (
@@ -496,7 +499,7 @@ const handleMeeting = async (e: React.MouseEvent<HTMLButtonElement>) => {
                     }
                   }}
                   className={
-                    "text-white font-medium py-2 px-4 rounded-md transition-all duration-300"
+                    "text-white font-medium rounded-md transition-all duration-300 py-1 px-3 text-sm sm:py-2 sm:px-4 sm:text-base"
                   }
                 >
                   {gmeet ? "Interview Link" : "Link available after booking"}
@@ -504,7 +507,7 @@ const handleMeeting = async (e: React.MouseEvent<HTMLButtonElement>) => {
 
                 <Button
                   className={
-                    "text-white font-medium py-2 px-4 rounded-md transition-all duration-300"
+                    "text-white font-medium py-1 px-3 text-sm sm:py-2 sm:px-4 rounded-md transition-all duration-300"
                   }
                   onClick={gmeet && !showBooked ? handleCancel : handleMeeting}
                   disabled={isLoading}

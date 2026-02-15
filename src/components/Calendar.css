@@ -162,3 +162,66 @@ body {
   background: #8b3d00 !important;
   color: white;
 }
+
+/* ===== Responsive adjustments for small screens ===== */
+@media (max-width: 520px) {
+  .month ul li {
+    font-size: 1.05rem; /* slightly smaller month header */
+    letter-spacing: 2px;
+  }
+
+  .weekdays li {
+    font-size: 0.78rem;
+  }
+
+  .days li {
+    font-size: 0.68rem;
+  }
+
+  .weekdays,
+  .days {
+    gap: 4px; /* reduce gaps so grid fits */
+  }
+
+  .days li .date,
+  .days li .deactive {
+    min-height: 30px;
+  }
+
+  .days li span {
+    border-radius: 4px;
+    max-width: 44px;
+    aspect-ratio: 1 / 1;
+    padding: 0;
+  }
+}
+
+@media (max-width: 380px) {
+  .month ul li {
+    font-size: 0.95rem;
+    letter-spacing: 1.5px;
+  }
+
+  .weekdays li {
+    font-size: 0.66rem;
+  }
+
+  .days li {
+    font-size: 0.60rem;
+  }
+
+  .days li .date,
+  .days li .deactive {
+    min-height: 40px;
+  }
+
+  .days li span {
+    max-width: 46px;
+  }
+}
+
+/* Ensure cells can shrink and won't force horizontal overflow */
+.weekdays li,
+.days li {
+  min-width: 0;
+}

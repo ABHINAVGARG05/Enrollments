@@ -44,6 +44,7 @@ const ManagementTask = ({ selectedSubDomain, setSelectedSubDomain }: Props) => {
             { key: "General Ops", label: "General Ops" },
             { key: "Publicity", label: "Publicity" },
             { key: "Events", label: "Events" },
+            { key: "Events", label: "Events" },
           ].map((item) => (
             <button
               key={item.key}

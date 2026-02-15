@@ -31,7 +31,7 @@ const NavbarComponent = () => {
       {menuItems.map((item) => (
         <div
           key={item.id}
-          className="relative z-[150] scale-75 lg:scale-100 cursor-pointer group"
+          className="relative z-[150] scale-50 sm:scale-75 lg:scale-100 cursor-pointer group"
           onClick={() => {
             if (item.action) item.action();
             navigate(item.route);
